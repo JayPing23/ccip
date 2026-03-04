@@ -1,0 +1,44 @@
+{
+  "folders": [
+    { "name": "CCIP — Root", "path": "." },
+    { "name": "CCIP — Modules", "path": "./modules" },
+    { "name": "CCIP — Shared", "path": "./shared" },
+    { "name": "CCIP — Supabase", "path": "./supabase" }
+  ],
+  "settings": {
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "typescript.tsdk": "node_modules/typescript/lib"
+  },
+  "extensions": {
+    "recommendations": [
+      "dbaeumer.vscode-eslint",
+      "esbenp.prettier-vscode",
+      "bradlc.vscode-tailwindcss",
+      "github.copilot",
+      "github.copilot-chat",
+      "usernamehw.errorlens",
+      "eamodio.gitlens",
+      "yoavbls.pretty-ts-errors",
+      "gruntfuggly.todo-tree",
+      "rangav.vscode-thunder-client",
+      "pkief.material-icon-theme",
+      "aaron-bond.better-comments",
+      "heybourn.headwind",
+      "formulahendry.auto-rename-tag"
+    ]
+  },
+  "launch": {
+    "configurations": [
+      {
+        "name": "Next.js Dev Server",
+        "type": "node",
+        "request": "launch",
+        "program": "${workspaceFolder}/node_modules/.bin/next",
+        "args": ["dev"],
+        "cwd": "${workspaceFolder}",
+        "env": { "NODE_ENV": "development" }
+      }
+    ]
+  }
+}

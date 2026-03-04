@@ -1,0 +1,110 @@
+{
+  "CCIP Service File": {
+    "prefix": "ccip-service",
+    "description": "Scaffold a CCIP module service file",
+    "body": [
+      "import { createServerSupabaseClient } from '@/shared/lib/supabase-server';",
+      "",
+      "/**",
+      " * ${1:Module} Service",
+      " * Handles all database interactions for the ${1:module} module.",
+      " */",
+      "",
+      "/**",
+      " * ${2:Description of function}",
+      " */",
+      "export async function ${3:functionName}() {",
+      "  const supabase = await createServerSupabaseClient();",
+      "",
+      "  const { data, error } = await supabase",
+      "    .from('${4:table}')",
+      "    .select('*');",
+      "",
+      "  if (error) throw new Error(error.message);",
+      "  return data;",
+      "}"
+    ]
+  },
+  "CCIP API Route": {
+    "prefix": "ccip-api",
+    "description": "Scaffold a CCIP API route handler",
+    "body": [
+      "import { NextRequest, NextResponse } from 'next/server';",
+      "import { createServerSupabaseClient } from '@/shared/lib/supabase-server';",
+      "import { z } from 'zod';",
+      "",
+      "const schema = z.object({",
+      "  ${1:field}: z.string(),",
+      "});",
+      "",
+      "export async function POST(req: NextRequest) {",
+      "  try {",
+      "    const supabase = await createServerSupabaseClient();",
+      "    const { data: { user } } = await supabase.auth.getUser();",
+      "",
+      "    if (!user) {",
+      "      return NextResponse.json(",
+      "        { data: null, error: { message: 'Unauthorized', code: 'UNAUTHORIZED' } },",
+      "        { status: 401 }",
+      "      );",
+      "    }",
+      "",
+      "    const body = await req.json();",
+      "    const parsed = schema.safeParse(body);",
+      "",
+      "    if (!parsed.success) {",
+      "      return NextResponse.json(",
+      "        { data: null, error: { message: 'Validation failed', code: 'VALIDATION_ERROR' } },",
+      "        { status: 422 }",
+      "      );",
+      "    }",
+      "",
+      "    // TODO: implement logic",
+      "",
+      "    return NextResponse.json({ data: null, error: null }, { status: 200 });",
+      "  } catch (err) {",
+      "    console.error(err);",
+      "    return NextResponse.json(",
+      "      { data: null, error: { message: 'Internal server error', code: 'SERVER_ERROR' } },",
+      "      { status: 500 }",
+      "    );",
+      "  }",
+      "}"
+    ]
+  },
+  "CCIP React Component": {
+    "prefix": "ccip-component",
+    "description": "Scaffold a CCIP React component",
+    "body": [
+      "interface ${1:ComponentName}Props {",
+      "  ${2:prop}: ${3:string};",
+      "}",
+      "",
+      "export function ${1:ComponentName}({ ${2:prop} }: ${1:ComponentName}Props) {",
+      "  return (",
+      "    <div className=\"${4:}\">",
+      "      ${0}",
+      "    </div>",
+      "  );",
+      "}"
+    ]
+  },
+  "CCIP Type Interface": {
+    "prefix": "ccip-type",
+    "description": "Scaffold a CCIP TypeScript interface",
+    "body": [
+      "export interface I${1:Name} {",
+      "  id: string;",
+      "  createdAt: string;",
+      "  ${2:field}: ${3:string};",
+      "}"
+    ]
+  },
+  "CCIP TODO Phase": {
+    "prefix": "ccip-todo",
+    "description": "Add a phase-deferred TODO comment",
+    "body": [
+      "// TODO: Phase ${1|2,3,4,5|} — ${2:description}"
+    ]
+  }
+}
