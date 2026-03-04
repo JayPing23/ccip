@@ -1,0 +1,14 @@
+
+SUPABASE DETAILS:
+
+Project URL: https://akcjalgxivsxjhnixjfk.supabase.co
+Publishable Key: sb_publishable_kMCdvNzNx0T-ROp366670Q_JXY-Ad6H
+Anon Key (Legacy): eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFrY2phbGd4aXZzeGpobml4amZrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI2MzQ4MjMsImV4cCI6MjA4ODIxMDgyM30.jch5OCZQdITprE_-Dj9Xsq7BE3qBd1mYRWB_CMWG9dI
+
+Service role: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFrY2phbGd4aXZzeGpobml4amZrIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3MjYzNDgyMywiZXhwIjoyMDg4MjEwODIzfQ.8aFCawH-_ZPgXkTS5crrawjkyCs6lZ33vmg-oIGjyuk
+
+secret key: sb_secret_yRaWcVj-_BhtdpLgyXA6pQ_t25eoZY9
+
+Google OAuth:
+Client ID: 354862608458-77qbakart4d6ct72h5rt0uc88lvpuncm.apps.googleusercontent.com
+Client Secret: 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
