@@ -10,14 +10,18 @@ import { ROLES, type Role } from '@/shared/constants/roles';
  * Check if a user can create content (any content, any org)
  */
 export function canCreateContent(role: Role): boolean {
-  return [ROLES.DEPT_EDITOR, ROLES.UNIVERSITY_EDITOR, ROLES.SUPER_ADMIN].includes(role);
+  return [ROLES.DEPT_EDITOR, ROLES.UNIVERSITY_EDITOR, ROLES.SUPER_ADMIN].includes(
+    role as typeof ROLES.DEPT_EDITOR | typeof ROLES.UNIVERSITY_EDITOR | typeof ROLES.SUPER_ADMIN
+  );
 }
 
 /**
  * Check if a user can edit their own content
  */
 export function canEditOwnContent(role: Role): boolean {
-  return [ROLES.DEPT_EDITOR, ROLES.UNIVERSITY_EDITOR, ROLES.SUPER_ADMIN].includes(role);
+  return [ROLES.DEPT_EDITOR, ROLES.UNIVERSITY_EDITOR, ROLES.SUPER_ADMIN].includes(
+    role as typeof ROLES.DEPT_EDITOR | typeof ROLES.UNIVERSITY_EDITOR | typeof ROLES.SUPER_ADMIN
+  );
 }
 
 /**
@@ -31,7 +35,9 @@ export function canEditAnyContent(role: Role): boolean {
  * Check if a user can delete their own content
  */
 export function canDeleteOwnContent(role: Role): boolean {
-  return [ROLES.DEPT_EDITOR, ROLES.UNIVERSITY_EDITOR, ROLES.SUPER_ADMIN].includes(role);
+  return [ROLES.DEPT_EDITOR, ROLES.UNIVERSITY_EDITOR, ROLES.SUPER_ADMIN].includes(
+    role as typeof ROLES.DEPT_EDITOR | typeof ROLES.UNIVERSITY_EDITOR | typeof ROLES.SUPER_ADMIN
+  );
 }
 
 /**
@@ -66,19 +72,25 @@ export function canViewAuditLogs(role: Role): boolean {
  * Check if a user can upload media attachments
  */
 export function canUploadMedia(role: Role): boolean {
-  return [ROLES.DEPT_EDITOR, ROLES.UNIVERSITY_EDITOR, ROLES.SUPER_ADMIN].includes(role);
+  return [ROLES.DEPT_EDITOR, ROLES.UNIVERSITY_EDITOR, ROLES.SUPER_ADMIN].includes(
+    role as typeof ROLES.DEPT_EDITOR | typeof ROLES.UNIVERSITY_EDITOR | typeof ROLES.SUPER_ADMIN
+  );
 }
 
 /**
  * Check if a user can schedule posts
  */
 export function canSchedulePosts(role: Role): boolean {
-  return [ROLES.DEPT_EDITOR, ROLES.UNIVERSITY_EDITOR, ROLES.SUPER_ADMIN].includes(role);
+  return [ROLES.DEPT_EDITOR, ROLES.UNIVERSITY_EDITOR, ROLES.SUPER_ADMIN].includes(
+    role as typeof ROLES.DEPT_EDITOR | typeof ROLES.UNIVERSITY_EDITOR | typeof ROLES.SUPER_ADMIN
+  );
 }
 
 /**
  * Check if a user can cross-post to external platforms
  */
 export function canCrossPost(role: Role): boolean {
-  return [ROLES.UNIVERSITY_EDITOR, ROLES.SUPER_ADMIN].includes(role);
+  return [ROLES.UNIVERSITY_EDITOR, ROLES.SUPER_ADMIN].includes(
+    role as typeof ROLES.UNIVERSITY_EDITOR | typeof ROLES.SUPER_ADMIN
+  );
 }

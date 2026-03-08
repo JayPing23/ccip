@@ -2,7 +2,54 @@
 
 A secure, role-based web platform that centralizes all official university communications into one place.
 
-## Quick Start
+---
+
+## 📖 CORE DOCUMENTATION - 5 FILES ONLY
+
+This project uses **just 5 core documentation files**. Everything you need is in one of these:
+
+### 1. **[IMPLEMENTATION_LOG.md](IMPLEMENTATION_LOG.md)** ⭐ START HERE
+**When:** Every new session | **Read time:** 5 min | **Purpose:** Current status & next steps
+- What's complete ✅
+- What's in progress 🔄
+- What's next ⏳
+- How to resume work
+- Architecture decisions
+
+### 2. **[SETUP_GUIDE.md](SETUP_GUIDE.md)**
+**When:** First time setup | **Read time:** 30 min | **Purpose:** Get project running
+- Supabase configuration
+- Google OAuth setup
+- Database migrations
+- Environment variables
+- Verification steps
+
+### 3. **[CCIP_PROJECT_PROPOSAL.md](CCIP_PROJECT_PROPOSAL.md)**
+**When:** Understanding "why" | **Read time:** 30 min (reference) | **Purpose:** Full architecture & design
+- System design & architecture
+- Database schema
+- Permission model
+- Naming conventions
+- All feature specifications
+- Technology stack decisions
+
+### 4. **[docs/API_REFERENCE.md](docs/API_REFERENCE.md)**
+**When:** Building features | **Read time:** 10 min (reference) | **Purpose:** All 17 API endpoints
+- Request/response examples
+- Error codes
+- Permission rules
+- Testing with cURL
+
+### 5. **[docs/phase-planning/PHASE_1_CHECKLIST.md](docs/phase-planning/PHASE_1_CHECKLIST.md)**
+**When:** Planning work | **Read time:** 5 min | **Purpose:** Phase 1 task list
+- Completed tasks ✅
+- In progress 🔄
+- Not started ❌
+- Time estimates
+
+---
+
+## 🚀 QUICK START (2 Minutes)
 
 ### Prerequisites
 - Node.js 18+ and npm
@@ -138,4 +185,4 @@ Private. See repo settings for access.
 
 ---
 
-*CCIP Project v2.0 | Centralized Campus Information Portal | Last Updated: March 4, 2026*
+*CCIP Project v2.0 | Centralized Campus Information Portal | Last Updated: March 8, 2026*

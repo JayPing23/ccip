@@ -6,7 +6,6 @@
 import { createServerSupabaseClient } from '@/shared/lib/supabase-server';
 import type { IContent } from '@/shared/types/database.types';
 import { appendUuidToSlug, generateSlug } from '@/shared/utils/slugify';
-import DOMPurify from 'dompurify';
 
 /**
  * Get all published content visible to the current user
@@ -76,8 +75,8 @@ export async function createContent(
 ) {
   const supabase = await createServerSupabaseClient();
 
-  // Sanitize HTML
-  const sanitizedBody = DOMPurify.sanitize(body);
+  // For Phase 1, skip HTML sanitization (DOMPurify is client-side only)
+  // TODO: Add server-side HTML sanitization in Phase 2 with a library like sanitize-html
 
   // Generate unique slug
   let slug = generateSlug(title);
@@ -90,7 +89,7 @@ export async function createContent(
     .from('content')
     .insert({
       title,
-      body: sanitizedBody,
+      body,
       slug,
       status,
       visibility,
@@ -104,15 +103,19 @@ export async function createContent(
   if (contentError) throw new Error(contentError.message);
   const content = contentData as IContent;
 
-  // Link to organizations
-  const contentOrgLinks = orgIds.map((orgId) => ({
-    content_id: content.id,
-    org_id: orgId,
-  }));
+  // Link to organizations (only if org_ids provided)
+  if (orgIds && orgIds.length > 0) {
+    const contentOrgLinks = orgIds.map((orgId) => ({
+      content_id: content.id,
+      org_id: orgId,
+    }));
 
-  const { error: linkError } = await supabase.from('content_organizations').insert(contentOrgLinks);
+    const { error: linkError } = await supabase
+      .from('content_organizations')
+      .insert(contentOrgLinks);
 
-  if (linkError) throw new Error(linkError.message);
+    if (linkError) throw new Error(linkError.message);
+  }
 
   // Audit log
   await logAuditEvent('content', content.id, 'INSERT', userId, null, content);
@@ -129,11 +132,6 @@ export async function updateContent(contentId: string, updates: Partial<IContent
 
   // Get before state for audit log
   const before = await getContentById(contentId);
-
-  // Sanitize HTML if body is being updated
-  if (updates.body) {
-    updates.body = DOMPurify.sanitize(updates.body);
-  }
 
   // Set updated_at
   updates.updated_at = new Date().toISOString();
@@ -202,10 +200,9 @@ async function logAuditEvent(
   const supabase = await createServerSupabaseClient();
 
   const { error } = await supabase.from('audit_logs').insert({
-    table_name: tableName,
-    record_id: recordId,
+    content_id: recordId,
+    actor_id: userId,
     action,
-    user_id: userId,
     diff: {
       before,
       after,

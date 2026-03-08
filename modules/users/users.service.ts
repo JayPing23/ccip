@@ -17,10 +17,20 @@ export async function getCurrentUser(): Promise<IUser | null> {
 
   if (!authUser) return null;
 
-  const { data, error } = await supabase.from('users').select('*').eq('id', authUser.id).single();
+  const { data, error } = await supabase
+    .from('users')
+    .select('*, role:roles!inner(name)')
+    .eq('id', authUser.id)
+    .single();
 
   if (error) return null;
-  return data as IUser;
+
+  // Flatten role name from the joined role object
+  const user = data as any;
+  return {
+    ...user,
+    role_name: user.role?.name,
+  } as IUser;
 }
 
 /**

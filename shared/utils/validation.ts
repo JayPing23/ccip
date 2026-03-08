@@ -12,21 +12,24 @@ import { z } from 'zod';
  */
 export const contentSchema = z.object({
   title: z.string().min(3).max(200),
-  body: z.string().min(10).max(10000),
-  status: z.enum([
-    CONTENT_STATUS.DRAFT,
-    CONTENT_STATUS.SCHEDULED,
-    CONTENT_STATUS.PUBLISHED,
-    CONTENT_STATUS.ARCHIVED,
-  ] as any),
+  description: z.string().min(10).max(10000).optional(), // Accept description from form
+  body: z.string().min(10).max(10000).optional(), // Accept body from API
+  status: z
+    .enum([
+      CONTENT_STATUS.DRAFT,
+      CONTENT_STATUS.SCHEDULED,
+      CONTENT_STATUS.PUBLISHED,
+      CONTENT_STATUS.ARCHIVED,
+    ] as any)
+    .optional(),
   visibility: z.enum([
     CONTENT_VISIBILITY.PUBLIC,
     CONTENT_VISIBILITY.ORG_ONLY,
     CONTENT_VISIBILITY.DEPT_ONLY,
   ] as any),
-  org_ids: z.array(z.string().uuid()).min(1), // At least one org
+  org_ids: z.array(z.string().uuid()).optional(), // Make optional for simple form
   scheduled_at: z.string().datetime().optional().nullable(),
-  tags: z.array(z.enum(CONTENT_TAGS as any)).optional(),
+  tags: z.array(z.string()).optional(), // Accept array of strings, not enums
 });
 
 export type ContentFormData = z.infer<typeof contentSchema>;

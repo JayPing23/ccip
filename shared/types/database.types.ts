@@ -25,6 +25,7 @@ export interface IUser {
   display_name: string;
   avatar_url: string | null;
   role_id: string;
+  role_name?: 'STUDENT' | 'DEPT_EDITOR' | 'UNIVERSITY_EDITOR' | 'SUPER_ADMIN';
   org_id: string | null;
   created_at: string;
   updated_at: string;
@@ -33,11 +34,14 @@ export interface IUser {
 export interface IContent {
   id: string;
   title: string;
-  body: string;
+  body?: string;
+  description?: string;
   slug: string;
   status: 'DRAFT' | 'SCHEDULED' | 'PUBLISHED' | 'ARCHIVED';
   visibility: 'PUBLIC' | 'ORG_ONLY' | 'DEPT_ONLY';
-  author_id: string;
+  author_id?: string;
+  created_by?: string;
+  tags?: string[];
   created_at: string;
   updated_at: string;
   published_at: string | null;
