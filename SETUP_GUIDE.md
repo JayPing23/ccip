@@ -158,7 +158,6 @@ ORG_NAME=Example University
 # ============================================================================
 NEXT_PUBLIC_GOOGLE_CLIENT_ID=123456789.apps.googleusercontent.com
 GOOGLE_CLIENT_SECRET=GOCSPX-xxxxx
-NEXT_PUBLIC_AUTH_CALLBACK_URL=http://localhost:3000/auth/callback/google
 
 # ============================================================================
 # APPLICATION CONFIGURATION

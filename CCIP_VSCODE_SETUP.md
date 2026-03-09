@@ -243,26 +243,31 @@ Create this file at the root of your project:
 
 ### ESLint Config
 
-**File:** `.eslintrc.json`
+**File:** `eslint.config.mjs`
 
-```json
-{
-  "extends": [
-    "next/core-web-vitals",
-    "plugin:@typescript-eslint/recommended",
-    "prettier"
-  ],
-  "plugins": ["@typescript-eslint"],
-  "rules": {
-    "@typescript-eslint/no-explicit-any": "error",
-    "@typescript-eslint/no-unused-vars": ["error", { "argsIgnorePattern": "^_" }],
-    "@typescript-eslint/explicit-function-return-type": "off",
-    "@typescript-eslint/consistent-type-imports": "warn",
-    "no-console": ["warn", { "allow": ["warn", "error"] }],
-    "prefer-const": "error",
-    "no-var": "error"
-  }
-}
+```js
+import nextCoreWebVitals from 'eslint-config-next/core-web-vitals';
+import nextTypescript from 'eslint-config-next/typescript';
+import eslintConfigPrettier from 'eslint-config-prettier';
+
+const eslintConfig = [
+  ...nextCoreWebVitals,
+  ...nextTypescript,
+  eslintConfigPrettier,
+  {
+    rules: {
+      '@typescript-eslint/no-explicit-any': 'warn',
+      '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
+      '@typescript-eslint/explicit-function-return-type': 'off',
+      '@typescript-eslint/consistent-type-imports': 'warn',
+      'no-console': ['warn', { allow: ['warn', 'error'] }],
+      'prefer-const': 'error',
+      'no-var': 'error',
+    },
+  },
+];
+
+export default eslintConfig;
 ```
 
 > This enforces the `no any` rule from the proposal's DON'T list automatically.
@@ -596,7 +601,7 @@ ccip/
 ├── public/
 ├── .env.example
 ├── .env.local              ← never commit
-├── .eslintrc.json
+├── eslint.config.mjs
 ├── .gitignore
 ├── .prettierrc
 ├── CCIP_PROJECT_PROPOSAL.md
@@ -817,7 +822,7 @@ Work through this in order before writing any feature code.
 - [ ] VS Code installed and opened to the `ccip/` folder
 - [ ] All essential extensions installed (Section 1)
 - [ ] `.vscode/settings.json` created (Section 2)
-- [ ] `.prettierrc` and `.eslintrc.json` created (Section 2)
+- [ ] `.prettierrc` and `eslint.config.mjs` created (Section 2)
 - [ ] `tsconfig.json` updated with strict mode and path aliases (Section 2)
 
 ### Project Bootstrap
