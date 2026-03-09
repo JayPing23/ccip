@@ -1,5 +1,5 @@
 # CCIP — VS Code Setup Guide
-> Complete setup for Extensions, Settings, and Project Workspace
+> Complete setup for a modular campus platform covering official announcements, student publication, and community discussion
 
 ---
 
@@ -379,6 +379,9 @@ mkdir -p modules/content/{components,api,hooks,types}
 mkdir -p modules/notifications/{components,api,hooks,types}
 mkdir -p modules/media/{components,api,hooks,types}
 mkdir -p modules/search/{components,api,hooks,types}
+mkdir -p modules/publication/{components,api,hooks,types}
+mkdir -p modules/forum/{components,api,hooks,types}
+mkdir -p modules/moderation/{components,api,hooks,types}
 mkdir -p modules/external_publish/{components,api,hooks,types}
 mkdir -p modules/admin/{components,api,hooks,types}
 
@@ -472,25 +475,27 @@ export type Role = typeof ROLES[keyof typeof ROLES];
 
 #### Content Constants
 
-**File:** `shared/constants/content.ts`
+**File:** `modules/content/constants/index.ts`
 
 ```typescript
-export const CONTENT_STATUS = {
+export const ANNOUNCEMENT_STATUS = {
   DRAFT:     'DRAFT',
   SCHEDULED: 'SCHEDULED',
   PUBLISHED: 'PUBLISHED',
   ARCHIVED:  'ARCHIVED',
 } as const;
 
-export type ContentStatus = typeof CONTENT_STATUS[keyof typeof CONTENT_STATUS];
+export type AnnouncementStatus =
+  typeof ANNOUNCEMENT_STATUS[keyof typeof ANNOUNCEMENT_STATUS];
 
-export const CONTENT_VISIBILITY = {
+export const ANNOUNCEMENT_VISIBILITY = {
   PUBLIC:    'PUBLIC',
   ORG_ONLY:  'ORG_ONLY',
   DEPT_ONLY: 'DEPT_ONLY',
 } as const;
 
-export type ContentVisibility = typeof CONTENT_VISIBILITY[keyof typeof CONTENT_VISIBILITY];
+export type AnnouncementVisibility =
+  typeof ANNOUNCEMENT_VISIBILITY[keyof typeof ANNOUNCEMENT_VISIBILITY];
 ```
 
 #### Tags Constants
@@ -571,13 +576,16 @@ ccip/
 │   └── api/
 ├── modules/
 │   ├── auth/
-│   ├── content/
+│   ├── content/             ← official announcements foundation
 │   ├── notifications/
 │   ├── organizations/
 │   ├── roles/
 │   ├── users/
 │   ├── media/
 │   ├── search/
+│   ├── publication/
+│   ├── forum/
+│   ├── moderation/
 │   ├── external_publish/
 │   └── admin/
 ├── shared/
@@ -843,7 +851,7 @@ Work through this in order before writing any feature code.
 - [ ] `CCIP_PROJECT_PROPOSAL.md` copied to project root
 - [ ] GitHub Copilot extension installed and signed in
 - [ ] Open the proposal file once in VS Code so Copilot indexes it as context
-- [ ] Test Copilot: open `modules/content/content.service.ts` and type `// get all published content` — Copilot should suggest a Supabase query
+- [ ] Test Copilot: open `modules/content/content.service.ts` and type `// get all published announcements` — Copilot should suggest a Supabase query for the current announcements foundation
 
 ### Verify Everything Works
 - [ ] `npm run dev` starts without errors
@@ -876,4 +884,4 @@ Work through this in order before writing any feature code.
 
 ---
 
-*CCIP VS Code Setup Guide | Pair with `CCIP_PROJECT_PROPOSAL.md` for full context*
+*CCIP VS Code Setup Guide | Pair with `CCIP_PROJECT_PROPOSAL.md` for the full modular product context*

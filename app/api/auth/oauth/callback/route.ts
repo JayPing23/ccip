@@ -38,7 +38,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Validate institutional domain
-    const institutionalDomain = process.env.NEXT_PUBLIC_INSTITUTIONAL_DOMAIN || 'slu.edu.ph';
+    const institutionalDomain = process.env.INSTITUTIONAL_DOMAIN || 'slu.edu.ph';
 
     if (!isInstitutionalEmail(data.user.email, institutionalDomain)) {
       await supabase.auth.signOut();

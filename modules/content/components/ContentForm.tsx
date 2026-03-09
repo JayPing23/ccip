@@ -1,6 +1,7 @@
 'use client';
 
-import { CONTENT_VISIBILITY } from '@/shared/constants/content';
+import { ANNOUNCEMENT_VISIBILITY } from '@/modules/content/constants';
+import type { ContentTag } from '@/shared/constants/tags';
 import { CONTENT_TAGS } from '@/shared/constants/tags';
 import type { IContent, IOrganization } from '@/shared/types/database.types';
 import { useRouter } from 'next/navigation';
@@ -12,8 +13,8 @@ interface ContentFormProps {
   initialContent?: IContent | null;
   /** Callback when form is successfully submitted */
   onSuccess?: (content: IContent) => void;
-  /** Whether to show admin-only fields */
-  isAdmin?: boolean;
+  /** Whether publishing and scheduling controls should be available */
+  canManagePublishing?: boolean;
 }
 
 /**
@@ -23,7 +24,7 @@ interface ContentFormProps {
 export default function ContentForm({
   initialContent,
   onSuccess,
-  isAdmin = false,
+  canManagePublishing = false,
 }: ContentFormProps) {
   const router = useRouter();
   const [organizations, setOrganizations] = useState<IOrganization[]>([]);
@@ -38,7 +39,7 @@ export default function ContentForm({
     errorMessage,
     isDirty,
     handleChange,
-    handleDescriptionChange,
+    handleBodyChange,
     handleSaveDraft,
     handlePublish,
     handleSchedule,
@@ -80,7 +81,7 @@ export default function ContentForm({
   /**
    * Toggle tag selection
    */
-  const toggleTag = (tag: string) => {
+  const toggleTag = (tag: ContentTag) => {
     const isSelected = formData.tags.includes(tag);
     const newTags = isSelected ? formData.tags.filter((t) => t !== tag) : [...formData.tags, tag];
 
@@ -157,31 +158,28 @@ export default function ContentForm({
               </div>
             </div>
 
-            {/* Description/Body Section */}
+            {/* Body Section */}
             <div>
-              <label
-                htmlFor="description"
-                className="mb-2 block text-sm font-semibold text-gray-700"
-              >
+              <label htmlFor="body" className="mb-2 block text-sm font-semibold text-gray-700">
                 Content <span className="text-red-500">*</span>
               </label>
               <textarea
-                id="description"
-                name="description"
-                value={formData.description}
-                onChange={handleDescriptionChange}
+                id="body"
+                name="body"
+                value={formData.body}
+                onChange={handleBodyChange}
                 placeholder="Enter announcement content..."
                 rows={8}
                 maxLength={10000}
                 className={`w-full rounded-lg border px-4 py-2 focus:ring-2 focus:outline-none ${
-                  errors.description
+                  errors.body
                     ? 'border-red-500 focus:ring-red-500'
                     : 'border-gray-300 focus:ring-blue-500'
                 }`}
               />
               <div className="mt-1 flex justify-between">
-                {errors.description && <p className="text-sm text-red-600">{errors.description}</p>}
-                <p className="text-sm text-gray-500">{formData.description.length}/10000</p>
+                {errors.body && <p className="text-sm text-red-600">{errors.body}</p>}
+                <p className="text-sm text-gray-500">{formData.body.length}/10000</p>
               </div>
             </div>
 
@@ -204,11 +202,11 @@ export default function ContentForm({
                     : 'border-gray-300 focus:ring-blue-500'
                 }`}
               >
-                <option value={CONTENT_VISIBILITY.PUBLIC}>Public - Everyone can see</option>
-                <option value={CONTENT_VISIBILITY.ORG_ONLY}>
+                <option value={ANNOUNCEMENT_VISIBILITY.PUBLIC}>Public - Everyone can see</option>
+                <option value={ANNOUNCEMENT_VISIBILITY.ORG_ONLY}>
                   Organization Only - Members only
                 </option>
-                <option value={CONTENT_VISIBILITY.DEPT_ONLY}>
+                <option value={ANNOUNCEMENT_VISIBILITY.DEPT_ONLY}>
                   Department Only - Department members
                 </option>
               </select>
@@ -218,7 +216,7 @@ export default function ContentForm({
             </div>
 
             {/* Organizations Section (if needed for restricted visibility) */}
-            {formData.visibility !== CONTENT_VISIBILITY.PUBLIC && (
+            {formData.visibility !== ANNOUNCEMENT_VISIBILITY.PUBLIC && (
               <div>
                 <label className="mb-3 block text-sm font-semibold text-gray-700">
                   Target Organizations
@@ -271,7 +269,7 @@ export default function ContentForm({
             </div>
 
             {/* Scheduled Date (for scheduled publishing) */}
-            {isAdmin && (
+            {canManagePublishing && (
               <div>
                 <label
                   htmlFor="scheduled_at"
@@ -301,18 +299,18 @@ export default function ContentForm({
               <button
                 type="button"
                 onClick={handleSaveDraft}
-                disabled={isSubmitting || !formData.title || !formData.description}
+                disabled={isSubmitting || !formData.title || !formData.body}
                 className="flex-1 rounded-lg border border-gray-300 px-6 py-3 font-medium text-gray-700 transition-colors hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
               >
                 {isSubmitting ? 'Saving...' : '💾 Save as Draft'}
               </button>
 
-              {isAdmin ? (
+              {canManagePublishing ? (
                 <>
                   <button
                     type="button"
                     onClick={handlePublish}
-                    disabled={isSubmitting || !formData.title || !formData.description}
+                    disabled={isSubmitting || !formData.title || !formData.body}
                     className="flex-1 rounded-lg bg-blue-600 px-6 py-3 font-medium text-white transition-colors hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
                   >
                     {isSubmitting ? 'Publishing...' : '🚀 Publish Now'}
@@ -322,10 +320,7 @@ export default function ContentForm({
                     type="button"
                     onClick={handleSchedule}
                     disabled={
-                      isSubmitting ||
-                      !formData.title ||
-                      !formData.description ||
-                      !formData.scheduled_at
+                      isSubmitting || !formData.title || !formData.body || !formData.scheduled_at
                     }
                     className="flex-1 rounded-lg bg-green-600 px-6 py-3 font-medium text-white transition-colors hover:bg-green-700 disabled:cursor-not-allowed disabled:opacity-50"
                   >
@@ -336,7 +331,7 @@ export default function ContentForm({
                 <button
                   type="button"
                   onClick={handlePublish}
-                  disabled={isSubmitting || !formData.title || !formData.description}
+                  disabled={isSubmitting || !formData.title || !formData.body}
                   className="flex-1 rounded-lg bg-blue-600 px-6 py-3 font-medium text-white transition-colors hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   {isSubmitting ? 'Publishing...' : '🚀 Publish'}

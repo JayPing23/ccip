@@ -32,15 +32,20 @@ describe('Header', () => {
           display_name: 'Campus User',
           avatar_url: 'https://example.edu/avatar.png',
         }}
-        showAdminLinks
+        actions={[
+          { href: '/content/create', label: 'New Announcement', tone: 'primary' },
+          { href: '/content/manage', label: 'Manage Announcements' },
+        ]}
       />
     );
 
     expect(await screen.findByText('CCIP')).toBeTruthy();
-    expect(screen.getByText('Feed')).toBeTruthy();
-    expect(screen.getByText('Manage Posts')).toBeTruthy();
-    expect(screen.getByText('New Post')).toBeTruthy();
+    expect(screen.getByText('Dashboard')).toBeTruthy();
+    expect(screen.getByText('Announcements')).toBeTruthy();
+    expect(screen.getByText('Manage Announcements')).toBeTruthy();
+    expect(screen.getByText('New Announcement')).toBeTruthy();
     expect(screen.getByText('Campus User')).toBeTruthy();
+    expect(screen.getByText('user@example.edu')).toBeTruthy();
     expect(screen.getByRole('button', { name: 'Sign out' })).toBeTruthy();
     expect(screen.getByRole('img', { name: 'Campus User' })).toBeTruthy();
   });

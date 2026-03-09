@@ -2,18 +2,21 @@ import { getCurrentUser } from '@/modules/users/users.service';
 import { createServerSupabaseClient } from '@/shared/lib/supabase-server';
 import { forbiddenError, internalError, unauthorizedError } from '@/shared/utils/api-errors';
 import { successResponse } from '@/shared/utils/api-response';
+import { canAccessAdminConsole } from '@/shared/utils/permissions';
 import { NextResponse } from 'next/server';
 
 /**
  * Admin Stats Endpoint
  * GET /api/admin/stats — Return aggregated counts for the admin dashboard
- * Requires SUPER_ADMIN role
+ * Requires admin-console access
  */
 export async function GET() {
   try {
     const user = await getCurrentUser();
     if (!user) return unauthorizedError();
-    if (user.role_name !== 'SUPER_ADMIN') return forbiddenError('Admin access required');
+    if (!user.role_name || !canAccessAdminConsole(user.role_name)) {
+      return forbiddenError('Admin access required');
+    }
 
     const supabase = await createServerSupabaseClient();
 

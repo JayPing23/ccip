@@ -1,22 +1,39 @@
 'use client';
 
 import LogoutButton from '@/modules/auth/components/LogoutButton';
+import type { IUser } from '@/shared/types/database.types';
 import Image from 'next/image';
 import Link from 'next/link';
 
-interface User {
-  id: string;
-  email: string;
-  display_name: string;
-  avatar_url?: string;
+interface HeaderLink {
+  href: string;
+  label: string;
+}
+
+interface HeaderAction extends HeaderLink {
+  tone?: 'primary' | 'neutral';
 }
 
 interface HeaderProps {
-  user?: User;
-  showAdminLinks?: boolean;
+  user?: Pick<IUser, 'id' | 'email' | 'display_name' | 'avatar_url'> | null;
+  navLinks?: HeaderLink[];
+  actions?: HeaderAction[];
+  brandHref?: string;
+  brandLabel?: string;
 }
 
-export default function Header({ user, showAdminLinks = false }: HeaderProps) {
+const DEFAULT_NAV_LINKS: HeaderLink[] = [
+  { href: '/dashboard', label: 'Dashboard' },
+  { href: '/feed', label: 'Announcements' },
+];
+
+export default function Header({
+  user,
+  navLinks = DEFAULT_NAV_LINKS,
+  actions = [],
+  brandHref = '/dashboard',
+  brandLabel = 'CCIP',
+}: HeaderProps) {
   if (!user) {
     return null;
   }
@@ -24,24 +41,35 @@ export default function Header({ user, showAdminLinks = false }: HeaderProps) {
   return (
     <header className="sticky top-0 z-40 bg-white shadow">
       <nav className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4">
-        <Link href="/dashboard" className="text-xl font-bold text-gray-900">
-          CCIP
+        <Link href={brandHref} className="text-xl font-bold text-gray-900">
+          {brandLabel}
         </Link>
 
         <div className="flex items-center gap-6">
-          <Link href="/dashboard" className="text-gray-700 hover:text-gray-900">
-            Feed
-          </Link>
+          <div className="hidden items-center gap-4 md:flex">
+            {navLinks.map((link) => (
+              <Link key={link.href} href={link.href} className="text-gray-700 hover:text-gray-900">
+                {link.label}
+              </Link>
+            ))}
+          </div>
 
-          {showAdminLinks && (
-            <>
-              <Link href="/admin/content" className="text-gray-700 hover:text-gray-900">
-                Manage Posts
-              </Link>
-              <Link href="/content/create" className="text-gray-700 hover:text-gray-900">
-                New Post
-              </Link>
-            </>
+          {actions.length > 0 && (
+            <div className="hidden items-center gap-2 lg:flex">
+              {actions.map((action) => (
+                <Link
+                  key={`${action.href}-${action.label}`}
+                  href={action.href}
+                  className={
+                    action.tone === 'primary'
+                      ? 'rounded-lg bg-blue-600 px-3 py-2 text-sm font-medium text-white hover:bg-blue-700'
+                      : 'rounded-lg border border-gray-200 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50'
+                  }
+                >
+                  {action.label}
+                </Link>
+              ))}
+            </div>
           )}
 
           <div className="flex items-center gap-3 border-l border-gray-300 pl-6">
@@ -55,7 +83,10 @@ export default function Header({ user, showAdminLinks = false }: HeaderProps) {
                 unoptimized
               />
             )}
-            <span className="text-sm text-gray-700">{user.display_name}</span>
+            <div className="hidden text-right sm:block">
+              <p className="text-sm font-medium text-gray-700">{user.display_name}</p>
+              <p className="text-xs text-gray-500">{user.email}</p>
+            </div>
             <LogoutButton />
           </div>
         </div>

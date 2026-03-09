@@ -1,4 +1,5 @@
 import { deleteContent, getContentById, updateContent } from '@/modules/content/content.service';
+import { announcementSchema } from '@/modules/content/schemas/content.schema';
 import { getCurrentUser } from '@/modules/users/users.service';
 import type { IContent } from '@/shared/types/database.types';
 import {
@@ -15,7 +16,6 @@ import {
   canEditAnyContent,
   canEditOwnContent,
 } from '@/shared/utils/permissions';
-import { contentSchema } from '@/shared/utils/validation';
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 
@@ -68,16 +68,23 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
 
     // Parse and validate
     const body = await request.json();
-    const validated = contentSchema.partial().safeParse(body);
+    const validated = announcementSchema.partial().safeParse(body);
 
     if (!validated.success) {
       return validationError('Invalid content data');
     }
 
     // Update content
+    const nextBody = validated.data.body ?? validated.data.description;
     const updates: Partial<IContent> = {
-      ...validated.data,
-      ...(validated.data.description !== undefined ? { body: validated.data.description } : {}),
+      ...(validated.data.title !== undefined ? { title: validated.data.title } : {}),
+      ...(nextBody !== undefined ? { body: nextBody } : {}),
+      ...(validated.data.visibility !== undefined ? { visibility: validated.data.visibility } : {}),
+      ...(validated.data.status !== undefined ? { status: validated.data.status } : {}),
+      ...(validated.data.tags !== undefined ? { tags: validated.data.tags } : {}),
+      ...(validated.data.scheduled_at !== undefined
+        ? { scheduled_at: validated.data.scheduled_at }
+        : {}),
     };
 
     const updated = await updateContent(id, updates, user.id);

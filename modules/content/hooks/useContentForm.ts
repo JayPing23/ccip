@@ -1,7 +1,11 @@
 'use client';
 
 import type { IContent } from '@/shared/types/database.types';
-import { contentSchema, type ContentFormData } from '@/shared/utils/validation';
+import type { ContentTag } from '@/shared/constants/tags';
+import {
+  announcementSchema,
+  type AnnouncementFormData,
+} from '@/modules/content/schemas/content.schema';
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
@@ -12,11 +16,11 @@ interface UseContentFormOptions {
 
 interface FormState {
   title: string;
-  description: string;
+  body: string;
   visibility: 'PUBLIC' | 'ORG_ONLY' | 'DEPT_ONLY';
   status: 'DRAFT' | 'SCHEDULED' | 'PUBLISHED';
   org_ids: string[];
-  tags: string[];
+  tags: ContentTag[];
   scheduled_at: string | null;
 }
 
@@ -38,7 +42,7 @@ export function useContentForm(options: UseContentFormOptions = {}) {
   const defaultFormState = useMemo<FormState>(
     () => ({
       title: initialContent?.title || '',
-      description: initialContent?.body || initialContent?.description || '',
+      body: initialContent?.body || '',
       visibility: (initialContent?.visibility || 'PUBLIC') as FormState['visibility'],
       status: (initialContent?.status || 'DRAFT') as FormState['status'],
       org_ids: [],
@@ -80,9 +84,9 @@ export function useContentForm(options: UseContentFormOptions = {}) {
    * Validate form data using Zod schema
    */
   const validateForm = useCallback((): boolean => {
-    const validationData: Partial<ContentFormData> = {
+    const validationData: Partial<AnnouncementFormData> = {
       title: formData.title,
-      description: formData.description,
+      body: formData.body,
       visibility: formData.visibility,
       status: formData.status,
       org_ids: formData.org_ids,
@@ -90,7 +94,7 @@ export function useContentForm(options: UseContentFormOptions = {}) {
       scheduled_at: formData.scheduled_at,
     };
 
-    const result = contentSchema.safeParse(validationData);
+    const result = announcementSchema.safeParse(validationData);
 
     if (!result.success) {
       const newErrors: FormErrors = {};
@@ -127,8 +131,8 @@ export function useContentForm(options: UseContentFormOptions = {}) {
 
       switch (name as FormFieldName) {
         case 'title':
-        case 'description':
-          setFieldValue(name as 'title' | 'description', value);
+        case 'body':
+          setFieldValue(name as 'title' | 'body', value);
           break;
         case 'visibility':
           setFieldValue('visibility', value as FormState['visibility']);
@@ -147,11 +151,11 @@ export function useContentForm(options: UseContentFormOptions = {}) {
   );
 
   /**
-   * Handle textarea input with character count
+   * Handle body input with character count
    */
-  const handleDescriptionChange = useCallback(
+  const handleBodyChange = useCallback(
     (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-      setFieldValue('description', e.target.value);
+      setFieldValue('body', e.target.value);
     },
     [setFieldValue]
   );
@@ -237,7 +241,7 @@ export function useContentForm(options: UseContentFormOptions = {}) {
 
         const payload = {
           title: formData.title,
-          description: formData.description,
+          body: formData.body,
           visibility: formData.visibility,
           status: submitStatus,
           org_ids: formData.org_ids,
@@ -343,7 +347,7 @@ export function useContentForm(options: UseContentFormOptions = {}) {
 
     // Handlers
     handleChange,
-    handleDescriptionChange,
+    handleBodyChange,
     handleSubmit,
     handleSaveDraft,
     handlePublish,

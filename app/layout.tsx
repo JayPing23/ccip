@@ -3,8 +3,8 @@ import type { Metadata } from 'next';
 import Script from 'next/script';
 
 export const metadata: Metadata = {
-  title: 'CCIP - Centralized Campus Information Portal',
-  description: 'Official university announcements and communications in one place',
+  title: 'CCIP - Campus Communications & Interaction Platform',
+  description: 'Modular campus announcements, publication, and community platform',
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

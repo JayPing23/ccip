@@ -1,188 +1,184 @@
-# CCIP — Centralized Campus Information Portal
+# CCIP — Campus Communications & Interaction Platform
 
-A secure, role-based web platform that centralizes all official university communications into one place.
+CCIP is a modular campus platform for three related experiences:
 
----
+1. Official announcements from university, school, and department offices.
+2. Student publication content such as campus news, features, and opinion pieces.
+3. A moderated forum where students and faculty can discuss campus issues.
 
-## 📖 CORE DOCUMENTATION - 5 FILES ONLY
-
-This project uses **just 5 core documentation files**. Everything you need is in one of these:
-
-### 1. **[IMPLEMENTATION_LOG.md](IMPLEMENTATION_LOG.md)** ⭐ START HERE
-**When:** Every new session | **Read time:** 5 min | **Purpose:** Current status & next steps
-- What's complete ✅
-- What's in progress 🔄
-- What's next ⏳
-- How to resume work
-- Architecture decisions
-
-### 2. **[SETUP_GUIDE.md](SETUP_GUIDE.md)**
-**When:** First time setup | **Read time:** 30 min | **Purpose:** Get project running
-- Supabase configuration
-- Google OAuth setup
-- Database migrations
-- Environment variables
-- Verification steps
-
-### 3. **[CCIP_PROJECT_PROPOSAL.md](CCIP_PROJECT_PROPOSAL.md)**
-**When:** Understanding "why" | **Read time:** 30 min (reference) | **Purpose:** Full architecture & design
-- System design & architecture
-- Database schema
-- Permission model
-- Naming conventions
-- All feature specifications
-- Technology stack decisions
-
-### 4. **[docs/API_REFERENCE.md](docs/API_REFERENCE.md)**
-**When:** Building features | **Read time:** 10 min (reference) | **Purpose:** All 17 API endpoints
-- Request/response examples
-- Error codes
-- Permission rules
-- Testing with cURL
-
-### 5. **[docs/phase-planning/PHASE_1_CHECKLIST.md](docs/phase-planning/PHASE_1_CHECKLIST.md)**
-**When:** Planning work | **Read time:** 5 min | **Purpose:** Phase 1 task list
-- Completed tasks ✅
-- In progress 🔄
-- Not started ❌
-- Time estimates
+The current codebase implements the shared platform foundation and the official announcements module first. Publication and forum capabilities are planned as additive modules, not as rewrites of the existing announcement system.
 
 ---
 
-## 🚀 QUICK START (2 Minutes)
+## Current Status
+
+- Foundation and official announcements are the current implemented product scope.
+- Authentication, organizations, roles, admin basics, announcement CRUD, and tests are already in place.
+- Announcement management is now content-owned: editors work from `/content/manage`, while super admins can reuse the same workspace from `/admin/content`.
+- The next planned work focuses on shared discoverability: notifications, search, preferences, and home/feed improvements.
+- Notification and search modules now include Phase 2 scaffolding contracts so runtime work can stay additive instead of growing out of the announcements module.
+- Student publication is the next major domain module after that.
+- Forum and moderation ship later, together.
+
+---
+
+## Core Documentation
+
+Start with these files:
+
+1. [IMPLEMENTATION_LOG.md](IMPLEMENTATION_LOG.md)
+   Current status, roadmap alignment, and next recommended work.
+2. [CCIP_PROJECT_PROPOSAL.md](CCIP_PROJECT_PROPOSAL.md)
+   Full product and architecture source of truth.
+3. [SETUP_GUIDE.md](SETUP_GUIDE.md)
+   Environment, Supabase, OAuth, and migration setup.
+4. [docs/API_REFERENCE.md](docs/API_REFERENCE.md)
+   Current API surface for foundation and official announcements.
+5. [docs/phase-planning/PHASE_1_CHECKLIST.md](docs/phase-planning/PHASE_1_CHECKLIST.md)
+   Foundation and announcements phase record.
+6. [docs/phase-planning/PHASE_2_PLAN.md](docs/phase-planning/PHASE_2_PLAN.md)
+   Shared discoverability and notifications roadmap.
+
+Additional roadmap detail for later phases lives in `docs/phase-planning/PHASE_3_PLAN.md`, `PHASE_4_PLAN.md`, `PHASE_5_PLAN.md`, and their matching `_AGENT_TASKS` files.
+
+---
+
+## Product Modules
+
+### Current Foundation
+
+- `auth`
+- `users`
+- `roles`
+- `organizations`
+- `content` for official announcements
+- `admin`
+- shared utilities, types, validation, and Supabase clients
+
+### Shared Platform Services
+
+- `notifications`
+- `search`
+- `media`
+
+### Planned Domain Modules
+
+- `publication`
+- `forum`
+- `moderation`
+- `external_publish`
+
+---
+
+## Quick Start
 
 ### Prerequisites
-- Node.js 18+ and npm
-- A Supabase account (free tier)
-- Google OAuth credentials for institutional domain
+
+- Node.js 18+
+- npm
+- Supabase project
+- Google OAuth credentials for your institutional domain
 
 ### Setup
 
-1. Clone the repository and install dependencies:
-   ```bash
-   npm install
-   ```
+1. Install dependencies:
 
-2. Create `.env.local` from `.env.example` and fill in your Supabase and Google OAuth credentials:
-   ```bash
-   cp .env.example .env.local
-   # Edit .env.local with your keys
-   ```
+```bash
+npm install
+```
 
-3. Run database migrations (see PRE_PHASE_1_SETUP.md):
-   - Create all 11 SQL migrations in Supabase
-   - Seed the initial organizations and SUPER_ADMIN user
+2. Create `.env.local` from `.env.example` and fill in your environment values.
+
+3. Run the current database migrations described in [SETUP_GUIDE.md](SETUP_GUIDE.md).
 
 4. Start the development server:
-   ```bash
-   npm run dev
-   ```
-
-5. Open [http://localhost:3000](http://localhost:3000) in your browser
-
-## Project Structure
-
-```
-app/               - Next.js App Router pages and routes
-modules/           - Feature modules (content, users, auth, etc.)
-shared/            - Shared constants, types, utils, components
-supabase/          - Database migrations
-tests/             - Unit, integration, and E2E tests
-```
-
-For detailed architecture and design decisions, see `CCIP_PROJECT_PROPOSAL.md`.
-
-## Development
-
-### Available Scripts
-
-- `npm run dev` — Start dev server at http://localhost:3000
-- `npm run build` — Build for production
-- `npm run type-check` — Run TypeScript compiler (zero errors required)
-- `npm run lint` — Run ESLint
-- `npm run format` — Format code with Prettier
-- `npm test` — Run Jest unit tests
-- `npm run test:watch` — Re-run tests on file changes
-- `npm run test:coverage` — Generate coverage report
-- `npm run test:e2e` — Run Cypress E2E tests
-
-### TypeScript
-
-This project uses **strict mode**. All code must be fully typed. The `tsconfig.json` enforces:
-- `strict: true` — All TypeScript checks enabled
-- `noUnusedLocals: true` — Unused variables cause errors
-- `noUnusedParameters: true` — Unused parameters cause errors
-- `noImplicitReturns: true` — All code paths must return a value
-
-### Code Style
-
-Code is automatically formatted with Prettier on save (via VS Code settings). ESLint catches style violations.
-
-To format all files:
-```bash
-npm run format
-```
-
-### Database Migrations
-
-All schema changes go in `supabase/migrations/`. Run migrations via Supabase dashboard or CLI:
 
 ```bash
-supabase migration up
+npm run dev
 ```
 
-Never modify the schema manually in production.
+5. Open `http://localhost:3000`.
 
-## Authentication
-
-Users log in with their institutional Google account. The domain is restricted to `INSTITUTIONAL_DOMAIN` environment variable.
-
-- **Client:** Supabase Auth + Google OAuth 2.0
-- **Server-side validation:** Email domain checked on every auth callback
-- **RLS (Row Level Security):** All data access is controlled at the database level
-
-## API Design
-
-All API endpoints follow this format:
-
-```typescript
-// Request
-POST /api/content
-{ "title": "...", "body": "...", ... }
-
-// Response (success)
-{
-  "data": { "id": "...", ... },
-  "error": null
-}
-
-// Response (error)
-{
-  "data": null,
-  "error": { "message": "...", "code": "VALIDATION_ERROR" }
-}
-```
-
-See `CCIP_PROJECT_PROPOSAL.md` Section 21 for full API design rules.
-
-## Phase Progress
-
-- **Phase 1** — MVP Core (In Progress)
-- **Phase 2** — Notifications & Search (Planned)
-- **Phase 3** — Rich Content & Media (Planned)
-- **Phase 4** — Admin & Publications (Planned)
-- **Phase 5** — External Social Media (Planned)
-
-For Phase definitions and requirements, see `CCIP_PROJECT_PROPOSAL.md` Section 18.
-
-## Contributing
-
-See `CONTRIBUTING.md` for branch strategy, commit conventions, and pull request process.
-
-## License
-
-Private. See repo settings for access.
+Note: current setup provisions the platform foundation and official announcements module. Publication and forum tables are future additive migrations.
 
 ---
 
-*CCIP Project v2.0 | Centralized Campus Information Portal | Last Updated: March 8, 2026*
+## Repository Structure
+
+```text
+app/               Next.js App Router pages and API routes
+modules/           Feature and platform modules
+shared/            Shared constants, types, utilities, clients, and components
+supabase/          SQL migrations
+tests/             Unit, integration, and E2E tests
+docs/              API reference and phase planning
+```
+
+Important current note: `modules/content` is the official announcements module in the current codebase. Publication and forum should be added as separate modules rather than merged into `content`.
+
+Important current note: announcement-specific schemas, constants, services, and management UI now live under `modules/content`, while `shared/` stays focused on platform-level primitives such as permissions, shared shell components, and Supabase clients.
+
+---
+
+## Available Scripts
+
+- `npm run dev` — start the development server
+- `npm run build` — build for production
+- `npm run type-check` — run TypeScript checks
+- `npm run lint` — run ESLint
+- `npm run format` — format files with Prettier
+- `npm test` — run Jest tests
+- `npm run test:watch` — run tests in watch mode
+- `npm run test:coverage` — run coverage with thresholds
+- `npm run test:e2e` — run Cypress E2E tests
+
+---
+
+## Development Rules
+
+- Keep modules explicit and additive.
+- Do not overload the current announcement data model for future publication or forum work.
+- Use Zod for request and form validation.
+- Keep server-side auth checks on `supabase.auth.getUser()`.
+- Keep RLS enabled on all current and future tables.
+- Update the proposal, README, and implementation log together when the roadmap changes.
+
+---
+
+## Current Roadmap
+
+1. **Phase 1:** Platform foundation and official announcements.
+2. **Phase 2:** Shared discoverability, notifications, search, and experience improvements.
+3. **Phase 3:** Student publication module.
+4. **Phase 4:** Community forum and moderation.
+5. **Phase 5:** Unified campus platform hardening, analytics, and external distribution.
+
+---
+
+## Current API Scope
+
+The current API reference covers:
+
+- authentication,
+- users,
+- organizations,
+- roles,
+- official announcements.
+
+Publication and forum endpoint families are planned and will be documented separately when those modules are introduced.
+
+---
+
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for branch strategy, commit conventions, and collaboration rules.
+
+---
+
+## License
+
+Private repository.
+
+---
+
+*Last updated: March 10, 2026 | CCIP — Campus Communications & Interaction Platform*

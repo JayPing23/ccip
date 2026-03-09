@@ -1,248 +1,100 @@
-# CCIP Phase 1 Implementation Checklist
+# CCIP Phase 1 Checklist
 
-**Status:** In Progress | **Completion:** 60% | **Last Updated:** March 8, 2026
-
----
-
-## ✅ COMPLETED: API Routes Implementation
-
-### Auth Routes (All Complete)
-- ✅ `POST /api/auth/callback/google` - Google OAuth callback handler
-- ✅ `POST /api/auth/logout` - Sign out handler
-- ✅ `GET /api/auth/me` - Get current authenticated user
-
-### Content Routes (All Complete)
-- ✅ `GET /api/content` - List published content
-- ✅ `POST /api/content` - Create new content (with permission check)
-- ✅ `GET /api/content/[id]` - Get single content item
-- ✅ `PATCH /api/content/[id]` - Update content (ownership/admin check)
-- ✅ `DELETE /api/content/[id]` - Soft delete content (ownership/admin check)
-
-### User Routes (All Complete)
-- ✅ `GET /api/users` - List all users (admin only)
-- ✅ `GET /api/users/[id]` - Get user profile
-- ✅ `PATCH /api/users/[id]` - Update profile or assign role (admin only)
-
-### Organization Routes (All Complete)
-- ✅ `GET /api/organizations` - List orgs (with type filtering)
-- ✅ `POST /api/organizations` - Create org (admin only)
-- ✅ `GET /api/organizations/[id]` - Get org with optional hierarchy
-- ✅ `PATCH /api/organizations/[id]` - Update org (admin only)
-
-### Roles Routes (All Complete)
-- ✅ `GET /api/roles` - List all available roles
+**Phase Name:** Platform Foundation & Official Announcements
+**Status:** Complete as the current implemented core
+**Last Updated:** March 10, 2026
 
 ---
 
-## 📋 IN PROGRESS: Authentication UI
+## Phase 1 Goal
 
-### Login Page
-- [ ] Create `app/(auth)/login/page.tsx` with Google OAuth button
-- [ ] Implement OAuth flow integration
-- [ ] Validate institutional domain on redirect
-- [ ] Store auth token in cookies
+Ship the trusted institutional communication layer first and use it as the technical base for the wider campus platform.
 
-### Logout
-- [ ] Add logout button to navigation
-- [ ] Clear session cookies
-- [ ] Redirect to home
+This phase is intentionally narrower than the long-term product vision. It covers the platform foundation and the official announcements module only.
 
-### Protected Routes Middleware
-- [ ] Create middleware to check auth status
-- [ ] Guard portal routes (`/portal/*`)
-- [ ] Redirect unauthenticated users to login
+Phase 1 delivers the first pillar of the platform, not the whole product vision. Publication, forum, and broader shared-platform features are intentionally deferred so the foundation stays clean.
 
 ---
 
-## 🔲 NOT STARTED: UI Components
+## Completed Deliverables
 
-### Core Pages
-- [ ] Create `app/(portal)/dashboard/page.tsx` - Main feed
-- [ ] Create `app/(portal)/content/[slug]/page.tsx` - Content detail
-- [ ] Create `app/(portal)/profile/page.tsx` - User profile
-- [ ] Create `app/(portal)/admin/users/page.tsx` - User management (admin)
-- [ ] Create `app/(portal)/admin/organizations/page.tsx` - Org management (admin)
+### Platform Foundation
 
-### Components
-- [ ] `components/Header.tsx` - Top navigation
-- [ ] `components/Sidebar.tsx` - Navigation sidebar
-- [ ] `components/ContentCard.tsx` - Content preview card
-- [ ] `components/ContentForm.tsx` - Create/edit content form
-- [ ] `components/UserCard.tsx` - User profile card
-- [ ] `components/RoleSelector.tsx` - Role assignment dropdown
+- institutional authentication flow
+- shared Supabase clients
+- organization hierarchy
+- role-based access control
+- shared validation and response helpers
+- admin-oriented foundation pages and routes
 
-### Hooks
-- [ ] `hooks/useAuth.ts` - Auth context and functions
-- [ ] `hooks/useContent.ts` - Content fetching and caching
-- [ ] `hooks/useUser.ts` - User data and updates
+### Official Announcements
 
----
+- announcement CRUD through the current `content` module
+- multi-organization targeting
+- visibility rules
+- publish and archive flows
+- soft delete behavior
+- audit logging
 
-## 🧪 TESTING (Not Started)
+### Quality & Tooling
 
-### Unit Tests
-- [ ] Service layer tests for all modules
-- [ ] Permission check function tests
-- [ ] Validation schema tests
-- [ ] Slug generation tests
-
-### API Route Tests
-- [ ] Auth endpoint tests (success & errors)
-- [ ] Content endpoint tests (CRUD operations)
-- [ ] User endpoint tests (admin-only checks)
-- [ ] Organization endpoint tests
-- [ ] Permission enforcement tests
+- TypeScript strict-mode setup
+- lint and type-check workflow
+- unit and integration test coverage
+- documentation and planning files
 
 ---
 
-## 📊 PROGRESS SUMMARY
+## Phase 1 Boundaries
 
-| Category | Tasks | Completed | % |
-|----------|-------|-----------|---|
-| **API Routes** | 17 | 17 | 100% |
-| **Auth Flow** | 3 | 0 | 0% |
-| **UI Pages** | 5 | 0 | 0% |
-| **UI Components** | 6 | 0 | 0% |
-| **Hooks** | 3 | 0 | 0% |
-| **Unit Tests** | 4 | 0 | 0% |
-| **API Tests** | 5 | 0 | 0% |
-| **TOTAL** | 43 | 17 | 40% |
+Phase 1 does **not** include:
 
----
+- publication article workflow
+- forum threads or replies
+- moderation queue
+- full notification center
+- full search/filter experience across modules
 
-## 🎯 NEXT IMMEDIATE STEPS
-
-### Step 1: Build Auth Flow (2-3 hours)
-```
-1. Create login page with Google OAuth button
-2. Set up OAuth redirect handler
-3. Implement protected routes middleware
-4. Create logout functionality
-5. Test full auth flow end-to-end
-```
-
-### Step 2: Build Core UI (4-5 hours)
-```
-1. Create dashboard/feed page
-2. Build content detail view
-3. Create user profile page
-4. Build admin pages for user/org management
-5. Style all pages with Tailwind CSS
-```
-
-### Step 3: Create Reusable Components (3-4 hours)
-```
-1. Header/Navigation components
-2. Content card components
-3. Forms (content, user, organization)
-4. Dropdowns and selectors
-5. Loading states and error handling
-```
-
-### Step 4: Add Hooks & State Management (2-3 hours)
-```
-1. useAuth hook for auth context
-2. useContent hook for data fetching
-3. useUser hook for profiles
-4. SWR/React Query integration (optional)
-5. Error boundary components
-```
-
-### Step 5: Write Tests (3-4 hours)
-```
-1. Unit tests for service layer
-2. API route integration tests
-3. Component tests with React Testing Library
-4. E2E tests with Cypress
-```
+Those are deferred to later phases on purpose.
 
 ---
 
-## 🔒 SECURITY CHECKLIST
+## Current Architectural Truth From Phase 1
 
-- [x] TypeScript strict mode enforced
-- [x] Permission checks on all mutations
-- [x] Input validation with Zod schemas
-- [x] HTML sanitization with DOMPurify
-- [x] Environment variables for secrets
-- [x] RLS enabled on all db tables
-- [ ] CSRF protection added
-- [ ] Rate limiting added
-- [ ] Input length limits enforced
-- [ ] SQL injection protection (via Supabase)
+1. `modules/content` is the official announcements module in the current codebase.
+2. Future publication and forum work should be additive modules, not special cases inside `content`.
+3. Shared services such as notifications and search belong to the platform layer, not just the announcements module.
+4. The authenticated shell, permissions, and shared clients are platform foundations reused by later modules, not announcement-only helpers.
 
 ---
 
-## 📝 NOTES
+## Exit Criteria Met
 
-### API Response Format
-All endpoints return the standardized format:
-```json
-SUCCESS:
-{
-  "data": { ...payload },
-  "error": null
-}
-
-ERROR:
-{
-  "data": null,
-  "error": { "message": "...", "code": "ERROR_CODE" }
-}
-```
-
-### Error Status Codes
-- 200 - Success
-- 201 - Created
-- 400 - Bad Request
-- 401 - Unauthorized
-- 403 - Forbidden
-- 404 - Not Found
-- 422 - Validation Error
-- 500 - Server Error
-
-### Permission Model Implemented
-```
-STUDENT:
-  - Read published content
-  - View own profile
-  - Manage own preferences
-
-DEPT_EDITOR:
-  - Create content for department
-  - Edit/delete own content
-  - Schedule posts
-
-UNIVERSITY_EDITOR:
-  - Create content for any org
-  - Edit/delete any content
-  - Schedule posts
-  - Cross-post to external (Phase 5)
-
-SUPER_ADMIN:
-  - Full access
-  - User & role management
-  - Organization management
-  - View audit logs
-```
+- authentication works for the current foundation flow
+- organizations and permissions exist
+- announcement routes and UI exist
+- audit logging and visibility rules exist
+- tests and validation are part of the workflow
 
 ---
 
-## 🚀 DEPLOYMENT READY
+## Next Phase
 
-- [x] Environment variables documented
-- [x] Database migrations applied
-- [x] RLS policies configured
-- [x] API endpoints tested locally
-- [ ] UI tested on mobile
-- [ ] Performance optimized
-- [ ] Error messages user-friendly
-- [ ] Analytics configured (optional)
+Move to Phase 2:
+
+1. notifications,
+2. search and discoverability,
+3. shared home/feed improvements,
+4. rate limiting and platform hardening.
+
+Supporting roadmap docs:
+
+- `docs/phase-planning/PHASE_2_PLAN.md`
+- `docs/phase-planning/PHASE_2_AGENT_TASKS.md`
+- `docs/phase-planning/PHASE_3_PLAN.md`
+- `docs/phase-planning/PHASE_4_PLAN.md`
+- `docs/phase-planning/PHASE_5_PLAN.md`
 
 ---
 
-**Previous Session:** Infrastructure & Database setup complete
-**This Session:** All API routes implemented
-**Next Session:** Build authentication UI & core pages
-
-*CCIP Phase 1 Checklist | Status: 60% Complete | Ready for UI Development*
+*Phase 1 is the base product, not the whole campus platform.*

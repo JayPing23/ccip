@@ -1,8 +1,12 @@
-import { contentFilterSchema, contentSchema, userProfileSchema } from '@/shared/utils/validation';
+import {
+  announcementFilterSchema,
+  announcementSchema,
+} from '@/modules/content/schemas/content.schema';
+import { userProfileSchema } from '@/shared/utils/validation';
 
 describe('validation schemas', () => {
   it('accepts a valid content payload from the create form', () => {
-    const result = contentSchema.safeParse({
+    const result = announcementSchema.safeParse({
       title: 'Campus Advisory',
       description: 'Classes are suspended in the afternoon due to weather.',
       visibility: 'PUBLIC',
@@ -14,7 +18,7 @@ describe('validation schemas', () => {
   });
 
   it('rejects malformed scheduled_at timestamps', () => {
-    const result = contentSchema.safeParse({
+    const result = announcementSchema.safeParse({
       title: 'Campus Advisory',
       description: 'Classes are suspended in the afternoon due to weather.',
       visibility: 'PUBLIC',
@@ -34,7 +38,7 @@ describe('validation schemas', () => {
   });
 
   it('applies default pagination values to content filters', () => {
-    const result = contentFilterSchema.parse({});
+    const result = announcementFilterSchema.parse({});
 
     expect(result.page).toBe(1);
     expect(result.limit).toBe(20);

@@ -82,7 +82,7 @@ describe('content routes', () => {
 
     expect(response.status).toBe(404);
     await expect(response.json()).resolves.toEqual({
-      success: false,
+      data: null,
       error: { code: 'NOT_FOUND', message: 'Content not found' },
     });
   });

@@ -4,6 +4,8 @@
  * Keep these in sync with the database schema
  */
 
+import type { ContentTag } from '@/shared/constants/tags';
+
 export interface IRole {
   id: string;
   name: 'STUDENT' | 'DEPT_EDITOR' | 'UNIVERSITY_EDITOR' | 'SUPER_ADMIN';
@@ -34,14 +36,12 @@ export interface IUser {
 export interface IContent {
   id: string;
   title: string;
-  body?: string;
-  description?: string;
+  body: string;
   slug: string;
   status: 'DRAFT' | 'SCHEDULED' | 'PUBLISHED' | 'ARCHIVED';
   visibility: 'PUBLIC' | 'ORG_ONLY' | 'DEPT_ONLY';
-  author_id?: string;
-  created_by?: string;
-  tags?: string[];
+  author_id: string;
+  tags?: ContentTag[];
   created_at: string;
   updated_at: string;
   published_at: string | null;

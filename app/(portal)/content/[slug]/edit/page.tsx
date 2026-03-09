@@ -1,8 +1,10 @@
 'use client';
 
 import ContentForm from '@/modules/content/components/ContentForm';
+import { useCurrentUser } from '@/shared/hooks/useCurrentUser';
 import type { IContent } from '@/shared/types/database.types';
-import { useParams } from 'next/navigation';
+import { canSchedulePosts } from '@/shared/utils/permissions';
+import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 /**
@@ -10,12 +12,29 @@ import { useEffect, useState } from 'react';
  * Allows the content author or admin to edit an announcement
  */
 export default function EditContentPage() {
+  const router = useRouter();
   const params = useParams();
   const slug = params.slug as string;
+  const { user, loading: userLoading, canCreateAnnouncements } = useCurrentUser();
 
   const [content, setContent] = useState<IContent | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (userLoading) {
+      return;
+    }
+
+    if (!user) {
+      router.replace('/login');
+      return;
+    }
+
+    if (!canCreateAnnouncements) {
+      router.replace('/dashboard');
+    }
+  }, [canCreateAnnouncements, router, user, userLoading]);
 
   useEffect(() => {
     async function fetchContent() {
@@ -50,7 +69,7 @@ export default function EditContentPage() {
     fetchContent();
   }, [slug]);
 
-  if (isLoading) {
+  if (userLoading || isLoading) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-gray-50">
         <div className="text-gray-600">Loading content...</div>
@@ -75,5 +94,10 @@ export default function EditContentPage() {
     );
   }
 
-  return <ContentForm initialContent={content} isAdmin={true} />;
+  return (
+    <ContentForm
+      initialContent={content}
+      canManagePublishing={user?.role_name ? canSchedulePosts(user.role_name) : false}
+    />
+  );
 }

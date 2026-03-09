@@ -3,9 +3,15 @@
  * Handles authentication-related functions
  */
 
-import { upsertUser } from '@/modules/users/users.service';
 import { createServerSupabaseClient } from '@/shared/lib/supabase-server';
 import type { IUser } from '@/shared/types/database.types';
+
+type SyncOAuthUserProfile = (
+  userId: string,
+  email: string,
+  displayName: string,
+  avatarUrl: string | null
+) => Promise<IUser>;
 
 /**
  * Get the currently authenticated user from the session
@@ -84,7 +90,8 @@ export async function handleGoogleOAuthCallback(
   email: string,
   displayName: string,
   avatarUrl: string | null,
-  institutionalDomain: string = 'university.edu'
+  institutionalDomain: string = 'university.edu',
+  syncUserProfile?: SyncOAuthUserProfile
 ): Promise<IUser | null> {
   // Step 1: Validate institutional email domain
   if (!validateInstitutionalDomain(email, institutionalDomain)) {
@@ -100,9 +107,13 @@ export async function handleGoogleOAuthCallback(
     return null;
   }
 
+  if (!syncUserProfile) {
+    return null;
+  }
+
   // Step 3: Create or update user profile in database
   try {
-    const user = await upsertUser(authUser.id, email, displayName, avatarUrl);
+    const user = await syncUserProfile(authUser.id, email, displayName, avatarUrl);
     return user;
   } catch (error) {
     console.error('Failed to upsert user during OAuth callback:', error);

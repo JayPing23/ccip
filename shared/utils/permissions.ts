@@ -6,22 +6,26 @@
 
 import { ROLES, type Role } from '@/shared/constants/roles';
 
+const CONTENT_EDITOR_ROLES: Role[] = [
+  ROLES.DEPT_EDITOR,
+  ROLES.UNIVERSITY_EDITOR,
+  ROLES.SUPER_ADMIN,
+];
+
+const CONTENT_ADMINISTRATION_ROLES: Role[] = [ROLES.UNIVERSITY_EDITOR, ROLES.SUPER_ADMIN];
+
 /**
  * Check if a user can create content (any content, any org)
  */
 export function canCreateContent(role: Role): boolean {
-  return [ROLES.DEPT_EDITOR, ROLES.UNIVERSITY_EDITOR, ROLES.SUPER_ADMIN].includes(
-    role as typeof ROLES.DEPT_EDITOR | typeof ROLES.UNIVERSITY_EDITOR | typeof ROLES.SUPER_ADMIN
-  );
+  return CONTENT_EDITOR_ROLES.includes(role);
 }
 
 /**
  * Check if a user can edit their own content
  */
 export function canEditOwnContent(role: Role): boolean {
-  return [ROLES.DEPT_EDITOR, ROLES.UNIVERSITY_EDITOR, ROLES.SUPER_ADMIN].includes(
-    role as typeof ROLES.DEPT_EDITOR | typeof ROLES.UNIVERSITY_EDITOR | typeof ROLES.SUPER_ADMIN
-  );
+  return CONTENT_EDITOR_ROLES.includes(role);
 }
 
 /**
@@ -35,9 +39,7 @@ export function canEditAnyContent(role: Role): boolean {
  * Check if a user can delete their own content
  */
 export function canDeleteOwnContent(role: Role): boolean {
-  return [ROLES.DEPT_EDITOR, ROLES.UNIVERSITY_EDITOR, ROLES.SUPER_ADMIN].includes(
-    role as typeof ROLES.DEPT_EDITOR | typeof ROLES.UNIVERSITY_EDITOR | typeof ROLES.SUPER_ADMIN
-  );
+  return CONTENT_EDITOR_ROLES.includes(role);
 }
 
 /**
@@ -69,28 +71,43 @@ export function canViewAuditLogs(role: Role): boolean {
 }
 
 /**
+ * Check if a user can access the admin console.
+ */
+export function canAccessAdminConsole(role: Role): boolean {
+  return role === ROLES.SUPER_ADMIN;
+}
+
+/**
  * Check if a user can upload media attachments
  */
 export function canUploadMedia(role: Role): boolean {
-  return [ROLES.DEPT_EDITOR, ROLES.UNIVERSITY_EDITOR, ROLES.SUPER_ADMIN].includes(
-    role as typeof ROLES.DEPT_EDITOR | typeof ROLES.UNIVERSITY_EDITOR | typeof ROLES.SUPER_ADMIN
-  );
+  return CONTENT_EDITOR_ROLES.includes(role);
 }
 
 /**
  * Check if a user can schedule posts
  */
 export function canSchedulePosts(role: Role): boolean {
-  return [ROLES.DEPT_EDITOR, ROLES.UNIVERSITY_EDITOR, ROLES.SUPER_ADMIN].includes(
-    role as typeof ROLES.DEPT_EDITOR | typeof ROLES.UNIVERSITY_EDITOR | typeof ROLES.SUPER_ADMIN
-  );
+  return CONTENT_EDITOR_ROLES.includes(role);
 }
 
 /**
  * Check if a user can cross-post to external platforms
  */
 export function canCrossPost(role: Role): boolean {
-  return [ROLES.UNIVERSITY_EDITOR, ROLES.SUPER_ADMIN].includes(
-    role as typeof ROLES.UNIVERSITY_EDITOR | typeof ROLES.SUPER_ADMIN
-  );
+  return CONTENT_ADMINISTRATION_ROLES.includes(role);
+}
+
+/**
+ * Check if a user can access the announcement management workspace.
+ */
+export function canAccessContentManager(role: Role): boolean {
+  return CONTENT_EDITOR_ROLES.includes(role);
+}
+
+/**
+ * Check if a user can review the full announcement management list.
+ */
+export function canViewContentAdministration(role: Role): boolean {
+  return CONTENT_ADMINISTRATION_ROLES.includes(role);
 }

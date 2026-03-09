@@ -1,6 +1,6 @@
 'use client';
 
-import { useToast } from '@/modules/admin/components/Toast';
+import { useToast } from '@/shared/components/Toast';
 import React, { useState } from 'react';
 import { useUpdateUser } from '../hooks/index';
 import type { UserWithRole } from '../types/index';

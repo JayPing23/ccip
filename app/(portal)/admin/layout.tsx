@@ -1,6 +1,7 @@
 'use client';
 
-import { ToastProvider } from '@/modules/admin/components/Toast';
+import { useCurrentUser } from '@/shared/hooks/useCurrentUser';
+import { canAccessAdminConsole } from '@/shared/utils/permissions';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -20,35 +21,25 @@ const NAV_ITEMS = [
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
-  const [checking, setChecking] = useState(true);
-  const [adminUser, setAdminUser] = useState<{ display_name: string; email: string } | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const { user, loading } = useCurrentUser();
 
   useEffect(() => {
-    const checkAdmin = async () => {
-      try {
-        const res = await fetch('/api/auth/me');
-        if (!res.ok) {
-          router.replace('/login');
-          return;
-        }
-        const data = await res.json();
-        const user = data.data;
-        if (!user || user.role_name !== 'SUPER_ADMIN') {
-          router.replace('/dashboard');
-          return;
-        }
-        setAdminUser({ display_name: user.display_name, email: user.email });
-      } catch {
-        router.replace('/login');
-      } finally {
-        setChecking(false);
-      }
-    };
-    checkAdmin();
-  }, [router]);
+    if (loading) {
+      return;
+    }
 
-  if (checking) {
+    if (!user) {
+      router.replace('/login');
+      return;
+    }
+
+    if (!user.role_name || !canAccessAdminConsole(user.role_name)) {
+      router.replace('/dashboard');
+    }
+  }, [loading, router, user]);
+
+  if (loading) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-gray-900">
         <p className="text-gray-400">Verifying admin access...</p>
@@ -103,10 +94,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         </div>
 
         {/* User info */}
-        {adminUser && (
+        {user && (
           <div className="absolute right-0 bottom-0 left-0 border-t border-gray-700 px-4 py-4">
-            <p className="truncate text-sm font-medium text-white">{adminUser.display_name}</p>
-            <p className="truncate text-xs text-gray-400">{adminUser.email}</p>
+            <p className="truncate text-sm font-medium text-white">{user.display_name}</p>
+            <p className="truncate text-xs text-gray-400">{user.email}</p>
           </div>
         )}
       </aside>
@@ -133,14 +124,12 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             <span className="rounded-full bg-red-100 px-2 py-0.5 text-xs font-semibold text-red-700">
               ADMIN
             </span>
-            <span className="hidden text-sm text-gray-600 sm:block">{adminUser?.display_name}</span>
+            <span className="hidden text-sm text-gray-600 sm:block">{user?.display_name}</span>
           </div>
         </header>
 
         {/* Page content */}
-        <main className="flex-1 overflow-auto">
-          <ToastProvider>{children}</ToastProvider>
-        </main>
+        <main className="flex-1 overflow-auto">{children}</main>
       </div>
     </div>
   );

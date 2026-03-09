@@ -1,10 +1,18 @@
-# CCIP — Phase 1 Setup Guide
+# CCIP — Foundation Setup Guide
 
-Complete step-by-step instructions to set up Supabase, Google OAuth, environment variables, database migrations, and seed data. **Estimated time: 90 minutes total.**
+Complete step-by-step instructions to set up Supabase, Google OAuth, environment variables, database migrations, and seed data for the current platform foundation and official announcements module. **Estimated time: 90 minutes total.**
 
 ---
 
 ## Overview
+
+This guide provisions the currently implemented base of CCIP:
+
+1. platform foundation,
+2. official announcements,
+3. admin and RBAC groundwork.
+
+Student publication and forum features are future additive modules and are not part of this setup guide yet.
 
 1. **Create Supabase Project** (~15 min)
 2. **Configure Google OAuth** (~20 min)
@@ -750,12 +758,12 @@ Ready in XXXms
 
 ## What's Next?
 
-✅ **Phase 1 Infrastructure is now set up!** You can now:
+✅ **The current CCIP foundation is now set up!** You can now:
 
-1. **Start Phase 1 feature development** — See `CCIP_PROJECT_PROPOSAL.md` Section 18 for Phase 1 requirements
-2. **Create API routes** — Start building endpoints in `/app/api/`
-3. **Create React components** — Start building UI in `/modules/*/components/`
-4. **Write tests** — Run `npm test` to validate
+1. **Work on the announcements foundation** — See `CCIP_PROJECT_PROPOSAL.md` for the current implemented boundary
+2. **Build shared platform services next** — Notifications, search, and discoverability belong in Phase 2
+3. **Keep future modules additive** — Publication and forum come later as separate modules
+4. **Write and run tests** — Use `npm test` and `npm run test:coverage`
 
 For ongoing development tips, see [CONTRIBUTING.md](CONTRIBUTING.md).
 
@@ -787,4 +795,4 @@ npm test              # Run unit tests
 
 ---
 
-*CCIP Phase 1 Setup Guide | Last Updated: March 4, 2026*
+*CCIP Foundation Setup Guide | Last Updated: March 10, 2026*

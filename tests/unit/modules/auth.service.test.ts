@@ -1,5 +1,4 @@
 import * as authService from '@/modules/auth/auth.service';
-import { upsertUser } from '@/modules/users/users.service';
 import { createServerSupabaseClient } from '@/shared/lib/supabase-server';
 import type { IUser } from '@/shared/types/database.types';
 import { asServerSupabaseClient, createSupabaseClientMock } from '../../helpers/supabase';
@@ -8,12 +7,7 @@ jest.mock('@/shared/lib/supabase-server', () => ({
   createServerSupabaseClient: jest.fn(),
 }));
 
-jest.mock('@/modules/users/users.service', () => ({
-  upsertUser: jest.fn(),
-}));
-
 const mockedCreateServerSupabaseClient = jest.mocked(createServerSupabaseClient);
-const mockedUpsertUser = jest.mocked(upsertUser);
 
 const baseUser: IUser = {
   id: 'user-1',
@@ -47,7 +41,6 @@ describe('auth.service', () => {
     ).resolves.toBeNull();
 
     expect(mockedCreateServerSupabaseClient).not.toHaveBeenCalled();
-    expect(mockedUpsertUser).not.toHaveBeenCalled();
   });
 
   it('returns null when there is no authenticated session during OAuth callback', async () => {
@@ -67,19 +60,20 @@ describe('auth.service', () => {
 
   it('upserts the authenticated user profile during a valid OAuth callback', async () => {
     const supabase = createSupabaseClientMock();
+    const syncUserProfile = jest.fn().mockResolvedValue(baseUser);
 
     supabase.auth.getUser.mockResolvedValue({ data: { user: { id: 'user-1' } }, error: null });
     mockedCreateServerSupabaseClient.mockResolvedValue(asServerSupabaseClient(supabase));
-    mockedUpsertUser.mockResolvedValue(baseUser);
 
     const user = await authService.handleGoogleOAuthCallback(
       'user@example.edu',
       'Campus User',
       'https://example.edu/avatar.png',
-      'example.edu'
+      'example.edu',
+      syncUserProfile
     );
 
-    expect(mockedUpsertUser).toHaveBeenCalledWith(
+    expect(syncUserProfile).toHaveBeenCalledWith(
       'user-1',
       'user@example.edu',
       'Campus User',

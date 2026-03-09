@@ -7,6 +7,11 @@ import { createServerSupabaseClient } from '@/shared/lib/supabase-server';
 import type { IContent } from '@/shared/types/database.types';
 import { appendUuidToSlug, generateSlug } from '@/shared/utils/slugify';
 
+interface ManagedContentFilters {
+  status?: IContent['status'];
+  visibility?: IContent['visibility'];
+}
+
 /**
  * Get all published content visible to the current user
  * Filtered by visibility rules and soft delete status
@@ -19,6 +24,36 @@ export async function getPublishedContent() {
     .eq('status', 'PUBLISHED')
     .is('deleted_at', null)
     .order('published_at', { ascending: false });
+
+  if (error) throw new Error(error.message);
+  return data as IContent[];
+}
+
+/**
+ * Get announcements available in the current user's management workspace.
+ */
+export async function getManagedContent(
+  userId: string,
+  includeAllContent: boolean,
+  filters: ManagedContentFilters = {}
+): Promise<IContent[]> {
+  const supabase = await createServerSupabaseClient();
+
+  let query = supabase.from('content').select('*').is('deleted_at', null);
+
+  if (!includeAllContent) {
+    query = query.eq('author_id', userId);
+  }
+
+  if (filters.status) {
+    query = query.eq('status', filters.status);
+  }
+
+  if (filters.visibility) {
+    query = query.eq('visibility', filters.visibility);
+  }
+
+  const { data, error } = await query.order('updated_at', { ascending: false });
 
   if (error) throw new Error(error.message);
   return data as IContent[];
@@ -300,7 +335,7 @@ export async function getContentByOrganization(
  * @param after - State after change (null for DELETE)
  */
 async function logAuditEvent(
-  _tableName: string,
+  tableName: string,
   recordId: string,
   action: string,
   userId: string,
@@ -310,9 +345,10 @@ async function logAuditEvent(
   const supabase = await createServerSupabaseClient();
 
   const { error } = await supabase.from('audit_logs').insert({
-    content_id: recordId,
-    actor_id: userId,
+    table_name: tableName,
+    record_id: recordId,
     action,
+    user_id: userId,
     diff: {
       before,
       after,

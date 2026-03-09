@@ -3,16 +3,17 @@ import {
   getContentBySlug,
   getPublishedContent,
 } from '@/modules/content/content.service';
+import { announcementSchema } from '@/modules/content/schemas/content.schema';
 import { getCurrentUser } from '@/modules/users/users.service';
 import {
   forbiddenError,
   internalError,
+  notFoundError,
   unauthorizedError,
   validationError,
 } from '@/shared/utils/api-errors';
 import { successResponse } from '@/shared/utils/api-response';
 import { canCreateContent } from '@/shared/utils/permissions';
-import { contentSchema } from '@/shared/utils/validation';
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 
@@ -31,13 +32,7 @@ export async function GET(request: NextRequest) {
       // Fetch by slug
       const content = await getContentBySlug(slug);
       if (!content) {
-        return NextResponse.json(
-          {
-            success: false,
-            error: { code: 'NOT_FOUND', message: 'Content not found' },
-          },
-          { status: 404 }
-        );
+        return notFoundError('Content not found');
       }
       return NextResponse.json(successResponse(content), { status: 200 });
     }
@@ -63,7 +58,7 @@ export async function POST(request: NextRequest) {
 
     // Parse and validate request body
     const body = await request.json();
-    const validated = contentSchema.safeParse(body);
+    const validated = announcementSchema.safeParse(body);
 
     if (!validated.success) {
       console.error('[Validation Error]', validated.error);

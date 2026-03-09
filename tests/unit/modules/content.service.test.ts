@@ -130,8 +130,9 @@ describe('content.service', () => {
     ]);
     expect(auditBuilder.insert).toHaveBeenCalledWith(
       expect.objectContaining({
-        content_id: 'content-1',
-        actor_id: 'user-1',
+        table_name: 'content',
+        record_id: 'content-1',
+        user_id: 'user-1',
         action: 'INSERT',
       })
     );
@@ -176,8 +177,10 @@ describe('content.service', () => {
     );
     expect(auditBuilder.insert).toHaveBeenCalledWith(
       expect.objectContaining({
+        table_name: 'content',
+        record_id: 'content-1',
         action: 'UPDATE',
-        actor_id: 'user-1',
+        user_id: 'user-1',
       })
     );
     expect(updated.status).toBe('PUBLISHED');

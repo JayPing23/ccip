@@ -79,7 +79,7 @@ export default function ContentCard({ content, onDelete, canEdit = false }: Cont
         {canEdit && (
           <div className="ml-4 flex gap-2">
             <Link
-              href={`/content/${content.id}/edit`}
+              href={`/content/${content.slug}/edit`}
               className="rounded bg-blue-500 px-3 py-1 text-sm font-medium text-white transition hover:bg-blue-600"
             >
               Edit
@@ -96,7 +96,7 @@ export default function ContentCard({ content, onDelete, canEdit = false }: Cont
       </div>
 
       {/* Body */}
-      <p className="mb-4 line-clamp-3 text-gray-700">{content.description}</p>
+      <p className="mb-4 line-clamp-3 whitespace-pre-wrap text-gray-700">{content.body}</p>
 
       {/* Tags */}
       {content.tags && content.tags.length > 0 && (

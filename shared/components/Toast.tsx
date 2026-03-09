@@ -16,21 +16,21 @@ interface ToastContextValue {
 
 const ToastContext = createContext<ToastContextValue | null>(null);
 
-/**
- * Toast Provider — wrap admin layout with this
- */
 export function ToastProvider({ children }: { children: React.ReactNode }) {
   const [toasts, setToasts] = useState<Toast[]>([]);
 
   const showToast = useCallback((message: string, type: ToastType = 'info') => {
     const id = Math.random().toString(36).slice(2);
-    setToasts((prev) => [...prev, { id, message, type }]);
+    setToasts((currentToasts) => [...currentToasts, { id, message, type }]);
+
     setTimeout(() => {
-      setToasts((prev) => prev.filter((t) => t.id !== id));
+      setToasts((currentToasts) => currentToasts.filter((toast) => toast.id !== id));
     }, 4000);
   }, []);
 
-  const dismiss = (id: string) => setToasts((prev) => prev.filter((t) => t.id !== id));
+  const dismiss = useCallback((id: string) => {
+    setToasts((currentToasts) => currentToasts.filter((toast) => toast.id !== id));
+  }, []);
 
   const colorMap: Record<ToastType, string> = {
     success: 'bg-green-600',
@@ -49,7 +49,6 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
   return (
     <ToastContext.Provider value={{ showToast }}>
       {children}
-      {/* Toast Container */}
       <div className="pointer-events-none fixed right-4 bottom-4 z-[100] flex flex-col gap-2">
         {toasts.map((toast) => (
           <div
@@ -71,11 +70,12 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
   );
 }
 
-/**
- * useToast hook — call showToast from any admin component
- */
 export function useToast(): ToastContextValue {
-  const ctx = useContext(ToastContext);
-  if (!ctx) throw new Error('useToast must be used within a ToastProvider');
-  return ctx;
+  const context = useContext(ToastContext);
+
+  if (!context) {
+    throw new Error('useToast must be used within a ToastProvider');
+  }
+
+  return context;
 }
