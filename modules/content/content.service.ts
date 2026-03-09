@@ -203,6 +203,23 @@ export async function publishContent(contentId: string, userId: string): Promise
 }
 
 /**
+ * Archive a content item (transition to ARCHIVED)
+ * Sets status to ARCHIVED - content is hidden but not deleted
+ * @param contentId - UUID of content to archive
+ * @param userId - UUID of user performing the action
+ * @returns Archived content object
+ */
+export async function archiveContent(contentId: string, userId: string): Promise<IContent> {
+  return updateContent(
+    contentId,
+    {
+      status: 'ARCHIVED',
+    },
+    userId
+  );
+}
+
+/**
  * Get content filtered by visibility rules and user permissions
  * Respects content visibility: PUBLIC, ORG_ONLY, DEPT_ONLY
  * @param _userId - UUID of current user (null for anonymous) - RLS handled at DB level

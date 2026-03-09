@@ -1,4 +1,8 @@
+import { isInstitutionalEmail } from '@/modules/auth/auth.service';
+import { upsertUser } from '@/modules/users/users.service';
 import { createServerSupabaseClient } from '@/shared/lib/supabase-server';
+import { forbiddenError, internalError } from '@/shared/utils/api-errors';
+import { successResponse } from '@/shared/utils/api-response';
 import { NextRequest, NextResponse } from 'next/server';
 
 /**
@@ -34,50 +38,29 @@ export async function GET(request: NextRequest) {
 
     // Validate institutional domain
     const institutionalDomain = process.env.NEXT_PUBLIC_INSTITUTIONAL_DOMAIN || 'slu.edu.ph';
-    const emailDomain = data.user.email.split('@')[1];
 
-    if (emailDomain !== institutionalDomain) {
+    if (!isInstitutionalEmail(data.user.email, institutionalDomain)) {
       await supabase.auth.signOut();
-      return NextResponse.json(
-        { error: `Only @${institutionalDomain} emails allowed` },
-        { status: 403 }
-      );
+      return forbiddenError(`Only @${institutionalDomain} emails allowed`);
     }
 
     // Create or update user in database
-    const serverClient = supabase;
+    const displayName = data.user.user_metadata?.full_name || data.user.email.split('@')[0];
+    const avatarUrl = data.user.user_metadata?.avatar_url || null;
 
-    const { data: existingUser, error: selectError } = await serverClient
-      .from('users')
-      .select('id')
-      .eq('auth_id', data.user.id)
-      .single();
-
-    if (selectError && selectError.code !== 'PGRST116') {
-      return NextResponse.json({ error: 'Database error' }, { status: 500 });
-    }
-
-    // Create user if new
-    if (!existingUser) {
-      const { error: insertError } = await serverClient.from('users').insert([
-        {
-          auth_id: data.user.id,
-          email: data.user.email,
-          full_name: data.user.user_metadata?.full_name || '',
-          avatar_url: data.user.user_metadata?.avatar_url || null,
-          institutional_domain: institutionalDomain,
-        },
-      ]);
-
-      if (insertError) {
-        return NextResponse.json({ error: 'Failed to create user' }, { status: 500 });
-      }
-    }
+    const user = await upsertUser(data.user.id, data.user.email, displayName, avatarUrl);
 
     // Return success with redirect URL
-    return NextResponse.json({ success: true, redirectTo: '/dashboard' }, { status: 200 });
+    return NextResponse.json(
+      successResponse({
+        userId: data.user.id,
+        user,
+        redirectTo: '/dashboard',
+      }),
+      { status: 200 }
+    );
   } catch (error) {
     console.error('[OAuth Callback Error]', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    return internalError('Authentication failed');
   }
 }

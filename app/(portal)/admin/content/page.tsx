@@ -115,8 +115,11 @@ export default function AdminContentPage() {
         {/* Filters */}
         <div className="mb-6 flex gap-6 rounded-lg bg-white p-6 shadow">
           <div>
-            <label className="mb-2 block text-sm font-medium text-gray-700">Status</label>
+            <label htmlFor="status-filter" className="mb-2 block text-sm font-medium text-gray-700">
+              Status
+            </label>
             <select
+              id="status-filter"
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
               className="rounded border border-gray-300 px-3 py-2 text-sm"
@@ -129,8 +132,14 @@ export default function AdminContentPage() {
             </select>
           </div>
           <div>
-            <label className="mb-2 block text-sm font-medium text-gray-700">Visibility</label>
+            <label
+              htmlFor="visibility-filter"
+              className="mb-2 block text-sm font-medium text-gray-700"
+            >
+              Visibility
+            </label>
             <select
+              id="visibility-filter"
               value={visibilityFilter}
               onChange={(e) => setVisibilityFilter(e.target.value)}
               className="rounded border border-gray-300 px-3 py-2 text-sm"

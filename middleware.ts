@@ -5,15 +5,37 @@ import { NextRequest, NextResponse } from 'next/server';
 /**
  * Middleware for Protected Routes
  * Redirects unauthenticated users trying to access protected pages to the login page
+ *
+ * TODO: Migration to Next.js proxy pattern in Phase 2
+ * Current middleware.ts convention is deprecated in favor of proxy configuration.
+ * This will be refactored when upgrading to the new pattern.
+ * Reference: https://nextjs.org/docs/messages/middleware-to-proxy
  */
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // Define public paths that don't require authentication
-  const publicPaths = ['/login', '/signup', '/auth-callback', '/oauth-callback', '/api/auth'];
+  const publicPaths = [
+    '/login',
+    '/signup',
+    '/auth-callback',
+    '/oauth-callback',
+    '/api/auth',
+    '/api/roles',
+  ];
 
   // Check if the current path is public
   const isPublicPath = publicPaths.some((path) => pathname.startsWith(path));
+
+  // Allow public GET requests to /api/content (viewing published content)
+  if (pathname === '/api/content' && request.method === 'GET') {
+    return NextResponse.next();
+  }
+
+  // Allow public GET requests to /api/organizations (viewing org structure)
+  if (pathname.startsWith('/api/organizations') && request.method === 'GET') {
+    return NextResponse.next();
+  }
 
   if (isPublicPath) {
     return NextResponse.next();

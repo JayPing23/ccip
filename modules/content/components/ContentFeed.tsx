@@ -63,8 +63,11 @@ export default function ContentFeed({
       {/* Filters */}
       {showFilters && (
         <div className="mb-6 flex items-center gap-4">
-          <label className="text-sm font-medium text-gray-700">Status:</label>
+          <label htmlFor="status-select" className="text-sm font-medium text-gray-700">
+            Status:
+          </label>
           <select
+            id="status-select"
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value as 'PUBLISHED' | 'ALL')}
             className="rounded border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:ring-blue-500"

@@ -1,4 +1,4 @@
-import { getContentById, publishContent } from '@/modules/content/content.service';
+import { archiveContent, getContentById } from '@/modules/content/content.service';
 import { getCurrentUser } from '@/modules/users/users.service';
 import {
   forbiddenError,
@@ -11,8 +11,9 @@ import { canEditAnyContent, canEditOwnContent } from '@/shared/utils/permissions
 import { NextRequest, NextResponse } from 'next/server';
 
 /**
- * POST /api/content/[id]/publish
- * Publish a draft content (transition from DRAFT to PUBLISHED)
+ * POST /api/content/[id]/archive
+ * Archive a content item (transition to ARCHIVED status)
+ * Archived content is hidden but not deleted
  * Requires: User is author or has edit permission (editor/admin)
  */
 export async function POST(_request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
@@ -21,13 +22,13 @@ export async function POST(_request: NextRequest, { params }: { params: Promise<
     const user = await getCurrentUser();
     if (!user) return unauthorizedError();
 
-    // Get content to check ownership and current status
+    // Get content to check ownership
     const content = await getContentById(id);
     if (!content) return notFoundError('Content not found');
 
     // Check permission (own content or admin)
     const isOwner = content.author_id === user.id;
-    const canPublish = isOwner
+    const canArchive = isOwner
       ? user.role_name
         ? canEditOwnContent(user.role_name)
         : false
@@ -35,16 +36,16 @@ export async function POST(_request: NextRequest, { params }: { params: Promise<
         ? canEditAnyContent(user.role_name)
         : false;
 
-    if (!canPublish) {
-      return forbiddenError('You do not have permission to publish this content');
+    if (!canArchive) {
+      return forbiddenError('You do not have permission to archive this content');
     }
 
-    // Publish content using service layer
-    const published = await publishContent(id, user.id);
+    // Archive content using service layer
+    const archived = await archiveContent(id, user.id);
 
-    return NextResponse.json(successResponse(published), { status: 200 });
+    return NextResponse.json(successResponse(archived), { status: 200 });
   } catch (error) {
-    console.error('[Publish Content Error]', error);
-    return internalError('Failed to publish content');
+    console.error('[Archive Content Error]', error);
+    return internalError('Failed to archive content');
   }
 }
