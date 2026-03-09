@@ -1,7 +1,7 @@
 'use client';
 
 import LogoutButton from '@/modules/auth/components/LogoutButton';
-import { IContent } from '@/shared/types/database.types';
+import type { IContent } from '@/shared/types/database.types';
 import { formatDistanceToNow } from 'date-fns';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';

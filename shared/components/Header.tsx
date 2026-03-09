@@ -1,8 +1,8 @@
 'use client';
 
 import LogoutButton from '@/modules/auth/components/LogoutButton';
+import Image from 'next/image';
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
 
 interface User {
   id: string;
@@ -17,13 +17,7 @@ interface HeaderProps {
 }
 
 export default function Header({ user, showAdminLinks = false }: HeaderProps) {
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  if (!mounted || !user) {
+  if (!user) {
     return null;
   }
 
@@ -52,7 +46,14 @@ export default function Header({ user, showAdminLinks = false }: HeaderProps) {
 
           <div className="flex items-center gap-3 border-l border-gray-300 pl-6">
             {user.avatar_url && (
-              <img src={user.avatar_url} alt={user.display_name} className="h-8 w-8 rounded-full" />
+              <Image
+                src={user.avatar_url}
+                alt={user.display_name}
+                className="h-8 w-8 rounded-full"
+                width={32}
+                height={32}
+                unoptimized
+              />
             )}
             <span className="text-sm text-gray-700">{user.display_name}</span>
             <LogoutButton />

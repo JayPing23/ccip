@@ -1,9 +1,21 @@
-import { changeUserRole, getCurrentUser, getUserById, updateUserProfile } from '@/modules/users/users.service';
-import { forbiddenError, internalError, notFoundError, unauthorizedError, validationError } from '@/shared/utils/api-errors';
+import {
+  changeUserRole,
+  getCurrentUser,
+  getUserById,
+  updateUserProfile,
+} from '@/modules/users/users.service';
+import {
+  forbiddenError,
+  internalError,
+  notFoundError,
+  unauthorizedError,
+  validationError,
+} from '@/shared/utils/api-errors';
 import { successResponse } from '@/shared/utils/api-response';
 import { canManageRoles } from '@/shared/utils/permissions';
 import { userProfileSchema } from '@/shared/utils/validation';
-import { NextRequest, NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
 
 /**
  * User Detail Endpoints
@@ -11,10 +23,7 @@ import { NextRequest, NextResponse } from 'next/server';
  * PATCH /api/users/[id] - Update own profile or assign role (admin)
  */
 
-export async function GET(
-  _request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function GET(_request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params;
     const user = await getUserById(id);
@@ -30,10 +39,7 @@ export async function GET(
   }
 }
 
-export async function PATCH(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function PATCH(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params;
     const currentUser = await getCurrentUser();
@@ -45,7 +51,7 @@ export async function PATCH(
 
     if (isRoleChange) {
       // Only SUPER_ADMIN can change roles
-      if (!canManageRoles(currentUser.role_id as any)) {
+      if (!currentUser.role_name || !canManageRoles(currentUser.role_name)) {
         return forbiddenError('Only admins can assign roles');
       }
 

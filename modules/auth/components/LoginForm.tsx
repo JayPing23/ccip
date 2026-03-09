@@ -2,7 +2,7 @@
 
 import { createClient } from '@/shared/lib/supabase';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 /**
  * LoginForm Component
@@ -11,11 +11,15 @@ import { useEffect, useState } from 'react';
 export default function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const supabase = createClient();
+  const supabase = useMemo(() => createClient(), []);
+  const initialTab = searchParams?.get('tab') === 'signup' ? 'google' : 'email';
+  const initialError = searchParams?.get('error');
 
-  const [tab, setTab] = useState<'email' | 'google'>('email');
+  const [tab, setTab] = useState<'email' | 'google'>(initialTab);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(
+    initialError ? decodeURIComponent(initialError) : null
+  );
   const institutionalDomain = process.env.NEXT_PUBLIC_INSTITUTIONAL_DOMAIN || 'slu.edu.ph';
 
   const [formData, setFormData] = useState({
@@ -54,25 +58,12 @@ export default function LoginForm() {
       }
     };
 
-    // Check for error from query params only on mount
-    if (searchParams) {
-      const errorParam = searchParams.get('error');
-      if (errorParam) {
-        setError(decodeURIComponent(errorParam));
-      }
-
-      const tabParam = searchParams.get('tab');
-      if (tabParam === 'signin' || tabParam === 'signup') {
-        setTab(tabParam === 'signup' ? 'google' : 'email');
-      }
-    }
-
-    checkAuth();
+    void checkAuth();
 
     return () => {
       isMounted = false;
     };
-  }, []);
+  }, [institutionalDomain, router, supabase]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -245,7 +236,7 @@ export default function LoginForm() {
             </button>
 
             <div className="text-center text-sm text-gray-600">
-              Don't have an account?{' '}
+              Don&apos;t have an account?{' '}
               <button
                 type="button"
                 onClick={() => router.push('/signup')}
@@ -292,7 +283,7 @@ export default function LoginForm() {
             </button>
 
             <p className="text-center text-xs text-gray-600">
-              You'll be automatically logged in if you use your institutional Google account.
+              You&apos;ll be automatically logged in if you use your institutional Google account.
             </p>
           </div>
         )}

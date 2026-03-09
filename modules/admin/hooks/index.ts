@@ -1,7 +1,19 @@
 'use client';
 
+import type { IOrganization } from '@/shared/types/database.types';
 import { useEffect, useState } from 'react';
 import type { UserWithRole } from '../types/index';
+
+interface UpdateUserPayload {
+  role_id?: string;
+  org_id?: string;
+}
+
+interface UpdateOrganizationPayload {
+  name?: string;
+  parent_id?: string | null;
+  type?: IOrganization['type'];
+}
 
 /**
  * Hook to fetch and manage admin users
@@ -51,7 +63,7 @@ export function useUpdateUser() {
       setIsUpdating(true);
       setError(null);
 
-      const payload: any = {};
+      const payload: UpdateUserPayload = {};
       if (roleId) payload.role_id = roleId;
       if (orgId) payload.org_id = orgId;
 
@@ -83,7 +95,7 @@ export function useUpdateUser() {
  * Hook to fetch and manage organizations
  */
 export function useAdminOrganizations() {
-  const [organizations, setOrganizations] = useState<any[]>([]);
+  const [organizations, setOrganizations] = useState<IOrganization[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -122,7 +134,7 @@ export function useUpdateOrganization() {
   const [isUpdating, setIsUpdating] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const updateOrganization = async (orgId: string, data: any) => {
+  const updateOrganization = async (orgId: string, data: UpdateOrganizationPayload) => {
     try {
       setIsUpdating(true);
       setError(null);

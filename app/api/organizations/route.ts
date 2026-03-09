@@ -12,7 +12,8 @@ import {
 } from '@/shared/utils/api-errors';
 import { successResponse } from '@/shared/utils/api-response';
 import { canManageOrganizations } from '@/shared/utils/permissions';
-import { NextRequest, NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
 
 /**
  * Organizations Endpoints

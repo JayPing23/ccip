@@ -9,7 +9,8 @@ import {
 import { successResponse } from '@/shared/utils/api-response';
 import { canManageRoles } from '@/shared/utils/permissions';
 import { userProfileSchema } from '@/shared/utils/validation';
-import { NextRequest, NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
 
 /**
  * Users Endpoints

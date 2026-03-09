@@ -2,6 +2,7 @@
 
 import LogoutButton from '@/modules/auth/components/LogoutButton';
 import ContentFeed from '@/modules/content/components/ContentFeed';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
@@ -61,10 +62,13 @@ export default function FeedPage() {
         <div className="mx-auto flex max-w-4xl items-center justify-between px-4 py-4">
           <div className="flex items-center gap-4">
             {user?.avatar_url && (
-              <img
+              <Image
                 src={user.avatar_url}
-                alt={user.display_name}
+                alt={user.display_name || 'User avatar'}
                 className="h-10 w-10 rounded-full"
+                width={40}
+                height={40}
+                unoptimized
               />
             )}
             <div>

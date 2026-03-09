@@ -20,13 +20,13 @@ export const contentSchema = z.object({
       CONTENT_STATUS.SCHEDULED,
       CONTENT_STATUS.PUBLISHED,
       CONTENT_STATUS.ARCHIVED,
-    ] as any)
+    ])
     .optional(),
   visibility: z.enum([
     CONTENT_VISIBILITY.PUBLIC,
     CONTENT_VISIBILITY.ORG_ONLY,
     CONTENT_VISIBILITY.DEPT_ONLY,
-  ] as any),
+  ]),
   org_ids: z.array(z.string().uuid()).optional(), // Make optional for simple form
   scheduled_at: z.string().datetime().optional().nullable(),
   tags: z.array(z.string()).optional(), // Accept array of strings, not enums
@@ -63,7 +63,7 @@ export const contentFilterSchema = z.object({
   org_id: z.string().uuid().optional(),
   date_from: z.string().datetime().optional(),
   date_to: z.string().datetime().optional(),
-  tags: z.array(z.enum(CONTENT_TAGS as any)).optional(),
+  tags: z.array(z.enum(CONTENT_TAGS)).optional(),
   page: z.number().int().min(1).default(1),
   limit: z.number().int().min(1).max(100).default(20),
 });

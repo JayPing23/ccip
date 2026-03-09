@@ -3,7 +3,8 @@ import { upsertUser } from '@/modules/users/users.service';
 import { createServerSupabaseClient } from '@/shared/lib/supabase-server';
 import { apiError } from '@/shared/utils/api-errors';
 import { successResponse } from '@/shared/utils/api-response';
-import { NextRequest, NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
 
 /**
  * Google OAuth Callback Handler

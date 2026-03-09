@@ -300,7 +300,7 @@ function CreateOrganizationForm({
             id="org-type"
             value={type}
             onChange={(e) => {
-              setType(e.target.value as any);
+              setType(e.target.value as IOrganization['type']);
               setParentId(''); // Reset parent when type changes
             }}
             className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2"

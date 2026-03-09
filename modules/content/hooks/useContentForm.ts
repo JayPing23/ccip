@@ -3,7 +3,7 @@
 import type { IContent } from '@/shared/types/database.types';
 import { contentSchema, type ContentFormData } from '@/shared/utils/validation';
 import { useRouter } from 'next/navigation';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 interface UseContentFormOptions {
   initialContent?: IContent | null;
@@ -24,6 +24,8 @@ interface FormErrors {
   [key: string]: string;
 }
 
+type FormFieldName = keyof FormState;
+
 /**
  * Hook for managing content form state, validation, and submission
  * Handles both create and update operations with draft auto-save
@@ -33,15 +35,18 @@ export function useContentForm(options: UseContentFormOptions = {}) {
   const { initialContent, onSuccess } = options;
 
   // Initialize form state from initial content or defaults
-  const defaultFormState: FormState = {
-    title: initialContent?.title || '',
-    description: initialContent?.body || initialContent?.description || '',
-    visibility: (initialContent?.visibility || 'PUBLIC') as FormState['visibility'],
-    status: (initialContent?.status || 'DRAFT') as FormState['status'],
-    org_ids: [],
-    tags: initialContent?.tags || [],
-    scheduled_at: initialContent?.scheduled_at || null,
-  };
+  const defaultFormState = useMemo<FormState>(
+    () => ({
+      title: initialContent?.title || '',
+      description: initialContent?.body || initialContent?.description || '',
+      visibility: (initialContent?.visibility || 'PUBLIC') as FormState['visibility'],
+      status: (initialContent?.status || 'DRAFT') as FormState['status'],
+      org_ids: [],
+      tags: initialContent?.tags || [],
+      scheduled_at: initialContent?.scheduled_at || null,
+    }),
+    [initialContent]
+  );
 
   const [formData, setFormData] = useState<FormState>(defaultFormState);
   const [errors, setErrors] = useState<FormErrors>({});
@@ -53,6 +58,23 @@ export function useContentForm(options: UseContentFormOptions = {}) {
 
   const draftSaveTimer = useRef<NodeJS.Timeout | null>(null);
   const lastSavedDraftRef = useRef<string>('');
+
+  useEffect(() => {
+    setFormData(defaultFormState);
+    setErrors({});
+    setErrorMessage(null);
+    setSuccessMessage(null);
+    setIsDirty(false);
+    lastSavedDraftRef.current = '';
+  }, [defaultFormState]);
+
+  const setFieldValue = useCallback(<K extends FormFieldName>(name: K, value: FormState[K]) => {
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+    setIsDirty(true);
+  }, []);
 
   /**
    * Validate form data using Zod schema
@@ -89,40 +111,50 @@ export function useContentForm(options: UseContentFormOptions = {}) {
    */
   const handleChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-      const target = e.currentTarget as HTMLInputElement;
+      const target = e.currentTarget;
       const { name, value } = target;
-      let newValue: any = value;
 
-      // Handle checkboxes for multi-select (org_ids, tags)
-      if (target.type === 'checkbox') {
-        const isChecked = target.checked;
-        const currentArray = formData[name as keyof FormState] as any[];
-        newValue = isChecked
+      if (target instanceof HTMLInputElement && target.type === 'checkbox') {
+        const fieldName = name as 'org_ids' | 'tags';
+        const currentArray = formData[fieldName];
+        const nextValue = target.checked
           ? [...currentArray, value]
           : currentArray.filter((item) => item !== value);
+
+        setFieldValue(fieldName, nextValue);
+        return;
       }
 
-      setFormData((prev) => ({
-        ...prev,
-        [name]: newValue,
-      }));
-
-      setIsDirty(true);
+      switch (name as FormFieldName) {
+        case 'title':
+        case 'description':
+          setFieldValue(name as 'title' | 'description', value);
+          break;
+        case 'visibility':
+          setFieldValue('visibility', value as FormState['visibility']);
+          break;
+        case 'status':
+          setFieldValue('status', value as FormState['status']);
+          break;
+        case 'scheduled_at':
+          setFieldValue('scheduled_at', value || null);
+          break;
+        default:
+          break;
+      }
     },
-    [formData]
+    [formData, setFieldValue]
   );
 
   /**
    * Handle textarea input with character count
    */
-  const handleDescriptionChange = useCallback((e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    const value = e.target.value;
-    setFormData((prev) => ({
-      ...prev,
-      description: value,
-    }));
-    setIsDirty(true);
-  }, []);
+  const handleDescriptionChange = useCallback(
+    (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+      setFieldValue('description', e.target.value);
+    },
+    [setFieldValue]
+  );
 
   /**
    * Handle tag input (comma-separated)
@@ -229,7 +261,7 @@ export function useContentForm(options: UseContentFormOptions = {}) {
         }
 
         setSuccessMessage(
-          initialContent
+          initialContent?.id
             ? 'Content updated successfully'
             : `Content ${submitStatus === 'PUBLISHED' ? 'published' : 'saved as draft'}`
         );
@@ -296,6 +328,7 @@ export function useContentForm(options: UseContentFormOptions = {}) {
     setErrorMessage(null);
     setSuccessMessage(null);
     setIsDirty(false);
+    lastSavedDraftRef.current = '';
   }, [defaultFormState]);
 
   return {
@@ -316,6 +349,7 @@ export function useContentForm(options: UseContentFormOptions = {}) {
     handlePublish,
     handleSchedule,
     handleReset,
+    setFieldValue,
     validateForm,
   };
 }

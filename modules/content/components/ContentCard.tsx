@@ -1,6 +1,6 @@
 'use client';
 
-import { IContent } from '@/shared/types/database.types';
+import type { IContent } from '@/shared/types/database.types';
 import { formatDistanceToNow } from 'date-fns';
 import Link from 'next/link';
 import { useState } from 'react';

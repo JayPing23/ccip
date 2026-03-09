@@ -1,9 +1,9 @@
 'use client';
 
-import { IContent } from '@/shared/types/database.types';
+import type { IContent } from '@/shared/types/database.types';
 import { formatDate } from '@/shared/utils/date-helpers';
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 export default function AdminContentPage() {
   const [contents, setContents] = useState<IContent[]>([]);
@@ -12,11 +12,7 @@ export default function AdminContentPage() {
   const [statusFilter, setStatusFilter] = useState<string>('ALL');
   const [visibilityFilter, setVisibilityFilter] = useState<string>('ALL');
 
-  useEffect(() => {
-    fetchContents();
-  }, [statusFilter, visibilityFilter]);
-
-  const fetchContents = async () => {
+  const fetchContents = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
@@ -45,7 +41,11 @@ export default function AdminContentPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [statusFilter, visibilityFilter]);
+
+  useEffect(() => {
+    void fetchContents();
+  }, [fetchContents]);
 
   const handlePublish = async (contentId: string) => {
     try {
@@ -55,8 +55,8 @@ export default function AdminContentPage() {
 
       if (!response.ok) throw new Error('Failed to publish');
 
-      setContents(
-        contents.map((c) =>
+      setContents((currentContents) =>
+        currentContents.map((c) =>
           c.id === contentId
             ? { ...c, status: 'PUBLISHED', published_at: new Date().toISOString() }
             : c
@@ -77,7 +77,7 @@ export default function AdminContentPage() {
 
       if (!response.ok) throw new Error('Failed to delete');
 
-      setContents(contents.filter((c) => c.id !== contentId));
+      setContents((currentContents) => currentContents.filter((c) => c.id !== contentId));
     } catch (err) {
       alert(err instanceof Error ? err.message : 'Failed to delete');
     }

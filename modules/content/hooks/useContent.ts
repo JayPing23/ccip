@@ -1,6 +1,6 @@
 'use client';
 
-import { IContent } from '@/shared/types/database.types';
+import type { IContent } from '@/shared/types/database.types';
 import { useEffect, useState } from 'react';
 
 interface UseContentOptions {

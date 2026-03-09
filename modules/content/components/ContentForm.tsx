@@ -2,8 +2,7 @@
 
 import { CONTENT_VISIBILITY } from '@/shared/constants/content';
 import { CONTENT_TAGS } from '@/shared/constants/tags';
-import type { IContent } from '@/shared/types/database.types';
-import { IOrganization } from '@/shared/types/database.types';
+import type { IContent, IOrganization } from '@/shared/types/database.types';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { useContentForm } from '../hooks/useContentForm';
@@ -44,6 +43,7 @@ export default function ContentForm({
     handlePublish,
     handleSchedule,
     handleReset,
+    setFieldValue,
   } = useContentForm({ initialContent, onSuccess });
 
   // Fetch organizations for multi-select
@@ -74,12 +74,7 @@ export default function ContentForm({
       ? formData.org_ids.filter((id) => id !== orgId)
       : [...formData.org_ids, orgId];
 
-    handleChange({
-      currentTarget: {
-        name: 'org_ids',
-        value: newOrgIds.join(','),
-      },
-    } as any);
+    setFieldValue('org_ids', newOrgIds);
   };
 
   /**
@@ -89,12 +84,7 @@ export default function ContentForm({
     const isSelected = formData.tags.includes(tag);
     const newTags = isSelected ? formData.tags.filter((t) => t !== tag) : [...formData.tags, tag];
 
-    handleChange({
-      currentTarget: {
-        name: 'tags',
-        value: newTags.join(', '),
-      },
-    } as any);
+    setFieldValue('tags', newTags);
   };
 
   const isEditing = !!initialContent?.id;

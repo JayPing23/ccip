@@ -62,8 +62,8 @@ export interface IAuditLog {
   action: 'INSERT' | 'UPDATE' | 'DELETE';
   user_id: string | null;
   diff: {
-    before: Record<string, any>;
-    after: Record<string, any>;
+    before: Record<string, unknown>;
+    after: Record<string, unknown>;
   } | null;
   created_at: string;
 }

@@ -13,7 +13,8 @@ import {
 import { successResponse } from '@/shared/utils/api-response';
 import { canCreateContent } from '@/shared/utils/permissions';
 import { contentSchema } from '@/shared/utils/validation';
-import { NextRequest, NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
 
 /**
  * Content Endpoints

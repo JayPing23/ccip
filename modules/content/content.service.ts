@@ -27,23 +27,23 @@ export async function getPublishedContent() {
 /**
  * Get a single content item by ID
  */
-export async function getContentById(contentId: string) {
+export async function getContentById(contentId: string): Promise<IContent | null> {
   const supabase = await createServerSupabaseClient();
   const { data, error } = await supabase.from('content').select('*').eq('id', contentId).single();
 
-  if (error) throw new Error(error.message);
-  return data as IContent;
+  if (error && error.code !== 'PGRST116') throw new Error(error.message);
+  return data ? (data as IContent) : null;
 }
 
 /**
  * Get a single content item by slug
  */
-export async function getContentBySlug(slug: string) {
+export async function getContentBySlug(slug: string): Promise<IContent | null> {
   const supabase = await createServerSupabaseClient();
   const { data, error } = await supabase.from('content').select('*').eq('slug', slug).single();
 
   if (error && error.code !== 'PGRST116') throw new Error(error.message);
-  return (data as IContent) || null;
+  return data ? (data as IContent) : null;
 }
 
 /**
@@ -51,13 +51,13 @@ export async function getContentBySlug(slug: string) {
  */
 export async function slugExists(slug: string): Promise<boolean> {
   const supabase = await createServerSupabaseClient();
-  const { data, error } = await supabase
+  const { count, error } = await supabase
     .from('content')
     .select('id', { count: 'exact', head: true })
     .eq('slug', slug);
 
   if (error) throw new Error(error.message);
-  return !!data;
+  return (count ?? 0) > 0;
 }
 
 /**
@@ -132,6 +132,7 @@ export async function updateContent(contentId: string, updates: Partial<IContent
 
   // Get before state for audit log
   const before = await getContentById(contentId);
+  if (!before) throw new Error('Content not found');
 
   // Set updated_at
   updates.updated_at = new Date().toISOString();
@@ -165,6 +166,7 @@ export async function deleteContent(contentId: string, userId: string) {
   const supabase = await createServerSupabaseClient();
 
   const before = await getContentById(contentId);
+  if (!before) throw new Error('Content not found');
 
   const { data, error } = await supabase
     .from('content')
@@ -239,7 +241,11 @@ export async function getContentByVisibility(
   const supabase = await createServerSupabaseClient();
 
   // Start with base query: non-deleted, published only
-  let query = supabase.from('content').select('*').eq('status', 'PUBLISHED').is('deleted_at', null);
+  const query = supabase
+    .from('content')
+    .select('*')
+    .eq('status', 'PUBLISHED')
+    .is('deleted_at', null);
 
   // RLS and visibility rules are enforced at database level
   // This function trusts RLS policies to filter results
@@ -298,8 +304,8 @@ async function logAuditEvent(
   recordId: string,
   action: string,
   userId: string,
-  before: any,
-  after: any
+  before: object | null,
+  after: object | null
 ): Promise<void> {
   const supabase = await createServerSupabaseClient();
 

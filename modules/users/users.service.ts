@@ -6,6 +6,12 @@
 import { createServerSupabaseClient } from '@/shared/lib/supabase-server';
 import type { IUser } from '@/shared/types/database.types';
 
+type UserWithJoinedRole = IUser & {
+  role?: {
+    name?: NonNullable<IUser['role_name']>;
+  } | null;
+};
+
 /**
  * Get current authenticated user profile
  */
@@ -26,11 +32,13 @@ export async function getCurrentUser(): Promise<IUser | null> {
   if (error) return null;
 
   // Flatten role name from the joined role object
-  const user = data as any;
+  const user = data as UserWithJoinedRole;
+  const { role, ...userWithoutRole } = user;
+
   return {
-    ...user,
-    role_name: user.role?.name,
-  } as IUser;
+    ...userWithoutRole,
+    role_name: role?.name,
+  };
 }
 
 /**

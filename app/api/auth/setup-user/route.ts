@@ -1,5 +1,6 @@
 import { createServiceRoleClient } from '@/shared/lib/supabase-server';
-import { NextRequest, NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
 
 /**
  * POST /api/auth/setup-user

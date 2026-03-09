@@ -1,5 +1,6 @@
 import { deleteContent, getContentById, updateContent } from '@/modules/content/content.service';
 import { getCurrentUser } from '@/modules/users/users.service';
+import type { IContent } from '@/shared/types/database.types';
 import {
   forbiddenError,
   internalError,
@@ -15,7 +16,8 @@ import {
   canEditOwnContent,
 } from '@/shared/utils/permissions';
 import { contentSchema } from '@/shared/utils/validation';
-import { NextRequest, NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
 
 /**
  * Content Detail Endpoints
@@ -73,7 +75,12 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
     }
 
     // Update content
-    const updated = await updateContent(id, validated.data as any, user.id);
+    const updates: Partial<IContent> = {
+      ...validated.data,
+      ...(validated.data.description !== undefined ? { body: validated.data.description } : {}),
+    };
+
+    const updated = await updateContent(id, updates, user.id);
 
     return NextResponse.json(successResponse(updated), { status: 200 });
   } catch (error) {
