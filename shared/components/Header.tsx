@@ -1,6 +1,6 @@
 'use client';
 
-import { LogoutButton } from '@/modules/auth/components/LogoutButton';
+import LogoutButton from '@/modules/auth/components/LogoutButton';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 

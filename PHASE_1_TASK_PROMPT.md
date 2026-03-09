@@ -212,64 +212,64 @@ curl -X POST http://localhost:3000/api/content \
 
 ## TASK 4: Build Content Create/Edit Pages (~2–3 hours)
 **Priority:** 🟡 MEDIUM-HIGH — Core user-facing feature
-**Status:** ❌ NOT STARTED
+**Status:** ✅ COMPLETE
 **Objective:** Create React pages and forms for content creation and editing
 
 ### What Needs to Be Done
 
 #### Create Content Pages
-- [ ] `app/(portal)/content/create/page.tsx` — New announcement form
-- [ ] `modules/content/components/ContentForm.tsx` — Reusable form component
-- [ ] `modules/content/hooks/useContentForm.ts` — Form state & submission logic
+- [x] `app/(portal)/content/create/page.tsx` — New announcement form
+- [x] `modules/content/components/ContentForm.tsx` — Reusable form component
+- [x] `modules/content/hooks/useContentForm.ts` — Form state & submission logic
 
 #### Edit Content Pages
-- [ ] `app/(portal)/content/[id]/edit/page.tsx` — Edit existing announcement
-- [ ] Logic to fetch content, populate form, handle updates
+- [x] `app/(portal)/content/[slug]/edit/page.tsx` — Edit existing announcement
+- [x] Logic to fetch content, populate form, handle updates
 
 #### Form Features (ContentForm Component)
-- [ ] **Title input** — Required, max 200 chars
-- [ ] **Body/rich text** — Use Tiptap for formatted text (Phase 3 enhancement)
-- [ ] **Organization selector** — Multi-select which orgs see this
-- [ ] **Visibility dropdown** — PUBLIC | ORG_ONLY | DEPT_ONLY
-- [ ] **Content tags** — Multi-select from predefined tags
-- [ ] **Status selector** — DRAFT | SCHEDULED | PUBLISHED
-- [ ] **Scheduled publish date** — Optional datetime picker
-- [ ] **Author display** — Show current user as author (read-only)
-- [ ] **Draft auto-save** — Save as draft every 30 seconds
-- [ ] **Submit buttons**:
+- [x] **Title input** — Required, max 200 chars
+- [x] **Body/rich text** — Textarea for formatted text (Phase 3 enhancement)
+- [x] **Organization selector** — Multi-select which orgs see this
+- [x] **Visibility dropdown** — PUBLIC | ORG_ONLY | DEPT_ONLY
+- [x] **Content tags** — Multi-select from predefined tags
+- [x] **Status selector** — DRAFT | SCHEDULED | PUBLISHED
+- [x] **Scheduled publish date** — Optional datetime picker
+- [x] **Author display** — Show current user as author (read-only)
+- [x] **Draft auto-save** — Save as draft every 30 seconds
+- [x] **Submit buttons**:
   - "Save as Draft" (POST/PATCH with status=DRAFT)
   - "Publish Now" (POST/PATCH with status=PUBLISHED)
   - "Schedule for Later" (POST/PATCH with status=SCHEDULED + scheduled_at)
 
 #### Form Validation
-- [ ] Use Zod schemas from `shared/utils/validation.ts`
-- [ ] Display inline error messages
-- [ ] Disable submit if form invalid
-- [ ] Show loading state during submission
-- [ ] Show success/error toast notifications
+- [x] Use Zod schemas from `shared/utils/validation.ts`
+- [x] Display inline error messages
+- [x] Disable submit if form invalid
+- [x] Show loading state during submission
+- [x] Show success/error toast notifications
 
 #### Error Handling
-- [ ] Handle 401 (unauthorized — redirect to login)
-- [ ] Handle 403 (forbidden — show error message)
-- [ ] Handle 400 (validation error — show field errors)
-- [ ] Handle 500 (server error — show retry button)
+- [x] Handle 401 (unauthorized — redirect to login)
+- [x] Handle 403 (forbidden — show error message)
+- [x] Handle 400 (validation error — show field errors)
+- [x] Handle 500 (server error — show retry button)
 
 ### UI Requirements
-- [ ] Responsive design (mobile-first with Tailwind)
-- [ ] Accessible form (proper labels, ARIA attributes)
-- [ ] Clear visual feedback (loading spinners, disabled states)
-- [ ] Consistent with project design system
-- [ ] Dark mode support (if Tailwind configured)
+- [x] Responsive design (mobile-first with Tailwind)
+- [x] Accessible form (proper labels, ARIA attributes)
+- [x] Clear visual feedback (loading spinners, disabled states)
+- [x] Consistent with project design system
+- [x] Dark mode support (if Tailwind configured)
 
 ### Success Criteria
-- ✅ Create page allows filling out form and submitting
-- ✅ POST request sends correct data to `/api/content`
-- ✅ Response shows success/error message
-- ✅ Edit page pre-populates form with existing data
-- ✅ PATCH request updates content correctly
-- ✅ Validation errors display inline
-- ✅ Form auto-saves drafts periodically
-- ✅ `npm run dev` runs without errors
+- [x] Create page allows filling out form and submitting
+- [x] POST request sends correct data to `/api/content`
+- [x] Response shows success/error message
+- [x] Edit page pre-populates form with existing data
+- [x] PATCH request updates content correctly
+- [x] Validation errors display inline
+- [x] Form auto-saves drafts periodically
+- [x] `npm run dev` runs without errors
 
 ### Reference Files
 - [modules/content/types/content.types.ts](modules/content/types/content.types.ts) — Content types

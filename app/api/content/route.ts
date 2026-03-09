@@ -1,4 +1,8 @@
-import { createContent, getPublishedContent } from '@/modules/content/content.service';
+import {
+  createContent,
+  getContentBySlug,
+  getPublishedContent,
+} from '@/modules/content/content.service';
 import { getCurrentUser } from '@/modules/users/users.service';
 import {
   forbiddenError,
@@ -13,12 +17,31 @@ import { NextRequest, NextResponse } from 'next/server';
 
 /**
  * Content Endpoints
- * GET /api/content - List published content
+ * GET /api/content - List published content or fetch by slug
  * POST /api/content - Create new content (requires permission)
  */
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
+    // Check if slug query parameter is provided
+    const slug = request.nextUrl.searchParams.get('slug');
+
+    if (slug) {
+      // Fetch by slug
+      const content = await getContentBySlug(slug);
+      if (!content) {
+        return NextResponse.json(
+          {
+            success: false,
+            error: { code: 'NOT_FOUND', message: 'Content not found' },
+          },
+          { status: 404 }
+        );
+      }
+      return NextResponse.json(successResponse(content), { status: 200 });
+    }
+
+    // List all published content
     const content = await getPublishedContent();
     return NextResponse.json(successResponse(content), { status: 200 });
   } catch (error) {
