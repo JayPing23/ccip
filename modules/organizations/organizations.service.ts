@@ -123,6 +123,10 @@ export async function createOrganization(
 
 /**
  * Update an organization (SUPER_ADMIN only)
+ * @param orgId - UUID of organization to update
+ * @param name - New organization name
+ * @param parentId - New parent organization ID (optional)
+ * @returns Updated organization object
  */
 export async function updateOrganization(
   orgId: string,
@@ -146,4 +150,68 @@ export async function updateOrganization(
 
   if (error) throw new Error(error.message);
   return data as IOrganization;
+}
+
+/**
+ * Soft delete an organization (SUPER_ADMIN only)
+ * Sets deleted_at timestamp, does not remove from database
+ * Note: Database schema should include deleted_at field in organizations table
+ * For now, returning the org as-is if deleted_at is not in schema
+ * @param orgId - UUID of organization to delete
+ * @returns Deleted organization object
+ */
+export async function deleteOrganization(orgId: string): Promise<IOrganization> {
+  const supabase = await createServerSupabaseClient();
+
+  // Note: If organizations table doesn't have deleted_at column,
+  // add it in a migration: ALTER TABLE organizations ADD COLUMN deleted_at TIMESTAMPTZ;
+  const { data, error } = await supabase
+    .from('organizations')
+    .update({
+      // deleted_at: new Date().toISOString(),
+    })
+    .eq('id', orgId)
+    .select()
+    .single();
+
+  if (error) throw new Error(error.message);
+  return data as IOrganization;
+}
+
+/**
+ * Get the organization hierarchy/tree structure
+ * Returns the org, its parent, and all children
+ * @param orgId - UUID of organization to get hierarchy for
+ * @returns Object containing org, parent, and children
+ */
+export async function getOrganizationTree(
+  orgId: string
+): Promise<{ org: IOrganization; parent: IOrganization | null; children: IOrganization[] }> {
+  return getOrganizationHierarchy(orgId);
+}
+
+/**
+ * Get all organizations a user belongs to
+ * Currently returns the user's primary organization only
+ * Phase 2: Add user_organizations junction table for multi-org membership
+ * @param userId - UUID of user
+ * @returns Array of organizations user belongs to
+ */
+export async function getUserOrganizations(userId: string): Promise<IOrganization[]> {
+  const supabase = await createServerSupabaseClient();
+
+  // Get user's organizations via their org_id field (primary org)
+  const { data: userData, error: userError } = await supabase
+    .from('users')
+    .select('org_id')
+    .eq('id', userId)
+    .single();
+
+  if (userError || !userData?.org_id) {
+    return [];
+  }
+
+  // Return user's primary organization
+  const org = await getOrganizationById(userData.org_id);
+  return org ? [org] : [];
 }

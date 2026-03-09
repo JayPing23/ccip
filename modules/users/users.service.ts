@@ -125,14 +125,41 @@ export async function updateUserProfile(
 
 /**
  * Change user role (SUPER_ADMIN only)
+ * @param userId - UUID of user to update
+ * @param newRoleId - UUID of new role
+ * @returns Updated user object
  */
-export async function changeUserRole(userId: string, newRoleId: string) {
+export async function changeUserRole(userId: string, newRoleId: string): Promise<IUser> {
   const supabase = await createServerSupabaseClient();
 
   const { data, error } = await supabase
     .from('users')
     .update({
       role_id: newRoleId,
+      updated_at: new Date().toISOString(),
+    })
+    .eq('id', userId)
+    .select()
+    .single();
+
+  if (error) throw new Error(error.message);
+  return data as IUser;
+}
+
+/**
+ * Change user's primary organization (SUPER_ADMIN only)
+ * Updates the org_id field to move user to a different organization
+ * @param userId - UUID of user to update
+ * @param newOrgId - UUID of new organization
+ * @returns Updated user object
+ */
+export async function changeUserOrganization(userId: string, newOrgId: string): Promise<IUser> {
+  const supabase = await createServerSupabaseClient();
+
+  const { data, error } = await supabase
+    .from('users')
+    .update({
+      org_id: newOrgId,
       updated_at: new Date().toISOString(),
     })
     .eq('id', userId)

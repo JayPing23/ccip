@@ -186,17 +186,104 @@ export async function deleteContent(contentId: string, userId: string) {
 }
 
 /**
+ * Publish a content item (transition DRAFT → PUBLISHED)
+ * Sets published_at timestamp and status to PUBLISHED
+ * @param contentId - UUID of content to publish
+ * @param userId - UUID of user performing the action
+ * @returns Published content object
+ */
+export async function publishContent(contentId: string, userId: string): Promise<IContent> {
+  return updateContent(
+    contentId,
+    {
+      status: 'PUBLISHED',
+    },
+    userId
+  );
+}
+
+/**
+ * Get content filtered by visibility rules and user permissions
+ * Respects content visibility: PUBLIC, ORG_ONLY, DEPT_ONLY
+ * @param _userId - UUID of current user (null for anonymous) - RLS handled at DB level
+ * @param _userRole - User's role for permission checks - RLS handled at DB level
+ * @param _userOrgId - User's primary organization - RLS handled at DB level
+ * @param limit - Number of results to return
+ * @param offset - Pagination offset
+ * @returns Array of accessible content items
+ */
+export async function getContentByVisibility(
+  _userId: string | null,
+  _userRole: string,
+  _userOrgId: string | null,
+  limit: number = 20,
+  offset: number = 0
+): Promise<IContent[]> {
+  const supabase = await createServerSupabaseClient();
+
+  // Start with base query: non-deleted, published only
+  let query = supabase.from('content').select('*').eq('status', 'PUBLISHED').is('deleted_at', null);
+
+  // RLS and visibility rules are enforced at database level
+  // This function trusts RLS policies to filter results
+  // PUBLIC content is visible to all
+  // ORG_ONLY/DEPT_ONLY requires user to be in that org (checked by RLS)
+
+  const { data, error } = await query
+    .order('published_at', { ascending: false })
+    .range(offset, offset + limit - 1);
+
+  if (error) throw new Error(error.message);
+  return data as IContent[];
+}
+
+/**
+ * Get all content belonging to a specific organization
+ * Filtered by org_id through content_organizations junction table
+ * @param orgId - UUID of organization
+ * @param includeArchived - Whether to include ARCHIVED content
+ * @returns Array of content items
+ */
+export async function getContentByOrganization(
+  orgId: string,
+  includeArchived: boolean = false
+): Promise<IContent[]> {
+  const supabase = await createServerSupabaseClient();
+
+  let query = supabase
+    .from('content')
+    .select('*, content_organizations!inner(org_id)')
+    .eq('content_organizations.org_id', orgId)
+    .is('deleted_at', null);
+
+  if (!includeArchived) {
+    query = query.neq('status', 'ARCHIVED');
+  }
+
+  const { data, error } = await query.order('created_at', { ascending: false });
+
+  if (error) throw new Error(error.message);
+  return data as IContent[];
+}
+
+/**
  * Log an audit event for content mutations
  * Internal helper — called automatically by CRUD functions
+ * @param _tableName - Name of table being modified
+ * @param recordId - UUID of record being modified
+ * @param action - Type of action: INSERT, UPDATE, DELETE
+ * @param userId - UUID of user performing action
+ * @param before - State before change (null for INSERT)
+ * @param after - State after change (null for DELETE)
  */
 async function logAuditEvent(
-  tableName: string,
+  _tableName: string,
   recordId: string,
   action: string,
   userId: string,
   before: any,
   after: any
-) {
+): Promise<void> {
   const supabase = await createServerSupabaseClient();
 
   const { error } = await supabase.from('audit_logs').insert({
