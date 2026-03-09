@@ -11,6 +11,7 @@ interface IUser {
   display_name?: string;
   avatar_url?: string;
   role_id?: string;
+  role_name?: string;
   created_at?: string;
 }
 
@@ -107,19 +108,38 @@ export default function DashboardPage() {
         </div>
 
         {/* Action Buttons */}
-        <div className="mb-8 flex gap-4">
+        <div className="mb-8 flex flex-wrap gap-4">
           <button
             onClick={() => router.push('/feed')}
             className="rounded-lg bg-blue-600 px-6 py-2 font-medium text-white transition hover:bg-blue-700"
           >
             View All Announcements
           </button>
-          <button
-            onClick={() => router.push('/admin')}
-            className="rounded-lg bg-gray-200 px-6 py-2 font-medium text-gray-900 transition hover:bg-gray-300"
-          >
-            Admin Panel
-          </button>
+          {user?.role_name &&
+            ['DEPT_EDITOR', 'UNIVERSITY_EDITOR', 'SUPER_ADMIN'].includes(user.role_name) && (
+              <>
+                <button
+                  onClick={() => router.push('/content/create')}
+                  className="rounded-lg bg-green-600 px-6 py-2 font-medium text-white transition hover:bg-green-700"
+                >
+                  📝 New Post
+                </button>
+                <button
+                  onClick={() => router.push('/admin/content')}
+                  className="rounded-lg bg-purple-600 px-6 py-2 font-medium text-white transition hover:bg-purple-700"
+                >
+                  📋 Manage Posts
+                </button>
+              </>
+            )}
+          {user?.role_name === 'SUPER_ADMIN' && (
+            <button
+              onClick={() => router.push('/admin')}
+              className="rounded-lg bg-gray-700 px-6 py-2 font-medium text-white transition hover:bg-gray-800"
+            >
+              ⚙️ Admin Panel
+            </button>
+          )}
         </div>
 
         {/* Recent Content Feed */}

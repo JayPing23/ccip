@@ -1,0 +1,12 @@
+[project]
+url = "https://akcjalgxivsxjhnixjfk.supabase.co"
+project_id = "akcjalgxivsxjhnixjfk"
+
+[api]
+enabled = true
+
+[auth]
+enabled = true
+
+[database]
+enabled = true
