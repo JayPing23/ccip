@@ -83,7 +83,8 @@ export async function POST(request: NextRequest) {
       validated.data.visibility,
       org_ids,
       user.id,
-      validated.data.scheduled_at
+      validated.data.scheduled_at,
+      validated.data.tags
     );
 
     return NextResponse.json(successResponse(content), { status: 201 });

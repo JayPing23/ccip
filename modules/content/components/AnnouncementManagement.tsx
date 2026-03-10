@@ -109,7 +109,7 @@ export default function AnnouncementManagement({
   }
 
   return (
-    <div className="p-6 sm:p-8">
+    <div className="p-6 sm:p-8" data-testid="announcement-management">
       <div className="mb-6 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
         <div>
           <h2 className="text-2xl font-bold text-gray-900">{title}</h2>
@@ -138,6 +138,7 @@ export default function AnnouncementManagement({
           </label>
           <select
             id="status-filter"
+            data-testid="announcement-status-filter"
             value={statusFilter}
             onChange={(event) => setStatusFilter(event.target.value as typeof statusFilter)}
             className="rounded border border-gray-300 px-3 py-2 text-sm"
@@ -158,6 +159,7 @@ export default function AnnouncementManagement({
           </label>
           <select
             id="visibility-filter"
+            data-testid="announcement-visibility-filter"
             value={visibilityFilter}
             onChange={(event) => setVisibilityFilter(event.target.value as typeof visibilityFilter)}
             className="rounded border border-gray-300 px-3 py-2 text-sm"
@@ -185,10 +187,18 @@ export default function AnnouncementManagement({
             const canPublish = canEdit && announcement.status === 'DRAFT';
 
             return (
-              <div key={announcement.id} className="rounded-lg bg-white p-6 shadow-sm">
+              <div
+                key={announcement.id}
+                data-testid="announcement-card"
+                data-announcement-id={announcement.id}
+                className="rounded-lg bg-white p-6 shadow-sm"
+              >
                 <div className="flex items-start justify-between gap-4">
                   <div className="flex-1">
-                    <h3 className="mb-2 text-lg font-semibold text-gray-900">
+                    <h3
+                      data-testid="announcement-title"
+                      className="mb-2 text-lg font-semibold text-gray-900"
+                    >
                       {announcement.title}
                     </h3>
                     <p className="mb-3 text-sm text-gray-600">
@@ -196,7 +206,10 @@ export default function AnnouncementManagement({
                       {announcement.body.length > 140 ? '...' : ''}
                     </p>
                     <div className="flex flex-wrap items-center gap-2 text-sm text-gray-500">
-                      <span className="rounded-full bg-gray-100 px-3 py-1 font-medium text-gray-700">
+                      <span
+                        data-testid="announcement-status"
+                        className="rounded-full bg-gray-100 px-3 py-1 font-medium text-gray-700"
+                      >
                         {announcement.status}
                       </span>
                       <span>{announcement.visibility}</span>
@@ -225,6 +238,7 @@ export default function AnnouncementManagement({
                     {canPublish && (
                       <button
                         onClick={() => handlePublish(announcement.id)}
+                        data-testid="announcement-publish-button"
                         className="rounded bg-green-600 px-3 py-2 text-sm text-white hover:bg-green-700"
                       >
                         Publish
@@ -233,6 +247,7 @@ export default function AnnouncementManagement({
                     {canDelete && (
                       <button
                         onClick={() => handleDelete(announcement.id)}
+                        data-testid="announcement-delete-button"
                         className="rounded bg-red-600 px-3 py-2 text-sm text-white hover:bg-red-700"
                       >
                         Delete

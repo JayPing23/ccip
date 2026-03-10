@@ -6,3 +6,7 @@
 node_modules/
 coverage/
 *.tsbuildinfo
+.cy/
+cypress/screenshots/
+cypress/videos/
+cypress/downloads/

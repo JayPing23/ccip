@@ -1,0 +1,45 @@
+name: Cypress Tests
+
+on:
+  push:
+
+jobs:
+  cypress-run:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        containers: [1, 2]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Cypress run
+        uses: cypress-io/github-action@v7
+        with:
+          install-command: npm ci
+          start: npm run dev:e2e
+          wait-on: 'http://127.0.0.1:3000/login'
+          wait-on-timeout: 120
+          spec: cypress/e2e/content-publish.smoke.cy.js
+          record: true
+          parallel: true
+          group: publish-smoke
+          ci-build-id: ${{ github.run_id }}-${{ github.run_attempt }}
+        env:
+          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          NEXT_PUBLIC_INSTITUTIONAL_DOMAIN: ${{ secrets.NEXT_PUBLIC_INSTITUTIONAL_DOMAIN }}
+          E2E_EDITOR_EMAIL: ${{ secrets.E2E_EDITOR_EMAIL }}
+          E2E_EDITOR_PASSWORD: ${{ secrets.E2E_EDITOR_PASSWORD }}
+          E2E_EDITOR_DISPLAY_NAME: ${{ secrets.E2E_EDITOR_DISPLAY_NAME }}

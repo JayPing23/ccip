@@ -77,7 +77,7 @@ function NotificationRow({
 
   if (notification.content_slug) {
     return (
-      <Link href={`/feed/${notification.content_slug}`} className="block">
+      <Link href={`/content/${encodeURIComponent(notification.content_slug)}`} className="block">
         {content}
       </Link>
     );

@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "dev:e2e": "next dev --hostname 127.0.0.1 --port 3000",
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",
@@ -11,9 +12,14 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "test": "jest",
+    "test:content": "jest tests/unit/modules/content.service.test.ts tests/integration/api/content.route.test.ts tests/integration/api/content-id.route.test.ts tests/integration/api/content-publish.route.test.ts",
+    "test:content:coverage": "jest tests/unit/modules/content.service.test.ts tests/integration/api/content.route.test.ts tests/integration/api/content-id.route.test.ts tests/integration/api/content-publish.route.test.ts --coverage",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
-    "test:e2e": "cypress open"
+    "test:e2e": "cypress open",
+    "test:e2e:headless": "cypress run",
+    "test:e2e:publish:only": "cypress run --spec cypress/e2e/content-publish.smoke.cy.js",
+    "test:e2e:publish": "node scripts/run-e2e-publish.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",

@@ -200,6 +200,7 @@ export default function LoginForm() {
                 id="email"
                 name="email"
                 type="email"
+                data-testid="login-email-input"
                 required
                 value={formData.email}
                 onChange={handleChange}
@@ -218,6 +219,7 @@ export default function LoginForm() {
                 id="password"
                 name="password"
                 type="password"
+                data-testid="login-password-input"
                 required
                 value={formData.password}
                 onChange={handleChange}
@@ -229,6 +231,7 @@ export default function LoginForm() {
 
             <button
               type="submit"
+              data-testid="login-submit-button"
               disabled={loading}
               className="w-full rounded-lg bg-blue-600 py-2 font-semibold text-white transition hover:bg-blue-700 disabled:bg-blue-400"
             >

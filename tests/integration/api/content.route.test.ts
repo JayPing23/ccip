@@ -161,9 +161,36 @@ describe('content routes', () => {
       'PUBLIC',
       [],
       'user-1',
+      undefined,
       undefined
     );
     expect(response.status).toBe(201);
     await expect(response.json()).resolves.toEqual({ data: content, error: null });
+  });
+
+  it('passes tags through when creating content', async () => {
+    mockedGetCurrentUser.mockResolvedValue(editorUser);
+    mockedCreateContent.mockResolvedValue(content);
+
+    const response = await POST(
+      buildRequest('http://localhost/api/content', 'POST', {
+        title: 'Campus Advisory',
+        description: 'Classes are suspended in the afternoon due to weather.',
+        visibility: 'PUBLIC',
+        tags: ['emergency'],
+      })
+    );
+
+    expect(mockedCreateContent).toHaveBeenCalledWith(
+      'Campus Advisory',
+      'Classes are suspended in the afternoon due to weather.',
+      'DRAFT',
+      'PUBLIC',
+      [],
+      'user-1',
+      undefined,
+      ['emergency']
+    );
+    expect(response.status).toBe(201);
   });
 });

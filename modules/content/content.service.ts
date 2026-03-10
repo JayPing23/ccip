@@ -3,13 +3,17 @@
  * Handles all database interactions for the content module
  */
 
-import { createServerSupabaseClient } from '@/shared/lib/supabase-server';
+import { createServerSupabaseClient, createServiceRoleClient } from '@/shared/lib/supabase-server';
 import type { IContent } from '@/shared/types/database.types';
 import { appendUuidToSlug, generateSlug } from '@/shared/utils/slugify';
 
 interface ManagedContentFilters {
   status?: IContent['status'];
   visibility?: IContent['visibility'];
+}
+
+function isMissingTagsColumnError(error: { message?: string } | null | undefined): boolean {
+  return /column\s+content\.tags\s+does\s+not\s+exist/i.test(error?.message ?? '');
 }
 
 /**
@@ -106,7 +110,8 @@ export async function createContent(
   visibility: string,
   orgIds: string[],
   userId: string,
-  scheduledAt?: string | null
+  scheduledAt?: string | null,
+  tags?: IContent['tags']
 ) {
   const supabase = await createServerSupabaseClient();
 
@@ -120,20 +125,32 @@ export async function createContent(
   }
 
   // Create content
-  const { data: contentData, error: contentError } = await supabase
-    .from('content')
-    .insert({
-      title,
-      body,
-      slug,
-      status,
-      visibility,
-      author_id: userId,
-      scheduled_at: scheduledAt || null,
-      published_at: status === 'PUBLISHED' ? new Date().toISOString() : null,
-    })
-    .select()
-    .single();
+  const insertPayload = {
+    title,
+    body,
+    slug,
+    status,
+    visibility,
+    author_id: userId,
+    scheduled_at: scheduledAt || null,
+    published_at: status === 'PUBLISHED' ? new Date().toISOString() : null,
+    ...(tags && tags.length > 0 ? { tags } : {}),
+  };
+
+  let insertResult = await supabase.from('content').insert(insertPayload).select().single();
+
+  if (
+    insertResult.error &&
+    tags &&
+    tags.length > 0 &&
+    isMissingTagsColumnError(insertResult.error)
+  ) {
+    const fallbackPayload = { ...insertPayload };
+    delete fallbackPayload.tags;
+    insertResult = await supabase.from('content').insert(fallbackPayload).select().single();
+  }
+
+  const { data: contentData, error: contentError } = insertResult;
 
   if (contentError) throw new Error(contentError.message);
   const content = contentData as IContent;
@@ -163,26 +180,41 @@ export async function createContent(
  * Automatically creates audit log entry
  */
 export async function updateContent(contentId: string, updates: Partial<IContent>, userId: string) {
-  const supabase = await createServerSupabaseClient();
+  const supabase = createServiceRoleClient();
 
   // Get before state for audit log
   const before = await getContentById(contentId);
   if (!before) throw new Error('Content not found');
 
-  // Set updated_at
-  updates.updated_at = new Date().toISOString();
+  const nextUpdates: Partial<IContent> = {
+    ...updates,
+    updated_at: new Date().toISOString(),
+  };
 
   // If transitioning to PUBLISHED, set published_at
   if (updates.status === 'PUBLISHED' && before.status !== 'PUBLISHED') {
-    updates.published_at = new Date().toISOString();
+    nextUpdates.published_at = new Date().toISOString();
   }
 
-  const { data, error } = await supabase
+  let updateResult = await supabase
     .from('content')
-    .update(updates)
+    .update(nextUpdates)
     .eq('id', contentId)
     .select()
     .single();
+
+  if (updateResult.error && 'tags' in nextUpdates && isMissingTagsColumnError(updateResult.error)) {
+    const fallbackUpdates = { ...nextUpdates };
+    delete fallbackUpdates.tags;
+    updateResult = await supabase
+      .from('content')
+      .update(fallbackUpdates)
+      .eq('id', contentId)
+      .select()
+      .single();
+  }
+
+  const { data, error } = updateResult;
 
   if (error) throw new Error(error.message);
   const content = data as IContent;
@@ -198,7 +230,7 @@ export async function updateContent(contentId: string, updates: Partial<IContent
  * Sets deleted_at timestamp, does not remove from DB
  */
 export async function deleteContent(contentId: string, userId: string) {
-  const supabase = await createServerSupabaseClient();
+  const supabase = createServiceRoleClient();
 
   const before = await getContentById(contentId);
   if (!before) throw new Error('Content not found');
@@ -342,7 +374,7 @@ async function logAuditEvent(
   before: object | null,
   after: object | null
 ): Promise<void> {
-  const supabase = await createServerSupabaseClient();
+  const supabase = createServiceRoleClient();
 
   const { error } = await supabase.from('audit_logs').insert({
     table_name: tableName,

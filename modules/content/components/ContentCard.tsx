@@ -56,12 +56,17 @@ export default function ContentCard({ content, onDelete, canEdit = false }: Cont
   };
 
   return (
-    <article className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm transition hover:shadow-md">
+    <article
+      data-testid="content-card"
+      className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm transition hover:shadow-md"
+    >
       {/* Header */}
       <div className="mb-4 flex items-start justify-between">
         <div className="flex-1">
           <h2 className="mb-2 text-xl font-semibold text-gray-900 hover:text-blue-600">
-            <Link href={`/content/${content.slug}`}>{content.title}</Link>
+            <Link href={`/content/${content.slug}`} data-testid="content-card-title">
+              {content.title}
+            </Link>
           </h2>
           <div className="flex flex-wrap gap-2">
             <span

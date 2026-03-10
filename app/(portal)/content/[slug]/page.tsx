@@ -7,12 +7,12 @@ import { canEditAnyContent, canEditOwnContent } from '@/shared/utils/permissions
 import { formatDistanceToNow } from 'date-fns';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { use, useEffect, useState } from 'react';
 
 interface ContentDetailPageProps {
-  params: {
+  params: Promise<{
     slug: string;
-  };
+  }>;
 }
 
 /**
@@ -20,6 +20,7 @@ interface ContentDetailPageProps {
  * Shows a single announcement in full view
  */
 export default function ContentDetailPage({ params }: ContentDetailPageProps) {
+  const { slug } = use(params);
   const router = useRouter();
   const {
     user,
@@ -45,7 +46,7 @@ export default function ContentDetailPage({ params }: ContentDetailPageProps) {
         setError(null);
 
         // Fetch the content
-        const contentRes = await fetch(`/api/content?slug=${params.slug}`);
+        const contentRes = await fetch(`/api/content?slug=${encodeURIComponent(slug)}`);
         if (!contentRes.ok) {
           throw new Error('Content not found');
         }
@@ -66,7 +67,7 @@ export default function ContentDetailPage({ params }: ContentDetailPageProps) {
     };
 
     void fetchContent();
-  }, [params.slug]);
+  }, [slug]);
 
   if (userLoading || loading) {
     return (

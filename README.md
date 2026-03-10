@@ -93,7 +93,7 @@ npm install
 
    If you want Phase 2 email delivery and digests, also set `RESEND_API_KEY`, `RESEND_FROM_EMAIL`, and `CRON_SECRET`.
 
-3. Run the foundation migrations described in [docs/SETUP_GUIDE.md](docs/SETUP_GUIDE.md), and make sure [supabase/migrations/002_content_full_text_search.sql](supabase/migrations/002_content_full_text_search.sql) is also applied for Phase 2 search.
+3. Run the foundation migrations described in [docs/SETUP_GUIDE.md](docs/SETUP_GUIDE.md), and apply the SQL files under [supabase/migrations](supabase/migrations) in order. The current runtime expects [supabase/migrations/002_content_full_text_search.sql](supabase/migrations/002_content_full_text_search.sql), [supabase/migrations/003_fix_content_update_policy.sql](supabase/migrations/003_fix_content_update_policy.sql), and [supabase/migrations/004_add_content_tags.sql](supabase/migrations/004_add_content_tags.sql).
 
 4. Start the development server:
 
@@ -135,6 +135,64 @@ Important current note: announcement-specific schemas, constants, services, and 
 - `npm run test:watch` — run tests in watch mode
 - `npm run test:coverage` — run coverage with thresholds
 - `npm run test:e2e` — run Cypress E2E tests
+- `npm run test:e2e:headless` — run Cypress E2E tests in headless mode
+- `npm run test:e2e:publish` — start a local app and run the headless content publish smoke test
+- `npm run test:e2e:publish:only` — run the headless content publish smoke test against an already-running app
+
+### Publish Smoke Test
+
+The publish smoke test logs in with a seeded editor account, creates a new draft announcement,
+publishes it from the management workspace, and verifies that it appears in the announcement
+feed.
+
+Credential environment variables are optional.
+
+If `CYPRESS_E2E_USER_EMAIL` and `CYPRESS_E2E_USER_PASSWORD` are set, Cypress uses them.
+If they are omitted, the smoke test seeds a local `DEPT_EDITOR` account automatically through a
+development-only route and signs in with that account.
+
+Optional environment variables:
+
+- `CYPRESS_BASE_URL` — defaults to `http://127.0.0.1:3000`
+- `CYPRESS_E2E_PUBLISH_SMOKE_TITLE_PREFIX` — defaults to `Cypress Publish Smoke`
+- `CYPRESS_E2E_PUBLISH_SMOKE_BODY` — overrides the default smoke-test body text
+- `E2E_EDITOR_EMAIL` — overrides the default local seeded editor email
+- `E2E_EDITOR_PASSWORD` — overrides the default local seeded editor password
+- `E2E_EDITOR_DISPLAY_NAME` — overrides the default local seeded editor display name
+
+`npm run test:e2e:publish` starts the app automatically on `http://127.0.0.1:3000`, waits for `/login`, runs the smoke test, and then shuts the app down.
+
+Use this when you want the single-command local or CI flow:
+
+```bash
+npm run test:e2e:publish
+```
+
+If you already have the app running, or you need to point Cypress at another URL via `CYPRESS_BASE_URL`, use:
+
+```bash
+npm run test:e2e:publish:only
+```
+
+### Cypress Cloud GitHub Actions
+
+The repo is configured for Cypress Cloud with project ID `ezz7q3`.
+
+Required GitHub Actions secrets:
+
+- `CYPRESS_RECORD_KEY`
+- `NEXT_PUBLIC_SUPABASE_URL`
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+- `SUPABASE_SERVICE_ROLE_KEY`
+
+Optional GitHub Actions secrets:
+
+- `NEXT_PUBLIC_INSTITUTIONAL_DOMAIN`
+- `E2E_EDITOR_EMAIL`
+- `E2E_EDITOR_PASSWORD`
+- `E2E_EDITOR_DISPLAY_NAME`
+
+The workflow file is `.github/workflows/cypress.yml` and records the publish smoke test to Cypress Cloud on push.
 
 ---
 

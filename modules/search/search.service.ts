@@ -14,6 +14,10 @@ function normalizeSearchQuery(query?: string): string {
   return query?.trim().toLowerCase() ?? '';
 }
 
+function isMissingTagsColumnError(error: { message?: string } | null | undefined): boolean {
+  return /column\s+content\.tags\s+does\s+not\s+exist/i.test(error?.message ?? '');
+}
+
 function getMatchedFields(
   content: IContent,
   normalizedQuery: string
@@ -157,10 +161,7 @@ export async function searchAnnouncements(
   // Build the base query — always filter to published, non-deleted content.
   let query = supabase
     .from('content')
-    .select(
-      'id, title, body, slug, status, visibility, author_id, tags, created_at, updated_at, published_at, scheduled_at, deleted_at',
-      { count: 'exact' }
-    )
+    .select('*', { count: 'exact' })
     .eq('status', 'PUBLISHED')
     .is('deleted_at', null);
 
@@ -207,7 +208,13 @@ export async function searchAnnouncements(
 
   const { data, count, error } = await query;
 
-  if (error) throw new Error(error.message);
+  if (error) {
+    if (params.tag && isMissingTagsColumnError(error)) {
+      return { items: [], total: 0, page, pageSize, totalPages: 0 };
+    }
+
+    throw new Error(error.message);
+  }
 
   const rows = (data ?? []) as IContent[];
   const normalizedQuery = params.query?.trim().toLowerCase() ?? '';

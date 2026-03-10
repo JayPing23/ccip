@@ -142,6 +142,7 @@ export default function ContentForm({
                 type="text"
                 id="title"
                 name="title"
+                data-testid="content-title-input"
                 value={formData.title}
                 onChange={handleChange}
                 placeholder="Enter announcement title"
@@ -166,6 +167,7 @@ export default function ContentForm({
               <textarea
                 id="body"
                 name="body"
+                data-testid="content-body-input"
                 value={formData.body}
                 onChange={handleBodyChange}
                 placeholder="Enter announcement content..."
@@ -299,6 +301,7 @@ export default function ContentForm({
               <button
                 type="button"
                 onClick={handleSaveDraft}
+                data-testid="content-save-draft-button"
                 disabled={isSubmitting || !formData.title || !formData.body}
                 className="flex-1 rounded-lg border border-gray-300 px-6 py-3 font-medium text-gray-700 transition-colors hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
               >
@@ -310,6 +313,7 @@ export default function ContentForm({
                   <button
                     type="button"
                     onClick={handlePublish}
+                    data-testid="content-publish-button"
                     disabled={isSubmitting || !formData.title || !formData.body}
                     className="flex-1 rounded-lg bg-blue-600 px-6 py-3 font-medium text-white transition-colors hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
                   >
@@ -331,6 +335,7 @@ export default function ContentForm({
                 <button
                   type="button"
                   onClick={handlePublish}
+                  data-testid="content-publish-button"
                   disabled={isSubmitting || !formData.title || !formData.body}
                   className="flex-1 rounded-lg bg-blue-600 px-6 py-3 font-medium text-white transition-colors hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
                 >
