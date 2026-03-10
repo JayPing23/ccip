@@ -1,5 +1,10 @@
-import { searchAnnouncements } from '@/modules/search/search.service';
-import type { AnnouncementSearchParams, SearchSortOption } from '@/modules/search/types';
+import { searchAnnouncements, searchArticles } from '@/modules/search/search.service';
+import type {
+  AnnouncementSearchParams,
+  ArticleSearchParams,
+  ArticleSearchSortOption,
+  SearchSortOption,
+} from '@/modules/search/types';
 import { SEARCH_DEFAULTS, SEARCH_SORT_OPTIONS } from '@/modules/search/types';
 import type { ContentTag } from '@/shared/constants/tags';
 import { CONTENT_TAGS } from '@/shared/constants/tags';
@@ -18,6 +23,12 @@ function parsePositiveInt(raw: string | null, fallback: number, max: number): nu
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
+
+    const type = searchParams.get('type') || 'announcements';
+
+    if (type === 'articles') {
+      return handleArticleSearch(searchParams);
+    }
 
     const q = searchParams.get('q')?.trim() || undefined;
     const status = searchParams.get('status') || undefined;
@@ -70,6 +81,33 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(successResponse(result), { status: 200 });
   } catch (error) {
     console.error('[Search Error]', error);
-    return internalError('Failed to search announcements');
+    return internalError('Failed to search');
   }
+}
+
+async function handleArticleSearch(searchParams: URLSearchParams) {
+  const q = searchParams.get('q')?.trim() || undefined;
+  const section = searchParams.get('section') || undefined;
+  const sort = searchParams.get('sort') || undefined;
+  const page = parsePositiveInt(searchParams.get('page'), 1, 1000);
+  const pageSize = parsePositiveInt(
+    searchParams.get('pageSize'),
+    SEARCH_DEFAULTS.PAGE_SIZE,
+    SEARCH_DEFAULTS.MAX_PAGE_SIZE
+  );
+
+  if (sort && !SEARCH_SORT_OPTIONS.includes(sort as SearchSortOption)) {
+    return validationError(`sort must be one of: ${SEARCH_SORT_OPTIONS.join(', ')}`);
+  }
+
+  const params: ArticleSearchParams = {
+    query: q,
+    section,
+    sort: (sort as ArticleSearchSortOption) ?? 'relevance',
+    page,
+    pageSize,
+  };
+
+  const result = await searchArticles(params);
+  return NextResponse.json(successResponse(result), { status: 200 });
 }

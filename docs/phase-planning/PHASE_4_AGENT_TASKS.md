@@ -2,6 +2,10 @@
 
 **Purpose:** Break Phase 4 into small implementation units so forum and moderation work stay safe, additive, and separate from earlier announcement and publication domains.
 
+**Status:** Active next phase
+**Dependency Note:** Phases 1-3 are complete in the current repo state.
+**Recommended First Task:** `P4-01`
+
 ---
 
 ## How To Use This File

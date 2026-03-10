@@ -2,9 +2,9 @@
 
 **Project:** Campus Communications & Interaction Platform (CCIP)
 **Last Updated:** March 10, 2026
-**Current Product Boundary:** Platform foundation + official announcements + Phase 2 shared discoverability services are implemented
-**Current Delivery Position:** Phase 2 shared-platform runtime is complete; Phase 3 publication work has not started
-**Next Recommended Entry Point:** `docs/phase-planning/PHASE_3_AGENT_TASKS.md` -> `P3-01`
+**Current Product Boundary:** Platform foundation + official announcements + Phase 2 shared discoverability services + Phase 3 student publication module are implemented
+**Current Delivery Position:** Phase 3 publication module is complete; Phase 4 forum work has not started
+**Next Recommended Entry Point:** `docs/phase-planning/PHASE_4_AGENT_TASKS.md` -> `P4-01`
 
 ---
 
@@ -44,9 +44,10 @@ What exists today is:
 - shared announcement search and feed/dashboard discoverability,
 - immediate email delivery and scheduled digest routes,
 - server-side rate limiting for high-risk announcement actions,
-- targeted tests for the new shared services.
+- targeted tests for the new shared services,
+- the student publication module with article workflow, Campus News pages, notifications, and search integration.
 
-Publication, forum, moderation, and external publishing remain planned additive modules.
+Forum, moderation, and external publishing remain planned additive modules.
 
 ---
 
@@ -90,7 +91,7 @@ The current architecture target remains a modular monolith:
 | Email delivery and digests | Implemented | Resend wrapper, publish-time fan-out, daily digest route, weekly digest route |
 | Rate limiting | Implemented | User-based create/publish throttling on announcement mutation routes |
 | Targeted Phase 2 tests | Implemented | Notification, digest, search helper, and rate-limit coverage exists |
-| Student publication | Planned | Phase 3 only, no runtime module yet |
+| Student publication | Implemented | Phase 3 complete: article CRUD, editorial workflow, API routes, notifications, search, dashboard surfacing, tests |
 | Community forum | Planned | Phase 4 only, no runtime module yet |
 | Moderation runtime | Planned | Must ship with forum, not as a loose follow-up |
 | External publishing | Planned | Phase 5, not current runtime scope |
@@ -190,11 +191,41 @@ Impact:
 
 ## What Is Not Implemented Yet
 
-- student publication runtime module,
 - community forum runtime module,
 - moderation runtime module,
 - external publishing workflows,
 - plug-and-play module registration/bootstrap infrastructure.
+
+---
+
+## Phase 3 Publication Module Completion
+
+### Summary
+
+Phase 3 delivered the student publication module as an additive domain that operates on its own `articles` and `article_authors` tables, separate from the announcements `content` table.
+
+### Work Completed
+
+- Publication types, constants, and Zod schemas (`modules/publication/types`, `constants`, `schemas`).
+- Additive PostgreSQL migration for `articles` and `article_authors` tables.
+- Publication service with full CRUD, editorial workflow (DRAFT → IN_REVIEW → APPROVED → PUBLISHED → ARCHIVED), byline author management, slug generation, and audit logging.
+- Publication API routes: `GET/POST /api/publication`, `GET/PATCH/DELETE /api/publication/[id]`, `POST /api/publication/[id]/submit`, `POST /api/publication/[id]/review`, `POST /api/publication/[id]/publish`.
+- Article editor hook (`useArticleEditor`) and form component (`ArticleForm`).
+- Editorial workflow panel (`PublicationWorkflowPanel`) with create/edit pages under `/news/create` and `/news/[slug]/edit`.
+- Campus News listing (`ArticleFeed`) and article detail pages under `/news` and `/news/[slug]`.
+- Dashboard surfacing: "Campus News" quick link, "Latest Campus News" section, and nav link in shared header.
+- Article publish notifications through the shared notification layer (`notifyOnArticlePublish`).
+- Article search integration through the shared `/api/search?type=articles` endpoint.
+- Publication-focused tests: service, schema validation, route integration, and article search tests.
+- Publication permission functions in `shared/utils/permissions.ts`.
+- Rate limiting for article create and publish actions.
+
+### Domain Boundaries Respected
+
+- No article storage in the `content` table.
+- No fake publication support in `/api/content/*`.
+- No refactor that collapses announcements and publication.
+- Notification and search integration uses the shared platform layer.
 
 ---
 

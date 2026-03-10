@@ -35,18 +35,21 @@ Do not continue extending Phase 1 by stuffing later product ideas into the exist
 
 Use the updated roadmap instead:
 
-1. Phase 2 for shared discoverability and notifications
-2. Phase 3 for publication
-3. Phase 4 for forum and moderation
-4. Phase 5 for platform hardening, analytics, and external distribution
+1. Phase 2 completed shared discoverability, notifications, digests, and hardening support.
+2. Phase 3 completed the student publication module.
+3. Phase 4 is the current next active phase for forum and moderation.
+4. Phase 5 remains the final hardening, analytics, and external distribution phase.
 
 ---
 
 ## If You Need An Active Prompt
 
-Use the task file for the active phase only:
+Use the task file for the current or upcoming active phase only:
 
-1. `docs/phase-planning/PHASE_2_AGENT_TASKS.md`
-2. `docs/phase-planning/PHASE_3_AGENT_TASKS.md`
-3. `docs/phase-planning/PHASE_4_AGENT_TASKS.md`
-4. `docs/phase-planning/PHASE_5_AGENT_TASKS.md`
+1. `docs/phase-planning/PHASE_4_AGENT_TASKS.md`
+2. `docs/phase-planning/PHASE_5_AGENT_TASKS.md`
+
+Completed execution records remain available in:
+
+- `docs/phase-planning/PHASE_2_AGENT_TASKS.md`
+- `docs/phase-planning/PHASE_3_AGENT_TASKS.md`

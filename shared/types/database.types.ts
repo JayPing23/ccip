@@ -122,3 +122,32 @@ export interface IContentExternalTarget {
   created_at: string;
   updated_at: string;
 }
+
+// ---------------------------------------------------------------------------
+// Publication domain (Phase 3 – additive, separate from announcements)
+// ---------------------------------------------------------------------------
+
+export interface IArticle {
+  id: string;
+  title: string;
+  body: string;
+  slug: string;
+  excerpt: string | null;
+  section: 'NEWS' | 'FEATURES' | 'OPINION' | 'EDITORIAL' | 'SPORTS' | 'CULTURE';
+  status: 'DRAFT' | 'IN_REVIEW' | 'APPROVED' | 'PUBLISHED' | 'ARCHIVED';
+  author_id: string;
+  reviewer_id: string | null;
+  review_note: string | null;
+  published_at: string | null;
+  deleted_at: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface IArticleAuthor {
+  article_id: string;
+  user_id: string;
+  role: 'primary' | 'contributor';
+  byline_name: string;
+  created_at: string;
+}

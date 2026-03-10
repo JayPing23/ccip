@@ -3,6 +3,8 @@
 import RecentAnnouncements from '@/modules/content/components/RecentAnnouncements';
 import { useContent } from '@/modules/content/hooks/useContent';
 import NotificationPreferences from '@/modules/notifications/components/NotificationPreferences';
+import RecentArticles from '@/modules/publication/components/RecentArticles';
+import type { IArticle } from '@/modules/publication/types';
 import Header from '@/shared/components/Header';
 import { useCurrentUser } from '@/shared/hooks/useCurrentUser';
 import type { IOrganization } from '@/shared/types/database.types';
@@ -35,6 +37,10 @@ export default function DashboardPage() {
   const [orgsLoading, setOrgsLoading] = useState(true);
   const [searchInput, setSearchInput] = useState('');
 
+  const [recentArticles, setRecentArticles] = useState<IArticle[]>([]);
+  const [articlesLoading, setArticlesLoading] = useState(true);
+  const [articlesError, setArticlesError] = useState<string | null>(null);
+
   useEffect(() => {
     if (!loading && !user) {
       router.replace('/login');
@@ -56,6 +62,27 @@ export default function DashboardPage() {
     }
 
     void fetchOrgs();
+  }, [user]);
+
+  useEffect(() => {
+    if (!user) return;
+
+    async function fetchArticles() {
+      try {
+        setArticlesLoading(true);
+        setArticlesError(null);
+        const res = await fetch('/api/publication?limit=5');
+        if (!res.ok) throw new Error('Failed to load articles');
+        const json = await res.json();
+        setRecentArticles(json.data ?? []);
+      } catch (err) {
+        setArticlesError(err instanceof Error ? err.message : 'Failed to load articles');
+      } finally {
+        setArticlesLoading(false);
+      }
+    }
+
+    void fetchArticles();
   }, [user]);
 
   const handleSearch = useCallback(
@@ -158,6 +185,16 @@ export default function DashboardPage() {
             </p>
           </Link>
 
+          <Link
+            href="/news"
+            className="rounded-lg border border-gray-200 bg-white p-5 shadow-sm transition hover:shadow-md"
+          >
+            <h3 className="text-sm font-semibold text-gray-900">Campus News</h3>
+            <p className="mt-1 text-sm text-gray-500">
+              Read student articles, features, and editorials.
+            </p>
+          </Link>
+
           {canCreateAnnouncements && (
             <Link
               href="/content/create"
@@ -190,6 +227,17 @@ export default function DashboardPage() {
             </Link>
           </div>
           <RecentAnnouncements items={recentItems} loading={contentLoading} error={contentError} />
+        </section>
+
+        {/* Latest campus news */}
+        <section className="mb-10 rounded-xl bg-white p-6 shadow-sm">
+          <div className="mb-4 flex items-center justify-between">
+            <h2 className="text-lg font-semibold text-gray-900">Latest Campus News</h2>
+            <Link href="/news" className="text-sm font-medium text-blue-600 hover:text-blue-700">
+              View all &rarr;
+            </Link>
+          </div>
+          <RecentArticles items={recentArticles} loading={articlesLoading} error={articlesError} />
         </section>
 
         {/* Notification preferences */}

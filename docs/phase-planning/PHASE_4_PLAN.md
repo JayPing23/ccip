@@ -1,9 +1,11 @@
 # CCIP Phase 4 Plan
 
 **Phase Name:** Community Forum & Moderation
-**Status:** Planned
+**Status:** Ready to Start
 **Execution Model:** One micro-task per agent run
 **Last Updated:** March 10, 2026
+
+**Recommended Entry Point:** `docs/phase-planning/PHASE_4_AGENT_TASKS.md` -> `P4-01`
 
 ---
 

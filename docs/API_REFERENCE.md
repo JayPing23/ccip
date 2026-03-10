@@ -1,6 +1,6 @@
 # CCIP API Reference
 
-**Scope:** Current platform foundation, official announcements, and Phase 2 shared discoverability services
+**Scope:** Current platform foundation, official announcements, Phase 2 shared discoverability services, and Phase 3 student publication module
 **Last Updated:** March 10, 2026
 
 ---
@@ -13,7 +13,8 @@ This document describes the API surface that exists for the current implementati
 2. users, roles, and organizations,
 3. official announcements through the current `content` module,
 4. notifications, notification preferences, and search,
-5. admin stats and digest cron utilities.
+5. admin stats and digest cron utilities,
+6. student publication through the `publication` module.
 
 Important rule:
 
@@ -189,11 +190,44 @@ Supports organization listing and update flows for the current institutional hie
 
 ---
 
+### Publication
+
+- `GET /api/publication`
+  Query params: `slug`, `managed`, `status`, `section`, `limit`, `offset`
+  Returns published articles by default. Use `?slug=...` for single article lookup. Use `?managed=true` for editorial workspace (requires auth).
+- `POST /api/publication`
+  Creates a new article draft. Requires editor role. Rate-limited.
+- `GET /api/publication/[id]`
+  Returns article by ID.
+- `PATCH /api/publication/[id]`
+  Updates article fields.
+- `DELETE /api/publication/[id]`
+  Soft-deletes an article.
+- `POST /api/publication/[id]/submit`
+  Submits article for editorial review (DRAFT → IN_REVIEW).
+- `POST /api/publication/[id]/review`
+  Approves or requests revision for an article in review.
+  Body: `{ action: 'approve' | 'request_revision', review_note?: string }`
+- `POST /api/publication/[id]/publish`
+  Publishes or archives an article.
+  Body: `{ action: 'publish' | 'archive' }`
+
+Implementation notes:
+
+- Publication routes use the `articles` table, separate from announcements.
+- Article creation and publish actions are rate-limited.
+- Publishing an article triggers notification fan-out via `notifyOnArticlePublish`.
+
+### Search (extended)
+
+- `GET /api/search`
+  Query params: `type` (default: `announcements`, optionally `articles`), `q`, `section`, `status`, `visibility`, `tag`, `org`, `sort`, `page`, `pageSize`
+  When `type=articles`, searches published articles by query and section.
+
 ## Planned Future Endpoint Families
 
-These are intentionally separate from the current announcements API:
+These are intentionally separate from the existing APIs:
 
-- `/api/publication/*`
 - `/api/forum/*`
 - `/api/moderation/*`
 

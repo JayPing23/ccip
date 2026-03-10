@@ -72,3 +72,15 @@ export const contentPublishLimiter = createRateLimiter({
   limit: 5,
   windowMs: 60_000,
 });
+
+/** Article creation: 10 requests per minute per user. */
+export const articleCreateLimiter = createRateLimiter({
+  limit: 10,
+  windowMs: 60_000,
+});
+
+/** Article publish: 5 requests per minute per user. */
+export const articlePublishLimiter = createRateLimiter({
+  limit: 5,
+  windowMs: 60_000,
+});

@@ -1,7 +1,7 @@
 # CCIP Phase 1 Checklist
 
 **Phase Name:** Platform Foundation & Official Announcements
-**Status:** Complete as the current implemented core
+**Status:** Complete historical foundation phase
 **Last Updated:** March 10, 2026
 
 ---
@@ -12,7 +12,7 @@ Ship the trusted institutional communication layer first and use it as the techn
 
 This phase is intentionally narrower than the long-term product vision. It covers the platform foundation and the official announcements module only.
 
-Phase 1 delivers the first pillar of the platform, not the whole product vision. Publication, forum, and broader shared-platform features are intentionally deferred so the foundation stays clean.
+Phase 1 delivered the first pillar of the platform, not the whole product vision. Publication, forum, and broader shared-platform features were intentionally deferred at that point so the foundation stayed clean.
 
 ---
 
@@ -78,22 +78,24 @@ Those are deferred to later phases on purpose.
 
 ---
 
-## Next Phase
+## Roadmap Position Now
 
-Move to Phase 2:
+Phase 1 remains complete as the historical base layer of the project.
 
-1. notifications,
-2. search and discoverability,
-3. shared home/feed improvements,
-4. rate limiting and platform hardening.
+Since this phase closed, the project has also completed:
 
-Supporting roadmap docs:
+1. Phase 2 shared notifications, search, discoverability, digests, and rate limiting.
+2. Phase 3 student publication as a separate additive domain module.
 
-- `docs/phase-planning/PHASE_2_PLAN.md`
-- `docs/phase-planning/PHASE_2_AGENT_TASKS.md`
-- `docs/phase-planning/PHASE_3_PLAN.md`
+Current active planning entry point:
+
 - `docs/phase-planning/PHASE_4_PLAN.md`
+- `docs/phase-planning/PHASE_4_AGENT_TASKS.md`
+
+Later roadmap docs:
+
 - `docs/phase-planning/PHASE_5_PLAN.md`
+- `docs/phase-planning/PHASE_5_AGENT_TASKS.md`
 
 ---
 

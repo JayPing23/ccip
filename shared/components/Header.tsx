@@ -29,6 +29,7 @@ interface HeaderProps {
 const DEFAULT_NAV_LINKS: HeaderLink[] = [
   { href: '/dashboard', label: 'Dashboard' },
   { href: '/feed', label: 'Announcements' },
+  { href: '/news', label: 'Campus News' },
 ];
 
 export default function Header({

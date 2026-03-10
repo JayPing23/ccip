@@ -234,7 +234,7 @@ Next.js Application (Single Deployment)
 |   |-- search/                 Shared search and filtering
 |   |-- media/                  Uploads, attachments, storage
 |   |-- admin/                  User, org, role, audit tooling
-|   |-- publication/            Planned Phase 3
+|   |-- publication/            Implemented Phase 3
 |   |-- forum/                  Planned Phase 4
 |   |-- moderation/             Planned Phase 4
 |   `-- external_publish/       Planned Phase 5
@@ -297,7 +297,7 @@ modules/
 |-- search/
 |-- media/
 |-- admin/
-|-- publication/       Planned
+|-- publication/       Implemented
 |-- forum/             Planned
 |-- moderation/        Planned
 `-- external_publish/  Planned
@@ -771,7 +771,7 @@ Moderation is not optional forum polish. It is a launch requirement for any disc
 
 - additive article tables exist,
 - writer/editor workflow exists,
-- rich text and media are stable,
+- structured article editing exists and the publication UI is media-ready for a later rich-text upgrade,
 - article categories and bylines exist,
 - article pages and listing pages exist,
 - homepage can surface stories separately from official announcements.

@@ -1,7 +1,8 @@
-const { defineConfig } = require('cypress');
+import { defineConfig } from 'cypress';
 
-module.exports = defineConfig({
+export default defineConfig({
   projectId: 'ezz7q3',
+  allowCypressEnv: false,
   video: false,
   screenshotOnRunFailure: true,
   viewportWidth: 1440,

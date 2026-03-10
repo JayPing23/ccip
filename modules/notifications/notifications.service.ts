@@ -9,7 +9,7 @@ import type {
 } from '@/modules/notifications/types';
 import { NOTIFICATION_DEFAULTS } from '@/modules/notifications/types';
 import type { DigestItem } from '@/shared/lib/resend';
-import { buildPublishEmailHtml, sendEmail } from '@/shared/lib/resend';
+import { buildArticlePublishEmailHtml, buildPublishEmailHtml, sendEmail } from '@/shared/lib/resend';
 import { createServerSupabaseClient } from '@/shared/lib/supabase-server';
 import type {
   IContent,
@@ -362,6 +362,103 @@ export async function notifyOnPublish(content: IContent): Promise<void> {
           html,
         }).catch((err) => {
           console.error(`[notifyOnPublish] Email to ${to} failed:`, err);
+        })
+      )
+    );
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Article publish notification fan-out
+// ---------------------------------------------------------------------------
+
+/**
+ * Create in-app notifications and send immediate emails for a newly published
+ * campus news article.  Mirrors the `notifyOnPublish` pattern but operates on
+ * the publication domain and links to `/news/<slug>` instead of `/content/<slug>`.
+ */
+export async function notifyOnArticlePublish(article: {
+  id: string;
+  title: string;
+  slug: string;
+  author_id: string;
+}): Promise<void> {
+  const supabase = await createServerSupabaseClient();
+
+  const { data: users, error: usersErr } = await supabase
+    .from('users')
+    .select('id, email')
+    .neq('id', article.author_id);
+
+  if (usersErr) {
+    console.error('[notifyOnArticlePublish] Failed to fetch users:', usersErr.message);
+    return;
+  }
+
+  if (!users || users.length === 0) return;
+
+  const userIds = users.map((u: { id: string }) => u.id);
+  const { data: prefs } = await supabase
+    .from('notification_preferences')
+    .select('user_id, in_app_enabled, email_enabled, email_digest')
+    .in('user_id', userIds);
+
+  const prefMap = new Map<string, NotificationPreferenceSnapshot>();
+  for (const p of prefs ?? []) {
+    prefMap.set(p.user_id as string, {
+      in_app_enabled: p.in_app_enabled as boolean,
+      email_enabled: p.email_enabled as boolean,
+      email_digest: p.email_digest as INotificationPreference['email_digest'],
+    });
+  }
+
+  const notificationText = `New campus news: ${article.title}`;
+  const inAppRows: Array<{
+    user_id: string;
+    content_id: string | null;
+    type: 'IN_APP';
+    notification_text: string;
+  }> = [];
+  const immediateEmailRecipients: string[] = [];
+
+  for (const user of users as Array<{ id: string; email: string }>) {
+    const decision = resolveNotificationDelivery(prefMap.get(user.id));
+
+    if (decision.shouldCreateInApp) {
+      inAppRows.push({
+        user_id: user.id,
+        content_id: null,
+        type: 'IN_APP',
+        notification_text: notificationText,
+      });
+    }
+
+    if (decision.shouldSendEmail && decision.emailDigest === 'IMMEDIATE') {
+      immediateEmailRecipients.push(user.email);
+    }
+  }
+
+  if (inAppRows.length > 0) {
+    const { error: insertErr } = await supabase.from('notifications').insert(inAppRows);
+    if (insertErr) {
+      console.error(
+        '[notifyOnArticlePublish] Failed to insert in-app notifications:',
+        insertErr.message
+      );
+    }
+  }
+
+  if (immediateEmailRecipients.length > 0) {
+    const html = buildArticlePublishEmailHtml(article.title, article.slug);
+
+    await Promise.allSettled(
+      immediateEmailRecipients.map((to) =>
+        sendEmail({
+          to,
+          subject: `New Campus News: ${article.title}`,
+          html,
+        }).catch((err) => {
+          console.error(`[notifyOnArticlePublish] Email to ${to} failed:`, err);
         })
       )
     );

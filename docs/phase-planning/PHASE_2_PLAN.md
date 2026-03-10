@@ -5,7 +5,7 @@
 **Execution Model:** One micro-task per agent run
 **Last Updated:** March 10, 2026
 
-**Completion Note:** All Phase 2 definition-of-done items are implemented in the current repo state. This file remains as the record of the phase scope and boundaries.
+**Completion Note:** All Phase 2 definition-of-done items are implemented in the current repo state. Phase 3 publication shipped on top of this shared layer; this file remains as the record of the phase scope and boundaries.
 
 ---
 
@@ -147,17 +147,17 @@ Run the full gate set:
 
 ---
 
-## Recommended Starting Point
+## Recommended Next Step
 
 Phase 2 is complete.
 
-Recommended next step: start with `P3-01` in `docs/phase-planning/PHASE_3_AGENT_TASKS.md`.
+Recommended next step: start with `P4-01` in `docs/phase-planning/PHASE_4_AGENT_TASKS.md`.
 
 Reason:
 
-- publication is the next additive domain module,
-- the shared notification, search, and discoverability layer is now in place,
-- the next architectural risk is protecting the boundary between announcements and publication.
+- Phase 3 publication is now complete on top of the shared platform work defined here,
+- the next unresolved product pillar is moderated forum runtime,
+- forum work depends on the shared services established here and proven reusable by Phase 3.
 
 ---
 
@@ -169,7 +169,7 @@ Phase 2 is complete only when:
 2. notifications and preferences are usable,
 3. shared search and filter infrastructure exists,
 4. no publication or forum logic has been incorrectly merged into the announcements module,
-5. the codebase is ready to begin the publication module,
+5. the codebase is ready to support later additive domain modules beyond announcements,
 6. the shared services introduced here are reusable by later platform modules rather than announcement-specific one-offs.
 
 ---

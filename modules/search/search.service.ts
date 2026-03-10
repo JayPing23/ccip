@@ -2,6 +2,10 @@ import type {
   AnnouncementSearchFilters,
   AnnouncementSearchParams,
   AnnouncementSearchResult,
+  ArticleSearchParams,
+  ArticleSearchResult,
+  ArticleSearchResultSet,
+  ArticleSearchSortOption,
   SearchQueryState,
   SearchResultSet,
   SearchSortOption,
@@ -9,6 +13,7 @@ import type {
 import { SEARCH_DEFAULTS } from '@/modules/search/types';
 import { createServerSupabaseClient } from '@/shared/lib/supabase-server';
 import type { IContent } from '@/shared/types/database.types';
+import type { IArticle } from '@/modules/publication/types';
 
 function normalizeSearchQuery(query?: string): string {
   return query?.trim().toLowerCase() ?? '';
@@ -222,6 +227,108 @@ export async function searchAnnouncements(
   const items: AnnouncementSearchResult[] = rows.map((content) => ({
     content,
     matchedFields: getMatchedFields(content, normalizedQuery),
+  }));
+
+  const total = count ?? 0;
+
+  return {
+    items,
+    total,
+    page,
+    pageSize,
+    totalPages: Math.ceil(total / pageSize),
+  };
+}
+
+// ---------------------------------------------------------------------------
+// Article (publication) search
+// ---------------------------------------------------------------------------
+
+function getArticleMatchedFields(
+  article: IArticle,
+  normalizedQuery: string
+): ArticleSearchResult['matchedFields'] {
+  if (!normalizedQuery) return [];
+
+  const matched: ArticleSearchResult['matchedFields'] = [];
+
+  if (article.title.toLowerCase().includes(normalizedQuery)) {
+    matched.push('title');
+  }
+  if (article.body.toLowerCase().includes(normalizedQuery)) {
+    matched.push('body');
+  }
+  if (article.excerpt?.toLowerCase().includes(normalizedQuery)) {
+    matched.push('excerpt');
+  }
+
+  return matched;
+}
+
+function resolveArticleSortOrder(sort: ArticleSearchSortOption): {
+  column: string;
+  ascending: boolean;
+} {
+  switch (sort) {
+    case 'newest':
+      return { column: 'published_at', ascending: false };
+    case 'oldest':
+      return { column: 'published_at', ascending: true };
+    case 'relevance':
+    default:
+      return { column: 'published_at', ascending: false };
+  }
+}
+
+/**
+ * Search published articles by query and optional section filter.
+ * Uses ILIKE-based filtering on title, body, and excerpt.
+ */
+export async function searchArticles(
+  params: ArticleSearchParams
+): Promise<ArticleSearchResultSet> {
+  const supabase = await createServerSupabaseClient();
+
+  const page = params.page ?? 1;
+  const pageSize = Math.min(
+    params.pageSize ?? SEARCH_DEFAULTS.PAGE_SIZE,
+    SEARCH_DEFAULTS.MAX_PAGE_SIZE
+  );
+  const sort = params.sort ?? 'relevance';
+  const from = (page - 1) * pageSize;
+  const to = from + pageSize - 1;
+
+  const normalizedQuery = params.query?.trim().toLowerCase() ?? '';
+
+  let query = supabase
+    .from('articles')
+    .select('*', { count: 'exact' })
+    .eq('status', 'PUBLISHED')
+    .is('deleted_at', null);
+
+  if (normalizedQuery) {
+    query = query.or(
+      `title.ilike.%${normalizedQuery}%,body.ilike.%${normalizedQuery}%,excerpt.ilike.%${normalizedQuery}%`
+    );
+  }
+
+  if (params.section) {
+    query = query.eq('section', params.section);
+  }
+
+  const { column, ascending } = resolveArticleSortOrder(sort);
+  query = query.order(column, { ascending, nullsFirst: false });
+  query = query.range(from, to);
+
+  const { data, count, error } = await query;
+
+  if (error) throw new Error(error.message);
+
+  const rows = (data ?? []) as IArticle[];
+
+  const items: ArticleSearchResult[] = rows.map((article) => ({
+    article,
+    matchedFields: getArticleMatchedFields(article, normalizedQuery),
   }));
 
   const total = count ?? 0;

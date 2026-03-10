@@ -1,5 +1,6 @@
 import type { ContentTag } from '@/shared/constants/tags';
 import type { IContent } from '@/shared/types/database.types';
+import type { IArticle } from '@/modules/publication/types';
 
 export type AnnouncementStatusFilter = IContent['status'] | 'ALL';
 export type AnnouncementVisibilityFilter = IContent['visibility'] | 'ALL';
@@ -39,6 +40,33 @@ export interface AnnouncementSearchParams extends AnnouncementSearchFilters {
   page?: number;
   pageSize?: number;
   sort?: SearchSortOption;
+}
+
+// ---------------------------------------------------------------------------
+// Article (publication) search types
+// ---------------------------------------------------------------------------
+
+export type ArticleSearchSortOption = 'relevance' | 'newest' | 'oldest';
+
+export interface ArticleSearchResult {
+  article: IArticle;
+  matchedFields: Array<'title' | 'body' | 'excerpt'>;
+}
+
+export interface ArticleSearchResultSet {
+  total: number;
+  items: ArticleSearchResult[];
+  page: number;
+  pageSize: number;
+  totalPages: number;
+}
+
+export interface ArticleSearchParams {
+  query?: string;
+  section?: string;
+  page?: number;
+  pageSize?: number;
+  sort?: ArticleSearchSortOption;
 }
 
 export const SEARCH_SORT_OPTIONS: readonly SearchSortOption[] = [

@@ -98,6 +98,60 @@ export function canCrossPost(role: Role): boolean {
   return CONTENT_ADMINISTRATION_ROLES.includes(role);
 }
 
+// ---------------------------------------------------------------------------
+// Publication (Phase 3) permissions
+// ---------------------------------------------------------------------------
+
+/**
+ * Check if a user can create publication articles (campus news).
+ * All editor roles can draft articles.
+ */
+export function canCreateArticle(role: Role): boolean {
+  return CONTENT_EDITOR_ROLES.includes(role);
+}
+
+/**
+ * Check if a user can edit their own articles.
+ */
+export function canEditOwnArticle(role: Role): boolean {
+  return CONTENT_EDITOR_ROLES.includes(role);
+}
+
+/**
+ * Check if a user can edit any article (editorial oversight).
+ */
+export function canEditAnyArticle(role: Role): boolean {
+  return CONTENT_ADMINISTRATION_ROLES.includes(role);
+}
+
+/**
+ * Check if a user can review / approve articles.
+ */
+export function canReviewArticle(role: Role): boolean {
+  return CONTENT_ADMINISTRATION_ROLES.includes(role);
+}
+
+/**
+ * Check if a user can publish approved articles.
+ */
+export function canPublishArticle(role: Role): boolean {
+  return CONTENT_ADMINISTRATION_ROLES.includes(role);
+}
+
+/**
+ * Check if a user can delete (soft-delete) their own articles.
+ */
+export function canDeleteOwnArticle(role: Role): boolean {
+  return CONTENT_EDITOR_ROLES.includes(role);
+}
+
+/**
+ * Check if a user can delete any article.
+ */
+export function canDeleteAnyArticle(role: Role): boolean {
+  return role === ROLES.SUPER_ADMIN;
+}
+
 /**
  * Check if a user can access the announcement management workspace.
  */

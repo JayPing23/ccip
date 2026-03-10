@@ -6,7 +6,7 @@ CCIP is a modular campus platform for three related experiences:
 2. Student publication content such as campus news, features, and opinion pieces.
 3. A moderated forum where students and faculty can discuss campus issues.
 
-The current codebase implements the shared platform foundation, the official announcements module, and the Phase 2 shared discoverability layer. Publication and forum capabilities remain planned as additive modules, not as rewrites of the existing announcement system.
+The current codebase implements the shared platform foundation, the official announcements module, the Phase 2 shared discoverability layer, and the Phase 3 student publication module. Forum capabilities remain planned as an additive module, not as a rewrite of the existing system.
 
 ---
 
@@ -18,7 +18,7 @@ The current codebase implements the shared platform foundation, the official ann
 - Search and discoverability are live: PostgreSQL full-text search support, `/api/search`, URL-driven filters, dashboard quick search, recent announcements, and a searchable feed.
 - Immediate publish emails and daily/weekly digests are implemented; they require the email and cron environment variables documented in `.env.example`.
 - User-based rate limiting protects announcement create and publish actions, and targeted tests now exist for notifications, search helpers, digests, and rate limiting.
-- Student publication is the next major domain module.
+- Student publication module is implemented: article CRUD, editorial workflow, campus news pages, notifications, and search integration.
 - Forum and moderation ship later, together.
 
 ---
@@ -62,9 +62,12 @@ Additional roadmap detail for later phases lives in `docs/phase-planning/PHASE_3
 - `search`
 - `media`
 
+### Implemented Domain Modules (Phase 3)
+
+- `publication` — campus news articles with editorial workflow
+
 ### Planned Domain Modules
 
-- `publication`
 - `forum`
 - `moderation`
 - `external_publish`
@@ -103,7 +106,7 @@ npm run dev
 
 5. Open `http://localhost:3000`.
 
-Note: current setup provisions the platform foundation, official announcements, notifications, search, and shared discoverability. Publication and forum tables remain future additive migrations.
+Note: current setup provisions the platform foundation, official announcements, notifications, search, shared discoverability, and the student publication module. Forum tables remain a future additive migration.
 
 ---
 
@@ -230,7 +233,7 @@ The current API reference covers:
 - search,
 - digest cron utilities.
 
-Publication and forum endpoint families are planned and will be documented separately when those modules are introduced.
+Publication endpoint families are now documented in the API reference. Forum endpoint families are planned and will be documented when that module is introduced.
 
 ---
 

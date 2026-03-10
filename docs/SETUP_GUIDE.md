@@ -1,6 +1,6 @@
 # CCIP — Foundation Setup Guide
 
-Complete step-by-step instructions to set up Supabase, Google OAuth, environment variables, database migrations, and seed data for the current platform foundation and official announcements module. Optional Phase 2 search and email-delivery settings are documented alongside the foundation setup. **Estimated time: 90 minutes total.**
+Complete step-by-step instructions to set up Supabase, Google OAuth, environment variables, database migrations, and seed data for the current CCIP runtime: platform foundation, official announcements, Phase 2 shared services, and the Phase 3 student publication module. **Estimated time: 90 minutes total.**
 
 ---
 
@@ -10,11 +10,13 @@ This guide provisions the currently implemented base of CCIP:
 
 1. platform foundation,
 2. official announcements,
-3. admin and RBAC groundwork.
+3. admin and RBAC groundwork,
+4. shared notifications and search,
+5. student publication tables and runtime support.
 
 Optional Phase 2 capabilities depend on the additive search migration and, for email delivery, the environment variables documented in [../.env.example](../.env.example).
 
-Student publication and forum features are future additive modules and are not part of this setup guide yet.
+Forum, moderation, and external publishing remain future additive modules and are not part of this setup guide yet.
 
 1. **Create Supabase Project** (~15 min)
 2. **Configure Google OAuth** (~20 min)
@@ -763,9 +765,9 @@ Ready in XXXms
 ✅ **The current CCIP foundation is now set up!** You can now:
 
 1. **Work on the implemented announcements and shared services** — See `CCIP_PROJECT_PROPOSAL.md` for the current implementation boundary
-2. **Start Phase 3 next** — Publication is the next additive domain module after the completed Phase 2 shared-service layer
-3. **Keep future modules additive** — Publication and forum continue as separate modules
-4. **Write and run tests** — Use `npm test` and `npm run test:coverage`
+2. **Start Phase 4 next** — Forum and moderation are the next additive domain modules after completed publication work
+3. **Keep future modules additive** — Forum and external publishing should remain separate from announcements and publication
+4. **Write and run tests** — Use `npm test`, `npm run test:coverage`, and `npm run test:e2e:publish`
 
 For ongoing development tips, see [CONTRIBUTING.md](../CONTRIBUTING.md).
 
