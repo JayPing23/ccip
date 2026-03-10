@@ -30,6 +30,7 @@ const DEFAULT_NAV_LINKS: HeaderLink[] = [
   { href: '/dashboard', label: 'Dashboard' },
   { href: '/feed', label: 'Announcements' },
   { href: '/news', label: 'Campus News' },
+  { href: '/forum', label: 'Forum' },
 ];
 
 export default function Header({
@@ -55,8 +56,17 @@ export default function Header({
   }
 
   return (
-    <header className="sticky top-0 z-40 bg-white shadow">
-      <nav className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4">
+    <header className="sticky top-0 z-40 bg-white shadow" role="banner">
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:rounded-lg focus:bg-blue-600 focus:px-4 focus:py-2 focus:text-white"
+      >
+        Skip to main content
+      </a>
+      <nav
+        className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4"
+        aria-label="Main navigation"
+      >
         <Link href={brandHref} className="text-xl font-bold text-gray-900">
           {brandLabel}
         </Link>

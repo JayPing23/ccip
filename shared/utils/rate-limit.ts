@@ -102,3 +102,9 @@ export const forumReportCreateLimiter = createRateLimiter({
   limit: 5,
   windowMs: 300_000,
 });
+
+/** External publish creation: 10 requests per minute per user. */
+export const externalPublishCreateLimiter = createRateLimiter({
+  limit: 10,
+  windowMs: 60_000,
+});

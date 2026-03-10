@@ -13,6 +13,7 @@ const NAV_ITEMS = [
   { href: '/admin/roles', label: 'Roles', icon: '🔑' },
   { href: '/admin/content', label: 'Content', icon: '📰' },
   { href: '/admin/moderation', label: 'Moderation', icon: '🛡️' },
+  { href: '/admin/retention', label: 'Retention', icon: '♻️' },
 ];
 
 /**
@@ -60,7 +61,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         </div>
 
         {/* Nav */}
-        <nav className="mt-4 space-y-1 px-3">
+        <nav className="mt-4 space-y-1 px-3" aria-label="Admin navigation">
           {NAV_ITEMS.map((item) => {
             const isActive = pathname.startsWith(item.href);
             return (
@@ -118,6 +119,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           <button
             onClick={() => setSidebarOpen(true)}
             className="rounded-md p-2 text-gray-500 hover:bg-gray-100 lg:hidden"
+            aria-label="Open sidebar navigation"
           >
             ☰
           </button>

@@ -1,6 +1,6 @@
 # CCIP — Foundation Setup Guide
 
-Complete step-by-step instructions to set up Supabase, Google OAuth, environment variables, database migrations, and seed data for the current CCIP runtime: platform foundation, official announcements, Phase 2 shared services, and the Phase 3 student publication module. **Estimated time: 90 minutes total.**
+Complete step-by-step instructions to set up Supabase, Google OAuth, environment variables, database migrations, and seed data for the current CCIP runtime: platform foundation, official announcements, Phase 2 shared services, Phase 3 student publication, Phase 4 forum & moderation, and Phase 5 analytics, retention & external distribution. **Estimated time: 90 minutes total.**
 
 ---
 
@@ -12,11 +12,13 @@ This guide provisions the currently implemented base of CCIP:
 2. official announcements,
 3. admin and RBAC groundwork,
 4. shared notifications and search,
-5. student publication tables and runtime support.
+5. student publication tables and runtime support,
+6. forum and moderation tables,
+7. analytics, retention, and external distribution tables.
 
 Optional Phase 2 capabilities depend on the additive search migration and, for email delivery, the environment variables documented in [../.env.example](../.env.example).
 
-Forum and moderation are implemented in Phase 4; their schema migrations should be applied in order with the rest. External publishing remains a future additive module.
+All five implementation phases are complete. Apply all migrations (001 through 009) in the order listed below.
 
 1. **Create Supabase Project** (~15 min)
 2. **Configure Google OAuth** (~20 min)
@@ -585,7 +587,7 @@ CREATE POLICY "read_external_targets_admin" ON content_external_targets FOR SELE
 ### 4c. Verify All Tables Created
 
 1. In the Supabase dashboard, go to **"Database → Tables"**
-2. You should see all 10 tables:
+2. You should see all 10 foundation tables:
    - ✅ roles
    - ✅ organizations
    - ✅ users
@@ -597,11 +599,18 @@ CREATE POLICY "read_external_targets_admin" ON content_external_targets FOR SELE
    - ✅ notification_preferences
    - ✅ content_external_targets
 
-3. Click on each table to verify columns and indexes are correct
+3. After applying the additive migrations (001–009 under `supabase/migrations/`), you will also see:
+   - ✅ articles, article_authors (Phase 3, migration 005)
+   - ✅ forum_categories, forum_threads, forum_replies, forum_reactions, moderation_reports, moderation_actions, user_restrictions (Phase 4, migrations 006–007)
+   - ✅ content_views, analytics_daily_snapshots, retention_policies (Phase 5, migration 008)
+   - ✅ Additional columns on content_external_targets (Phase 5, migration 009)
+
+4. Click on each table to verify columns and indexes are correct
 
 **✅ Checklist:**
-- [ ] All 10 SQL migrations executed successfully
-- [ ] All 10 tables created (visible in Tables view)
+- [ ] All 10 foundation SQL migrations executed successfully
+- [ ] All foundation tables created (visible in Tables view)
+- [ ] All 9 additive migrations (001–009) applied in order
 - [ ] No errors in Supabase SQL Editor
 - [ ] Each table has correct columns and indexes
 
@@ -762,12 +771,13 @@ Ready in XXXms
 
 ## What's Next?
 
-✅ **The current CCIP foundation is now set up!** You can now:
+✅ **The full CCIP platform is now set up!** All five phases are implemented. You can now:
 
-1. **Work on the implemented announcements and shared services** — See `CCIP_PROJECT_PROPOSAL.md` for the current implementation boundary
-2. **Start Phase 4 next** — Forum and moderation are the next additive domain modules after completed publication work
-3. **Keep future modules additive** — Forum and external publishing should remain separate from announcements and publication
-4. **Write and run tests** — Use `npm test`, `npm run test:coverage`, and `npm run test:e2e:publish`
+1. **Use the implemented platform** — Announcements, publication, forum, moderation, analytics, retention, and external distribution are all operational
+2. **Configure external API keys** — Set `FACEBOOK_APP_ID` and `FACEBOOK_APP_SECRET` in `.env.local` when ready to enable real external distribution
+3. **Set up scheduled jobs** — Configure external cron triggers for `/api/cron/digests/daily` and `/api/cron/digests/weekly`
+4. **Keep future modules additive** — Any new features should add their own tables, routes, and modules
+5. **Write and run tests** — Use `npm test`, `npm run test:coverage`, and `npm run test:e2e:publish`
 
 For ongoing development tips, see [CONTRIBUTING.md](../CONTRIBUTING.md).
 
@@ -799,4 +809,4 @@ npm test              # Run unit tests
 
 ---
 
-*CCIP Foundation Setup Guide | Last Updated: March 10, 2026*
+*CCIP Foundation Setup Guide | Last Updated: March 11, 2026*

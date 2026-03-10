@@ -2,6 +2,8 @@
 
 import RecentAnnouncements from '@/modules/content/components/RecentAnnouncements';
 import { useContent } from '@/modules/content/hooks/useContent';
+import RecentThreads from '@/modules/forum/components/RecentThreads';
+import type { IForumThread } from '@/modules/forum/types';
 import NotificationPreferences from '@/modules/notifications/components/NotificationPreferences';
 import RecentArticles from '@/modules/publication/components/RecentArticles';
 import type { IArticle } from '@/modules/publication/types';
@@ -40,6 +42,10 @@ export default function DashboardPage() {
   const [recentArticles, setRecentArticles] = useState<IArticle[]>([]);
   const [articlesLoading, setArticlesLoading] = useState(true);
   const [articlesError, setArticlesError] = useState<string | null>(null);
+
+  const [recentThreads, setRecentThreads] = useState<IForumThread[]>([]);
+  const [threadsLoading, setThreadsLoading] = useState(true);
+  const [threadsError, setThreadsError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!loading && !user) {
@@ -83,6 +89,27 @@ export default function DashboardPage() {
     }
 
     void fetchArticles();
+  }, [user]);
+
+  useEffect(() => {
+    if (!user) return;
+
+    async function fetchThreads() {
+      try {
+        setThreadsLoading(true);
+        setThreadsError(null);
+        const res = await fetch('/api/forum/threads?limit=5');
+        if (!res.ok) throw new Error('Failed to load threads');
+        const json = await res.json();
+        setRecentThreads(json.data ?? []);
+      } catch (err) {
+        setThreadsError(err instanceof Error ? err.message : 'Failed to load threads');
+      } finally {
+        setThreadsLoading(false);
+      }
+    }
+
+    void fetchThreads();
   }, [user]);
 
   const handleSearch = useCallback(
@@ -143,22 +170,21 @@ export default function DashboardPage() {
     <div className="min-h-screen bg-gray-50">
       <Header user={user} actions={actions} />
 
-      <main className="mx-auto max-w-4xl px-4 py-8">
+      <main id="main-content" className="mx-auto max-w-4xl px-4 py-8">
         {/* Hero / welcome section with quick search */}
         <section className="mb-10 rounded-xl bg-white p-8 shadow-sm">
           <p className="text-sm font-semibold tracking-[0.2em] text-blue-600 uppercase">
             Welcome back, {user.display_name}
           </p>
-          <h1 className="mt-2 text-3xl font-bold text-gray-900">Campus Announcements</h1>
+          <h1 className="mt-2 text-3xl font-bold text-gray-900">Campus Hub</h1>
           <p className="mt-2 max-w-2xl text-gray-600">
-            Stay up to date with the latest official campus notices. Search or browse the full feed
-            to find what you need.
+            Stay up to date with official announcements, campus news, and community discussions.
           </p>
 
           <form onSubmit={handleSearch} className="mt-6 flex gap-3">
             <input
               type="search"
-              placeholder="Search announcements…"
+              placeholder="Search announcements, articles, discussions…"
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
               className="min-w-0 flex-1 rounded-lg border border-gray-300 px-4 py-2 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
@@ -192,6 +218,16 @@ export default function DashboardPage() {
             <h3 className="text-sm font-semibold text-gray-900">Campus News</h3>
             <p className="mt-1 text-sm text-gray-500">
               Read student articles, features, and editorials.
+            </p>
+          </Link>
+
+          <Link
+            href="/forum"
+            className="rounded-lg border border-gray-200 bg-white p-5 shadow-sm transition hover:shadow-md"
+          >
+            <h3 className="text-sm font-semibold text-gray-900">Community Forum</h3>
+            <p className="mt-1 text-sm text-gray-500">
+              Join discussions and connect with the campus community.
             </p>
           </Link>
 
@@ -238,6 +274,17 @@ export default function DashboardPage() {
             </Link>
           </div>
           <RecentArticles items={recentArticles} loading={articlesLoading} error={articlesError} />
+        </section>
+
+        {/* Recent forum discussions */}
+        <section className="mb-10 rounded-xl bg-white p-6 shadow-sm">
+          <div className="mb-4 flex items-center justify-between">
+            <h2 className="text-lg font-semibold text-gray-900">Recent Discussions</h2>
+            <Link href="/forum" className="text-sm font-medium text-blue-600 hover:text-blue-700">
+              View all &rarr;
+            </Link>
+          </div>
+          <RecentThreads items={recentThreads} loading={threadsLoading} error={threadsError} />
         </section>
 
         {/* Notification preferences */}

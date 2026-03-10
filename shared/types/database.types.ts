@@ -113,11 +113,13 @@ export interface IMediaAttachment {
 export interface IContentExternalTarget {
   id: string;
   content_id: string;
+  content_type: 'ANNOUNCEMENT' | 'ARTICLE';
   platform: 'facebook' | 'instagram';
   external_post_id: string | null;
   status: 'PENDING' | 'POSTED' | 'FAILED';
   error_log: string | null;
   retry_count: number;
+  max_retries: number;
   next_retry_at: string | null;
   created_at: string;
   updated_at: string;
@@ -239,4 +241,44 @@ export interface IUserRestriction {
   expires_at: string | null;
   revoked_at: string | null;
   created_at: string;
+}
+
+// ---------------------------------------------------------------------------
+// Analytics domain (Phase 5 – platform-wide metrics and reporting)
+// ---------------------------------------------------------------------------
+
+export interface IContentView {
+  id: string;
+  content_type: 'ANNOUNCEMENT' | 'ARTICLE' | 'THREAD';
+  content_id: string;
+  user_id: string | null;
+  viewed_at: string;
+}
+
+export interface IAnalyticsDailySnapshot {
+  id: string;
+  snapshot_date: string;
+  total_users: number;
+  active_users: number;
+  new_users: number;
+  announcements_published: number;
+  articles_published: number;
+  forum_threads_created: number;
+  forum_replies_created: number;
+  content_views: number;
+  created_at: string;
+}
+
+// ---------------------------------------------------------------------------
+// Retention domain (Phase 5 – content lifecycle management)
+// ---------------------------------------------------------------------------
+
+export interface IRetentionPolicy {
+  id: string;
+  content_type: 'ANNOUNCEMENT' | 'ARTICLE' | 'THREAD';
+  stale_after_days: number;
+  auto_archive_after_days: number | null;
+  enabled: boolean;
+  created_at: string;
+  updated_at: string;
 }

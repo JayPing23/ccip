@@ -1,6 +1,9 @@
 /** @jest-environment node */
 
-import { articleCreateSchema, articleUpdateSchema } from '@/modules/publication/schemas/article.schema';
+import {
+  articleCreateSchema,
+  articleUpdateSchema,
+} from '@/modules/publication/schemas/article.schema';
 
 describe('article.schema – validation', () => {
   describe('articleCreateSchema', () => {

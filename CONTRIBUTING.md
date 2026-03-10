@@ -59,11 +59,14 @@ npm test              # All tests pass
 6. Create hooks: `modules/my-module/hooks/*.ts`
 7. Create tests: `modules/my-module/**/*.test.ts`
 
+Existing domain modules to reference for patterns: `content` (announcements), `publication` (articles), `forum` (threads/replies), `moderation` (reports/actions), `external_publish` (distribution targets), `admin` (analytics/retention).
+
 ## Phasing
 
-- Do not implement Phase N+ features while in Phase N-1
-- Use `// TODO: Phase N` comments for deferred features
-- Complete Definition of Done for current phase before moving to next
+- All five implementation phases (foundation, shared services, publication, forum, and hardening) are complete.
+- Future work should remain additive: new tables, new route families, new modules.
+- Use `// TODO: Future` comments for deferred features.
+- Complete Definition of Done for any new work before starting the next item.
 
 ## Questions?
 
@@ -71,4 +74,4 @@ See `CCIP_PROJECT_PROPOSAL.md` for architecture, naming conventions, and coding 
 
 ---
 
-*CCIP Contributing Guide | Last Updated: March 4, 2026*
+*CCIP Contributing Guide | Last Updated: March 11, 2026*

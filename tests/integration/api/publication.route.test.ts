@@ -7,8 +7,8 @@ import {
   getManagedArticles,
   getPublishedArticles,
 } from '@/modules/publication/publication.service';
-import { getCurrentUser } from '@/modules/users/users.service';
 import type { IArticle } from '@/modules/publication/types';
+import { getCurrentUser } from '@/modules/users/users.service';
 import type { IUser } from '@/shared/types/database.types';
 import { NextRequest } from 'next/server';
 

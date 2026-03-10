@@ -1,10 +1,10 @@
 # CCIP Implementation Log & Delivery Tracker
 
 **Project:** Campus Communications & Interaction Platform (CCIP)
-**Last Updated:** March 10, 2026
-**Current Product Boundary:** Platform foundation + official announcements + Phase 2 shared discoverability services + Phase 3 student publication module + Phase 4 community forum & moderation are implemented
-**Current Delivery Position:** Phase 4 forum and moderation module is complete; Phase 5 hardening work has not started
-**Next Recommended Entry Point:** `docs/phase-planning/PHASE_5_AGENT_TASKS.md` -> `P5-01`
+**Last Updated:** March 11, 2026
+**Current Product Boundary:** Platform foundation + official announcements + Phase 2 shared discoverability services + Phase 3 student publication module + Phase 4 community forum & moderation + Phase 5 analytics, retention & external distribution are implemented
+**Current Delivery Position:** Phase 5 complete
+**Next Recommended Entry Point:** Operational deployment and monitoring
 
 ---
 
@@ -50,9 +50,12 @@ What exists today is:
 - the moderation module with reports, moderation actions, user restrictions, and a moderator queue,
 - forum-specific rate limiting on thread creation, reply creation, and report creation,
 - active user restriction checks that block restricted users from posting,
-- forum and moderation integration and safety-critical tests.
-
-External publishing remains a planned additive module.
+- forum and moderation integration and safety-critical tests,
+- analytics and admin reporting with content view tracking and daily snapshots,
+- content lifecycle management with retention policies, stale content detection, and batch archiving,
+- external distribution service for announcements and articles to Facebook and Instagram (stub with retry handling),
+- security hardening with response headers, accessibility skip links, and ARIA navigation labels,
+- cross-module tests for analytics, retention, and external publish.
 
 ---
 
@@ -69,7 +72,7 @@ The current architecture target remains a modular monolith:
 - one Next.js deployment,
 - clear domain boundaries inside `modules/`,
 - shared platform concerns in `shared/`,
-- additive future modules for publication and forum,
+- all five phases implemented: foundation, announcements, publication, forum, and hardening,
 - no attempt yet to build a plug-in runtime or auto-registration system.
 
 ### Domain Boundary Rules
@@ -101,8 +104,12 @@ The current architecture target remains a modular monolith:
 | Moderation runtime | Implemented | Phase 4 complete: reports, moderation queue, moderation actions, user restrictions, moderator-only access |
 | Forum rate limiting | Implemented | Thread creation, reply creation, and report creation rate-limited; active restrictions block posting |
 | Forum & moderation tests | Implemented | Integration tests for thread, reply, report, and moderation routes; unit tests for forum search and rate limiters |
-| External publishing | Planned | Phase 5, not current runtime scope |
-| External publishing | Planned | Phase 5, not current runtime scope |
+| Analytics & reporting | Implemented | P5-02–P5-04: types, schema, service, admin route |
+| Content lifecycle | Implemented | P5-06–P5-07: retention utilities, policies, admin retention route & UI |
+| Unified homepage | Implemented | P5-05: cross-module dashboard with search, all pillars |
+| External publishing | Implemented | P5-08–P5-09: service, types, routes, retry handling |
+| Platform hardening | Implemented | P5-10: security headers, accessibility, rate limiting |
+| Cross-module tests | Implemented | P5-11: analytics, retention, external publish tests |
 
 ---
 
@@ -199,8 +206,41 @@ Impact:
 
 ## What Is Not Implemented Yet
 
-- external publishing workflows,
-- plug-and-play module registration/bootstrap infrastructure.
+- Real external platform API integrations (Facebook Graph API, Instagram API) — current service is a stub with retry handling.
+- Plug-and-play module registration/bootstrap infrastructure.
+- Distributed rate limiting (current is in-memory per-process).
+- Analytics snapshot generation cron job (snapshots table exists but needs scheduled population).
+
+---
+
+## Phase 5 Hardening & Platform Maturity Completion
+
+### Summary
+
+Phase 5 delivered analytics, content lifecycle management, external distribution, platform hardening, and comprehensive test coverage.
+
+### Work Completed (P5-07 through P5-12)
+
+- Admin retention API routes: GET/PATCH/POST `/api/admin/retention` for policy management, candidate review, and batch archiving.
+- Admin retention UI page under `/admin/retention` with policy editing, stale content summary, and archive actions.
+- External publish types and service: `modules/external_publish/types/index.ts`, `modules/external_publish/external_publish.service.ts` with create, get, mark posted/failed, retry, and cancel operations.
+- External publish API routes: GET/POST `/api/external-publish`, GET/PATCH `/api/external-publish/[id]` with rate limiting and permission checks.
+- Database migration `009_add_external_publish_columns.sql` for content_type and max_retries columns.
+- Updated `IContentExternalTarget` in database types to include content_type and max_retries fields.
+- Security headers via Next.js config: X-Content-Type-Options, X-Frame-Options, Referrer-Policy, Permissions-Policy, and API Cache-Control.
+- Accessibility improvements: skip-to-content link in Header, ARIA labels on navigation, main content landmark.
+- Rate limiting for external publish creation.
+- Integration tests: admin retention routes, external publish routes.
+- Unit tests: analytics service, external publish service, retention utilities.
+- Retention nav item added to admin sidebar.
+- Updated all documentation: IMPLEMENTATION_LOG, README, API_REFERENCE, .env.example.
+
+### Domain Boundaries Respected
+
+- No forum content in external distribution (announcements and articles only).
+- No new domain module creation.
+- No collapse of content abstractions.
+- All new routes use dedicated endpoint families.
 
 ---
 
@@ -277,7 +317,7 @@ Phase 3 delivered the student publication module as an additive domain that oper
 | Phase 2 | Shared Discoverability, Notifications & Experience | Complete | Implemented in the current repo state |
 | Phase 3 | Student Publication Module | Complete | Implemented publication module |
 | Phase 4 | Community Forum & Moderation | Complete | Implemented forum, moderation, notifications, search, rate limiting, tests |
-| Phase 5 | Unified Campus Platform Hardening | Planned | Full plan and task list documented |
+| Phase 5 | Unified Campus Platform Hardening | Complete | Analytics, retention, external publish, hardening, tests, docs |
 
 ---
 
@@ -306,23 +346,73 @@ Use these files together when resuming work:
 
 ---
 
+## Phase 5 Hardening Audit (P5-01)
+
+### Metrics Needs Identified
+
+| Category | Gap | Resolution |
+|---|---|---|
+| Content analytics | No view/engagement tracking tables exist | Add `content_views` and `analytics_daily_snapshots` tables |
+| User activity | Admin stats only return basic counts | Add time-series breakdown per module, active-user counts |
+| Forum engagement | No reaction/reply aggregate metrics | Include forum metrics in analytics snapshots |
+| Publication reach | No article view tracking | Unified view tracking covers articles and announcements |
+
+### Operational Gaps Identified
+
+| Area | Gap | Severity | Resolution |
+|---|---|---|---|
+| Rate limiting | In-memory only, not distributed | Low (single-process deployment) | Document limitation; acceptable for current scale |
+| Content retention | No lifecycle or archive enforcement | Medium | Add retention policy service and retention_policies table |
+| Dashboard completeness | Missing forum threads on homepage | Medium | Add forum section to unified dashboard |
+| Navigation | Header lacks Forum link | Low | Add Forum to default nav links |
+| Admin analytics | Only basic counts, no trends | Medium | Build analytics service with time-series support |
+| Content cleanup | No automated stale-content identification | Medium | Add retention utility for managed content lifecycle |
+
+### Hardening Readiness Confirmed
+
+| Area | Status | Notes |
+|---|---|---|
+| Auth & RBAC | Solid | Supabase auth + 4-role system + RLS on all 19 tables |
+| Audit logging | Solid | All mutations logged to immutable `audit_logs` table |
+| Soft deletes | Consistent | `deleted_at` pattern used across all content tables |
+| Notification system | Reusable | Shared service with fan-out, preferences, and digest support |
+| Search integration | Complete | Full-text search covers all 3 pillars via `/api/search` |
+| Domain boundaries | Clean | Each module owns its tables, routes, types, and service |
+| Permission system | Comprehensive | Centralized in `shared/utils/permissions.ts` |
+
+### Phase 5 Execution Plan
+
+1. **P5-02**: Add analytics and lifecycle type scaffolding — ✅ Complete
+2. **P5-03**: Add analytics and retention schema migration — ✅ Complete
+3. **P5-04**: Build analytics service and admin reporting endpoints — ✅ Complete
+4. **P5-05**: Build unified homepage with cross-module navigation — ✅ Complete
+5. **P5-06**: Build retention and lifecycle service methods — ✅ Complete
+6. **P5-07**: Admin retention routes and lifecycle tooling UI — ✅ Complete
+7. **P5-08**: Build external distribution service — ✅ Complete
+8. **P5-09**: Add external distribution routes, retry handling — ✅ Complete
+9. **P5-10**: Platform-wide hardening (security headers, accessibility, rate limiting) — ✅ Complete
+10. **P5-11**: Cross-module tests for analytics, retention, external publish — ✅ Complete
+11. **P5-12**: Documentation and environment reference updates — ✅ Complete
+
+---
+
 ## Immediate Next Recommended Actions
 
-1. Start formal Phase 5 execution with `P5-01` for unified campus platform hardening and analytics.
-2. Keep external publishing and distribution work additive to the existing modules.
-3. Reuse the shared notification, search, auth, and shell patterns introduced in earlier phases.
-4. Do not start external distribution work until forum and moderation are confirmed stable in production.
+1. Deploy the platform and configure external API keys for Facebook/Instagram integrations.
+2. Run the analytics and retention schema migrations (008, 009) in production.
+3. Set up external scheduling for digest cron routes and snapshot generation.
+4. Monitor retention policies and external publish targets through the admin UI.
 
 ---
 
 ## Notes For Future Sessions
 
-- Describe the current product as **platform foundation + official announcements + shared discoverability services + student publication + community forum & moderation**.
-- Do not claim that external publishing is already implemented.
+- Describe the current product as **platform foundation + official announcements + shared discoverability services + student publication + community forum & moderation + analytics + content lifecycle + external distribution**.
+- External publishing is implemented as a stub service with retry handling; real API integration requires FACEBOOK_APP_ID/SECRET configuration.
 - Treat notifications and search as reusable shared platform services now, not as scaffolding.
 - Prefer additive migrations and dedicated route families for every future domain module.
 - Update the proposal, README, API reference, and this tracker together when the implementation boundary changes.
 
 ---
 
-*Last updated: March 10, 2026 | CCIP — Campus Communications & Interaction Platform*
+*Last updated: March 11, 2026 | CCIP — Campus Communications & Interaction Platform*

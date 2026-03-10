@@ -6,7 +6,7 @@ CCIP is a modular campus platform for three related experiences:
 2. Student publication content such as campus news, features, and opinion pieces.
 3. A moderated forum where students and faculty can discuss campus issues.
 
-The current codebase implements the shared platform foundation, the official announcements module, the Phase 2 shared discoverability layer, the Phase 3 student publication module, and the Phase 4 community forum and moderation module. External distribution capabilities remain planned as an additive module.
+The current codebase implements the shared platform foundation, the official announcements module, the Phase 2 shared discoverability layer, the Phase 3 student publication module, the Phase 4 community forum and moderation module, and the Phase 5 analytics, content lifecycle, and external distribution capabilities.
 
 ---
 
@@ -21,6 +21,10 @@ The current codebase implements the shared platform foundation, the official ann
 - Student publication module is implemented: article CRUD, editorial workflow, campus news pages, notifications, and search integration.
 - Forum module is implemented: categories, threads, replies, reactions, reporting, notifications, search, and rate limiting.
 - Moderation module is implemented: report queue, moderation actions, user restrictions, and moderator-only access.
+- Analytics and reporting are implemented: content view tracking, daily snapshots, admin analytics endpoint.
+- Content lifecycle management is implemented: retention policies, stale content detection, batch archive, admin retention UI.
+- External distribution service is implemented: publish targets for announcements and articles to Facebook/Instagram, retry handling, admin status monitoring.
+- Security hardening is applied: security response headers, accessibility skip links, ARIA navigation labels.
 
 ---
 
@@ -72,9 +76,15 @@ Additional roadmap detail for later phases lives in `docs/phase-planning/PHASE_3
 - `forum` — community threads, replies, reactions, reporting, with rate limiting and search
 - `moderation` — report queue, moderation actions, user restrictions
 
+### Implemented Domain Modules (Phase 5)
+
+- `admin/analytics` — platform-wide metrics, content view tracking, daily snapshots
+- `external_publish` — external distribution service for announcements and articles with retry handling
+- Content lifecycle — retention policies, stale content detection, batch archiving
+
 ### Planned Domain Modules
 
-- `external_publish`
+- Real external API integrations (Facebook Graph API, Instagram API) — current external publish service is a stub with retry handling
 
 ---
 
@@ -100,7 +110,7 @@ npm install
 
    If you want Phase 2 email delivery and digests, also set `RESEND_API_KEY`, `RESEND_FROM_EMAIL`, and `CRON_SECRET`.
 
-3. Run the foundation migrations described in [docs/SETUP_GUIDE.md](docs/SETUP_GUIDE.md), and apply the SQL files under [supabase/migrations](supabase/migrations) in order. The current runtime expects [supabase/migrations/002_content_full_text_search.sql](supabase/migrations/002_content_full_text_search.sql), [supabase/migrations/003_fix_content_update_policy.sql](supabase/migrations/003_fix_content_update_policy.sql), and [supabase/migrations/004_add_content_tags.sql](supabase/migrations/004_add_content_tags.sql).
+3. Run the foundation migrations described in [docs/SETUP_GUIDE.md](docs/SETUP_GUIDE.md), and apply all SQL files under [supabase/migrations](supabase/migrations) in order (001 through 009).
 
 4. Start the development server:
 
@@ -110,7 +120,7 @@ npm run dev
 
 5. Open `http://localhost:3000`.
 
-Note: current setup provisions the platform foundation, official announcements, notifications, search, shared discoverability, the student publication module, and the forum and moderation module. Apply all SQL files under `supabase/migrations` in order.
+Note: current setup provisions the platform foundation, official announcements, notifications, search, shared discoverability, the student publication module, the forum and moderation module, and Phase 5 analytics, retention, and external distribution. Apply all SQL files under `supabase/migrations` in order (001 through 009).
 
 ---
 
@@ -237,7 +247,9 @@ The current API reference covers:
 - search,
 - digest cron utilities,
 - forum (categories, threads, replies, reactions, reports),
-- moderation (queue, actions, restrictions).
+- moderation (queue, actions, restrictions),
+- admin analytics and retention,
+- external distribution (publish targets, retry handling, status management).
 
 Publication, forum, and moderation endpoint families are now documented in the API reference.
 

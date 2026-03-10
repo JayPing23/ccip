@@ -80,7 +80,7 @@ CREATE INDEX IF NOT EXISTS idx_user_restrictions_user      ON user_restrictions 
 CREATE INDEX IF NOT EXISTS idx_user_restrictions_type      ON user_restrictions (restriction_type);
 CREATE INDEX IF NOT EXISTS idx_user_restrictions_issued_by ON user_restrictions (issued_by);
 CREATE INDEX IF NOT EXISTS idx_user_restrictions_active    ON user_restrictions (user_id)
-  WHERE revoked_at IS NULL AND (expires_at IS NULL OR expires_at > NOW());
+  WHERE revoked_at IS NULL;
 
 -- ============================================================================
 -- RLS policies for moderation_reports

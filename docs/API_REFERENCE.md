@@ -1,6 +1,7 @@
 # CCIP API Reference
 
-**Scope:** Current platform foundation, official announcements, Phase 2 shared discoverability services, Phase 3 student publication module, and Phase 4 community forum & moderation\n**Last Updated:** March 10, 2026", "oldString": "**Scope:** Current platform foundation, official announcements, Phase 2 shared discoverability services, and Phase 3 student publication module\n**Last Updated:** March 10, 2026
+**Scope:** Current platform foundation, official announcements, Phase 2 shared discoverability services, Phase 3 student publication module, Phase 4 community forum & moderation, and Phase 5 analytics, retention & external distribution
+**Last Updated:** March 11, 2026
 
 ---
 
@@ -12,10 +13,11 @@ This document describes the API surface that exists for the current implementati
 2. users, roles, and organizations,
 3. official announcements through the current `content` module,
 4. notifications, notification preferences, and search,
-5. admin stats and digest cron utilities,
+5. admin stats, digest cron utilities, analytics, and retention,
 6. student publication through the `publication` module,
 7. community forum through the `forum` module,
-8. moderation through the `moderation` module.
+8. moderation through the `moderation` module,
+9. external distribution through the `external_publish` module.
 
 Important rule:
 
@@ -117,6 +119,15 @@ Implementation notes:
 ### Admin
 
 - `GET /api/admin/stats`
+- `GET /api/admin/analytics`
+  Query params: `startDate`, `endDate`, `granularity` (`day` | `week` | `month`)
+  Returns analytics overview (aggregate counts) and trends (time-series). Admin only.
+- `GET /api/admin/retention`
+  Returns retention policies and stale content candidates. Admin only.
+- `PATCH /api/admin/retention`
+  Updates a retention policy. Body: `{ id, stale_after_days?, auto_archive_after_days?, enabled? }`. Admin only.
+- `POST /api/admin/retention`
+  Archives stale content by IDs. Body: `{ content_type, ids }`. Admin only.
 
 ---
 
@@ -313,11 +324,29 @@ Implementation notes:
 - Moderation action types: HIDE, LOCK, REMOVE, WARN.
 - Restriction types: MUTED, SUSPENDED, BANNED.
 
-## Planned Future Endpoint Families
+### External Distribution
 
-These are intentionally separate from the existing APIs:
+- `GET /api/external-publish`
+  Returns external publish summary (total, pending, posted, failed counts and targets). Requires cross-post permission.
 
-- `/api/external_publish/*`
+- `POST /api/external-publish`
+  Creates external publish targets. Rate-limited.
+  Body: `{ content_id, content_type, platforms }`. content_type must be ANNOUNCEMENT or ARTICLE. platforms: facebook, instagram.
+
+- `GET /api/external-publish/[id]`
+  Returns a single target by ID, or targets for a content item when `?by=content` is specified.
+
+- `PATCH /api/external-publish/[id]`
+  Updates a target. Body: `{ action }` where action is `mark_posted`, `mark_failed`, or `cancel`.
+  For `mark_posted`: also provide `external_post_id`.
+  For `mark_failed`: also provide `error_message`.
+
+Implementation notes:
+
+- External distribution only applies to announcements and articles. Forum content is never distributed externally.
+- POST is rate-limited (10/min per user).
+- The actual external platform API integration is a stub; targets are created and managed but not automatically posted.
+- Retry handling uses exponential backoff with configurable max retries (default 3).
 
 ---
 
