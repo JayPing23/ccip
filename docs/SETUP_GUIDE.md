@@ -16,7 +16,7 @@ This guide provisions the currently implemented base of CCIP:
 
 Optional Phase 2 capabilities depend on the additive search migration and, for email delivery, the environment variables documented in [../.env.example](../.env.example).
 
-Forum, moderation, and external publishing remain future additive modules and are not part of this setup guide yet.
+Forum and moderation are implemented in Phase 4; their schema migrations should be applied in order with the rest. External publishing remains a future additive module.
 
 1. **Create Supabase Project** (~15 min)
 2. **Configure Google OAuth** (~20 min)

@@ -84,3 +84,21 @@ export const articlePublishLimiter = createRateLimiter({
   limit: 5,
   windowMs: 60_000,
 });
+
+/** Forum thread creation: 5 requests per minute per user. */
+export const forumThreadCreateLimiter = createRateLimiter({
+  limit: 5,
+  windowMs: 60_000,
+});
+
+/** Forum reply creation: 10 requests per minute per user. */
+export const forumReplyCreateLimiter = createRateLimiter({
+  limit: 10,
+  windowMs: 60_000,
+});
+
+/** Forum report creation: 5 reports per 5 minutes per user. */
+export const forumReportCreateLimiter = createRateLimiter({
+  limit: 5,
+  windowMs: 300_000,
+});

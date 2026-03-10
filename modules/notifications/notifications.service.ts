@@ -9,7 +9,11 @@ import type {
 } from '@/modules/notifications/types';
 import { NOTIFICATION_DEFAULTS } from '@/modules/notifications/types';
 import type { DigestItem } from '@/shared/lib/resend';
-import { buildArticlePublishEmailHtml, buildPublishEmailHtml, sendEmail } from '@/shared/lib/resend';
+import {
+  buildArticlePublishEmailHtml,
+  buildPublishEmailHtml,
+  sendEmail,
+} from '@/shared/lib/resend';
 import { createServerSupabaseClient } from '@/shared/lib/supabase-server';
 import type {
   IContent,
@@ -551,4 +555,113 @@ export async function getDigestRecipients(cadence: DigestCadence): Promise<strin
   if (emailErr) throw new Error(emailErr.message);
 
   return (emailRows ?? []).map((r: { email: string }) => r.email);
+}
+
+// ---------------------------------------------------------------------------
+// Forum thread notification fan-out
+// ---------------------------------------------------------------------------
+
+/**
+ * Create in-app notifications for a newly created forum thread.
+ * Notifies all users (except the author) whose preferences allow in-app
+ * notifications.  Email delivery is intentionally omitted for forum threads
+ * to keep discussion-level noise separate from announcement / article emails.
+ */
+export async function notifyOnForumThread(thread: {
+  id: string;
+  title: string;
+  slug: string;
+  author_id: string;
+}): Promise<void> {
+  const supabase = await createServerSupabaseClient();
+
+  const { data: users, error: usersErr } = await supabase
+    .from('users')
+    .select('id')
+    .neq('id', thread.author_id);
+
+  if (usersErr) {
+    console.error('[notifyOnForumThread] Failed to fetch users:', usersErr.message);
+    return;
+  }
+
+  if (!users || users.length === 0) return;
+
+  const userIds = users.map((u: { id: string }) => u.id);
+  const { data: prefs } = await supabase
+    .from('notification_preferences')
+    .select('user_id, in_app_enabled')
+    .in('user_id', userIds);
+
+  const prefMap = new Map<string, boolean>();
+  for (const p of prefs ?? []) {
+    prefMap.set(p.user_id as string, p.in_app_enabled as boolean);
+  }
+
+  const notificationText = `New forum thread: ${thread.title}`;
+  const inAppRows: Array<{
+    user_id: string;
+    content_id: string | null;
+    type: 'IN_APP';
+    notification_text: string;
+  }> = [];
+
+  for (const user of users as Array<{ id: string }>) {
+    const inAppEnabled = prefMap.get(user.id) ?? true; // default on
+    if (inAppEnabled) {
+      inAppRows.push({
+        user_id: user.id,
+        content_id: null,
+        type: 'IN_APP',
+        notification_text: notificationText,
+      });
+    }
+  }
+
+  if (inAppRows.length > 0) {
+    const { error: insertErr } = await supabase.from('notifications').insert(inAppRows);
+    if (insertErr) {
+      console.error(
+        '[notifyOnForumThread] Failed to insert in-app notifications:',
+        insertErr.message
+      );
+    }
+  }
+}
+
+/**
+ * Create an in-app notification for the thread author when someone replies.
+ */
+export async function notifyOnForumReply(reply: {
+  thread_id: string;
+  thread_title: string;
+  thread_author_id: string;
+  reply_author_id: string;
+}): Promise<void> {
+  // Do not notify if the author replies to their own thread.
+  if (reply.thread_author_id === reply.reply_author_id) return;
+
+  const supabase = await createServerSupabaseClient();
+
+  // Check author preference
+  const { data: prefs } = await supabase
+    .from('notification_preferences')
+    .select('in_app_enabled')
+    .eq('user_id', reply.thread_author_id)
+    .limit(1);
+
+  const inAppEnabled = prefs && prefs.length > 0 ? (prefs[0].in_app_enabled as boolean) : true;
+
+  if (!inAppEnabled) return;
+
+  const { error: insertErr } = await supabase.from('notifications').insert({
+    user_id: reply.thread_author_id,
+    content_id: null,
+    type: 'IN_APP',
+    notification_text: `New reply on your thread: ${reply.thread_title}`,
+  });
+
+  if (insertErr) {
+    console.error('[notifyOnForumReply] Failed to insert notification:', insertErr.message);
+  }
 }

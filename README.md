@@ -6,7 +6,7 @@ CCIP is a modular campus platform for three related experiences:
 2. Student publication content such as campus news, features, and opinion pieces.
 3. A moderated forum where students and faculty can discuss campus issues.
 
-The current codebase implements the shared platform foundation, the official announcements module, the Phase 2 shared discoverability layer, and the Phase 3 student publication module. Forum capabilities remain planned as an additive module, not as a rewrite of the existing system.
+The current codebase implements the shared platform foundation, the official announcements module, the Phase 2 shared discoverability layer, the Phase 3 student publication module, and the Phase 4 community forum and moderation module. External distribution capabilities remain planned as an additive module.
 
 ---
 
@@ -19,7 +19,8 @@ The current codebase implements the shared platform foundation, the official ann
 - Immediate publish emails and daily/weekly digests are implemented; they require the email and cron environment variables documented in `.env.example`.
 - User-based rate limiting protects announcement create and publish actions, and targeted tests now exist for notifications, search helpers, digests, and rate limiting.
 - Student publication module is implemented: article CRUD, editorial workflow, campus news pages, notifications, and search integration.
-- Forum and moderation ship later, together.
+- Forum module is implemented: categories, threads, replies, reactions, reporting, notifications, search, and rate limiting.
+- Moderation module is implemented: report queue, moderation actions, user restrictions, and moderator-only access.
 
 ---
 
@@ -34,7 +35,7 @@ Start with these files:
 3. [docs/SETUP_GUIDE.md](docs/SETUP_GUIDE.md)
    Environment, Supabase, OAuth, and foundation migration setup.
 4. [docs/API_REFERENCE.md](docs/API_REFERENCE.md)
-   Current API surface for announcements, notifications, search, and digest routes.
+   Current API surface for announcements, notifications, search, digest, forum, and moderation routes.
 5. [docs/phase-planning/PHASE_1_CHECKLIST.md](docs/phase-planning/PHASE_1_CHECKLIST.md)
    Foundation and announcements phase record.
 6. [docs/phase-planning/PHASE_2_PLAN.md](docs/phase-planning/PHASE_2_PLAN.md)
@@ -66,10 +67,13 @@ Additional roadmap detail for later phases lives in `docs/phase-planning/PHASE_3
 
 - `publication` — campus news articles with editorial workflow
 
+### Implemented Domain Modules (Phase 4)
+
+- `forum` — community threads, replies, reactions, reporting, with rate limiting and search
+- `moderation` — report queue, moderation actions, user restrictions
+
 ### Planned Domain Modules
 
-- `forum`
-- `moderation`
 - `external_publish`
 
 ---
@@ -106,7 +110,7 @@ npm run dev
 
 5. Open `http://localhost:3000`.
 
-Note: current setup provisions the platform foundation, official announcements, notifications, search, shared discoverability, and the student publication module. Forum tables remain a future additive migration.
+Note: current setup provisions the platform foundation, official announcements, notifications, search, shared discoverability, the student publication module, and the forum and moderation module. Apply all SQL files under `supabase/migrations` in order.
 
 ---
 
@@ -121,7 +125,7 @@ tests/             Unit, integration, and E2E tests
 docs/              API reference and phase planning
 ```
 
-Important current note: `modules/content` is the official announcements module in the current codebase. Publication and forum should be added as separate modules rather than merged into `content`.
+Important current note: `modules/content` is the official announcements module in the current codebase. Publication, forum, and moderation are separate modules and should not be merged into `content`.
 
 Important current note: announcement-specific schemas, constants, services, and management UI now live under `modules/content`, while `shared/` stays focused on platform-level primitives such as permissions, shared shell components, notifications, search, and Supabase clients.
 
@@ -231,9 +235,11 @@ The current API reference covers:
 - official announcements,
 - notifications and notification preferences,
 - search,
-- digest cron utilities.
+- digest cron utilities,
+- forum (categories, threads, replies, reactions, reports),
+- moderation (queue, actions, restrictions).
 
-Publication endpoint families are now documented in the API reference. Forum endpoint families are planned and will be documented when that module is introduced.
+Publication, forum, and moderation endpoint families are now documented in the API reference.
 
 ---
 

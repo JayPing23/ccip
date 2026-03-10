@@ -1,8 +1,14 @@
-import { searchAnnouncements, searchArticles } from '@/modules/search/search.service';
+import {
+  searchAnnouncements,
+  searchArticles,
+  searchForumThreads,
+} from '@/modules/search/search.service';
 import type {
   AnnouncementSearchParams,
   ArticleSearchParams,
   ArticleSearchSortOption,
+  ForumThreadSearchParams,
+  ForumThreadSearchSortOption,
   SearchSortOption,
 } from '@/modules/search/types';
 import { SEARCH_DEFAULTS, SEARCH_SORT_OPTIONS } from '@/modules/search/types';
@@ -28,6 +34,10 @@ export async function GET(request: NextRequest) {
 
     if (type === 'articles') {
       return handleArticleSearch(searchParams);
+    }
+
+    if (type === 'forum') {
+      return handleForumThreadSearch(searchParams);
     }
 
     const q = searchParams.get('q')?.trim() || undefined;
@@ -109,5 +119,32 @@ async function handleArticleSearch(searchParams: URLSearchParams) {
   };
 
   const result = await searchArticles(params);
+  return NextResponse.json(successResponse(result), { status: 200 });
+}
+
+async function handleForumThreadSearch(searchParams: URLSearchParams) {
+  const q = searchParams.get('q')?.trim() || undefined;
+  const categoryId = searchParams.get('category_id') || undefined;
+  const sort = searchParams.get('sort') || undefined;
+  const page = parsePositiveInt(searchParams.get('page'), 1, 1000);
+  const pageSize = parsePositiveInt(
+    searchParams.get('pageSize'),
+    SEARCH_DEFAULTS.PAGE_SIZE,
+    SEARCH_DEFAULTS.MAX_PAGE_SIZE
+  );
+
+  if (sort && !SEARCH_SORT_OPTIONS.includes(sort as SearchSortOption)) {
+    return validationError(`sort must be one of: ${SEARCH_SORT_OPTIONS.join(', ')}`);
+  }
+
+  const params: ForumThreadSearchParams = {
+    query: q,
+    categoryId,
+    sort: (sort as ForumThreadSearchSortOption) ?? 'relevance',
+    page,
+    pageSize,
+  };
+
+  const result = await searchForumThreads(params);
   return NextResponse.json(successResponse(result), { status: 200 });
 }

@@ -2,8 +2,8 @@
 
 **Purpose:** Break Phase 4 into small implementation units so forum and moderation work stay safe, additive, and separate from earlier announcement and publication domains.
 
-**Status:** Active next phase
-**Dependency Note:** Phases 1-3 are complete in the current repo state.
+**Status:** Complete
+**Dependency Note:** Phases 1-4 are complete in the current repo state.
 **Recommended First Task:** `P4-01`
 
 ---
@@ -74,6 +74,18 @@ Before finishing:
 1. `P4-01` — audit forum and moderation readiness
 2. `P4-02` — add forum and moderation scaffolding
 3. `P4-03` — add forum schema
+
+---
+
+## Completion Record
+
+All 17 tasks (P4-01 through P4-17) are complete.
+
+- P4-01 through P4-13: forum and moderation service, API, hooks, and UI.
+- P4-14: notification fan-out and search integration for forum threads.
+- P4-15: rate limiting and restriction checks for thread, reply, and report creation.
+- P4-16: integration and unit tests for forum and moderation safety-critical flows.
+- P4-17: documentation updates to IMPLEMENTATION_LOG.md, API_REFERENCE.md, README.md, and this file.
 
 ---
 

@@ -1,6 +1,7 @@
 import type { ContentTag } from '@/shared/constants/tags';
 import type { IContent } from '@/shared/types/database.types';
 import type { IArticle } from '@/modules/publication/types';
+import type { IForumThread } from '@/modules/forum/types';
 
 export type AnnouncementStatusFilter = IContent['status'] | 'ALL';
 export type AnnouncementVisibilityFilter = IContent['visibility'] | 'ALL';
@@ -67,6 +68,33 @@ export interface ArticleSearchParams {
   page?: number;
   pageSize?: number;
   sort?: ArticleSearchSortOption;
+}
+
+// ---------------------------------------------------------------------------
+// Forum thread search types
+// ---------------------------------------------------------------------------
+
+export type ForumThreadSearchSortOption = 'relevance' | 'newest' | 'oldest';
+
+export interface ForumThreadSearchResult {
+  thread: IForumThread;
+  matchedFields: Array<'title' | 'body'>;
+}
+
+export interface ForumThreadSearchResultSet {
+  total: number;
+  items: ForumThreadSearchResult[];
+  page: number;
+  pageSize: number;
+  totalPages: number;
+}
+
+export interface ForumThreadSearchParams {
+  query?: string;
+  categoryId?: string;
+  page?: number;
+  pageSize?: number;
+  sort?: ForumThreadSearchSortOption;
 }
 
 export const SEARCH_SORT_OPTIONS: readonly SearchSortOption[] = [

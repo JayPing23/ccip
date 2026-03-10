@@ -2,9 +2,9 @@
 
 **Project:** Campus Communications & Interaction Platform (CCIP)
 **Last Updated:** March 10, 2026
-**Current Product Boundary:** Platform foundation + official announcements + Phase 2 shared discoverability services + Phase 3 student publication module are implemented
-**Current Delivery Position:** Phase 3 publication module is complete; Phase 4 forum work has not started
-**Next Recommended Entry Point:** `docs/phase-planning/PHASE_4_AGENT_TASKS.md` -> `P4-01`
+**Current Product Boundary:** Platform foundation + official announcements + Phase 2 shared discoverability services + Phase 3 student publication module + Phase 4 community forum & moderation are implemented
+**Current Delivery Position:** Phase 4 forum and moderation module is complete; Phase 5 hardening work has not started
+**Next Recommended Entry Point:** `docs/phase-planning/PHASE_5_AGENT_TASKS.md` -> `P5-01`
 
 ---
 
@@ -45,9 +45,14 @@ What exists today is:
 - immediate email delivery and scheduled digest routes,
 - server-side rate limiting for high-risk announcement actions,
 - targeted tests for the new shared services,
-- the student publication module with article workflow, Campus News pages, notifications, and search integration.
+- the student publication module with article workflow, Campus News pages, notifications, and search integration,
+- the community forum module with categories, threads, replies, reactions, notifications, and search integration,
+- the moderation module with reports, moderation actions, user restrictions, and a moderator queue,
+- forum-specific rate limiting on thread creation, reply creation, and report creation,
+- active user restriction checks that block restricted users from posting,
+- forum and moderation integration and safety-critical tests.
 
-Forum, moderation, and external publishing remain planned additive modules.
+External publishing remains a planned additive module.
 
 ---
 
@@ -92,8 +97,11 @@ The current architecture target remains a modular monolith:
 | Rate limiting | Implemented | User-based create/publish throttling on announcement mutation routes |
 | Targeted Phase 2 tests | Implemented | Notification, digest, search helper, and rate-limit coverage exists |
 | Student publication | Implemented | Phase 3 complete: article CRUD, editorial workflow, API routes, notifications, search, dashboard surfacing, tests |
-| Community forum | Planned | Phase 4 only, no runtime module yet |
-| Moderation runtime | Planned | Must ship with forum, not as a loose follow-up |
+| Community forum | Implemented | Phase 4 complete: categories, threads, replies, reactions, search, notifications, rate limiting, restriction checks |
+| Moderation runtime | Implemented | Phase 4 complete: reports, moderation queue, moderation actions, user restrictions, moderator-only access |
+| Forum rate limiting | Implemented | Thread creation, reply creation, and report creation rate-limited; active restrictions block posting |
+| Forum & moderation tests | Implemented | Integration tests for thread, reply, report, and moderation routes; unit tests for forum search and rate limiters |
+| External publishing | Planned | Phase 5, not current runtime scope |
 | External publishing | Planned | Phase 5, not current runtime scope |
 
 ---
@@ -191,10 +199,42 @@ Impact:
 
 ## What Is Not Implemented Yet
 
-- community forum runtime module,
-- moderation runtime module,
 - external publishing workflows,
 - plug-and-play module registration/bootstrap infrastructure.
+
+---
+
+## Phase 4 Forum & Moderation Module Completion
+
+### Summary
+
+Phase 4 delivered the community forum and moderation modules as additive domains operating on their own `forum_categories`, `forum_threads`, `forum_replies`, `forum_reactions`, `moderation_reports`, `moderation_actions`, and `user_restrictions` tables, separate from announcements and publication.
+
+### Work Completed
+
+- Forum types, constants, and service methods for categories, threads, replies, and reactions.
+- Moderation types, constants, and service methods for reports, queue review, moderation actions, and user restrictions.
+- Additive PostgreSQL migrations for forum and moderation tables.
+- Forum API routes: `GET/POST /api/forum/threads`, `GET/PATCH/DELETE /api/forum/threads/[id]`, `GET/POST /api/forum/threads/[id]/reply`, `GET/POST /api/forum/threads/[id]/react`, `POST /api/forum/threads/[id]/report`.
+- Forum categories route: `GET /api/forum/categories`.
+- Moderation API routes: `GET/PATCH /api/moderation/queue`, `GET/POST /api/moderation/actions`, `GET /api/moderation/reports`, `GET/POST/PATCH /api/moderation/restrictions`.
+- Forum hooks for client-side interaction: categories, threads, thread detail, create thread, create reply, toggle reaction, report content.
+- Forum UI components: category list, thread view, thread composer, reply composer, reaction bar, report dialog.
+- Moderation UI: moderation queue component.
+- Shared notification integration: `notifyOnForumThread` and `notifyOnForumReply` fan-out via the existing notification service.
+- Shared search integration: `searchForumThreads` via ILIKE on title and body, available at `/api/search?type=forum`.
+- Forum-specific rate limiting: thread creation (5/min), reply creation (10/min), report creation (5/5min).
+- Active user restriction checks: restricted users are blocked from creating threads and replies.
+- Forum permission functions: `canPostInForum` and `canModerate` in shared permissions.
+- Integration tests: forum thread routes, reply routes, report routes, moderation queue routes.
+- Unit tests: forum search service, forum rate limiters.
+
+### Domain Boundaries Respected
+
+- No forum storage in the `content` or `articles` tables.
+- No publication or announcement route changes.
+- Moderation ships with forum, not as a loose follow-up.
+- Notification and search integration uses the shared platform layer.
 
 ---
 
@@ -235,8 +275,8 @@ Phase 3 delivered the student publication module as an additive domain that oper
 |---|---|---|---|
 | Phase 1 | Platform Foundation & Official Announcements | Complete | Implemented product core |
 | Phase 2 | Shared Discoverability, Notifications & Experience | Complete | Implemented in the current repo state |
-| Phase 3 | Student Publication Module | Next | Recommended next entry point |
-| Phase 4 | Community Forum & Moderation | Planned | Full plan and task list documented |
+| Phase 3 | Student Publication Module | Complete | Implemented publication module |
+| Phase 4 | Community Forum & Moderation | Complete | Implemented forum, moderation, notifications, search, rate limiting, tests |
 | Phase 5 | Unified Campus Platform Hardening | Planned | Full plan and task list documented |
 
 ---
@@ -268,17 +308,17 @@ Use these files together when resuming work:
 
 ## Immediate Next Recommended Actions
 
-1. Start formal Phase 3 execution with `P3-01` and lock the publication boundary before any schema or workflow work begins.
-2. Keep publication data models and `/api/publication/*` routes separate from the current announcements module.
-3. Reuse the shared notification, search, auth, and shell patterns introduced in Phase 2 instead of duplicating them.
-4. Do not start forum runtime work until publication is stable and moderation remains bundled with the forum phase.
+1. Start formal Phase 5 execution with `P5-01` for unified campus platform hardening and analytics.
+2. Keep external publishing and distribution work additive to the existing modules.
+3. Reuse the shared notification, search, auth, and shell patterns introduced in earlier phases.
+4. Do not start external distribution work until forum and moderation are confirmed stable in production.
 
 ---
 
 ## Notes For Future Sessions
 
-- Describe the current product as **platform foundation + official announcements + shared discoverability services**.
-- Do not claim that publication or forum are already implemented.
+- Describe the current product as **platform foundation + official announcements + shared discoverability services + student publication + community forum & moderation**.
+- Do not claim that external publishing is already implemented.
 - Treat notifications and search as reusable shared platform services now, not as scaffolding.
 - Prefer additive migrations and dedicated route families for every future domain module.
 - Update the proposal, README, API reference, and this tracker together when the implementation boundary changes.

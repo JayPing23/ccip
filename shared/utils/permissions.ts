@@ -165,3 +165,17 @@ export function canAccessContentManager(role: Role): boolean {
 export function canViewContentAdministration(role: Role): boolean {
   return CONTENT_ADMINISTRATION_ROLES.includes(role);
 }
+
+// ---------------------------------------------------------------------------
+// Forum (Phase 4) permissions
+// ---------------------------------------------------------------------------
+
+/** Any authenticated user with a role can post in the forum. */
+export function canPostInForum(role: Role): boolean {
+  return Object.values(ROLES).includes(role);
+}
+
+/** Moderators: university editors and super admins. */
+export function canModerate(role: Role): boolean {
+  return CONTENT_ADMINISTRATION_ROLES.includes(role);
+}

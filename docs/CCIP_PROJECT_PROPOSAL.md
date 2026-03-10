@@ -235,8 +235,8 @@ Next.js Application (Single Deployment)
 |   |-- media/                  Uploads, attachments, storage
 |   |-- admin/                  User, org, role, audit tooling
 |   |-- publication/            Implemented Phase 3
-|   |-- forum/                  Planned Phase 4
-|   |-- moderation/             Planned Phase 4
+|   |-- forum/                  Implemented Phase 4
+|   |-- moderation/             Implemented Phase 4
 |   `-- external_publish/       Planned Phase 5
 |
 |-- shared/                     Types, utils, constants, UI primitives, clients
@@ -298,8 +298,8 @@ modules/
 |-- media/
 |-- admin/
 |-- publication/       Implemented
-|-- forum/             Planned
-|-- moderation/        Planned
+|-- forum/             Implemented
+|-- moderation/        Implemented
 `-- external_publish/  Planned
 ```
 

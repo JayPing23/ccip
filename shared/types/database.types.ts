@@ -151,3 +151,92 @@ export interface IArticleAuthor {
   byline_name: string;
   created_at: string;
 }
+
+// ---------------------------------------------------------------------------
+// Forum domain (Phase 4 – additive, separate from announcements/publication)
+// ---------------------------------------------------------------------------
+
+export interface IForumCategory {
+  id: string;
+  name: string;
+  slug: string;
+  description: string | null;
+  display_order: number;
+  created_at: string;
+}
+
+export interface IForumThread {
+  id: string;
+  category_id: string;
+  author_id: string;
+  title: string;
+  body: string;
+  slug: string;
+  status: 'OPEN' | 'LOCKED' | 'HIDDEN' | 'REMOVED';
+  pinned: boolean;
+  reply_count: number;
+  created_at: string;
+  updated_at: string;
+  deleted_at: string | null;
+}
+
+export interface IForumReply {
+  id: string;
+  thread_id: string;
+  author_id: string;
+  body: string;
+  status: 'VISIBLE' | 'HIDDEN' | 'REMOVED';
+  parent_reply_id: string | null;
+  created_at: string;
+  updated_at: string;
+  deleted_at: string | null;
+}
+
+export interface IForumReaction {
+  id: string;
+  user_id: string;
+  thread_id: string | null;
+  reply_id: string | null;
+  reaction_type: 'LIKE' | 'HELPFUL' | 'INSIGHTFUL';
+  created_at: string;
+}
+
+// ---------------------------------------------------------------------------
+// Moderation domain (Phase 4 – ships alongside forum, not after it)
+// ---------------------------------------------------------------------------
+
+export interface IModerationReport {
+  id: string;
+  reporter_id: string;
+  content_type: 'THREAD' | 'REPLY';
+  content_id: string;
+  reason: 'SPAM' | 'HARASSMENT' | 'MISINFORMATION' | 'OFF_TOPIC' | 'INAPPROPRIATE' | 'OTHER';
+  description: string | null;
+  status: 'PENDING' | 'REVIEWED' | 'DISMISSED' | 'ACTIONED';
+  reviewed_by: string | null;
+  reviewed_at: string | null;
+  created_at: string;
+}
+
+export interface IModerationAction {
+  id: string;
+  moderator_id: string;
+  report_id: string | null;
+  content_type: 'THREAD' | 'REPLY';
+  content_id: string;
+  action: 'HIDE' | 'LOCK' | 'REMOVE' | 'WARN';
+  reason: string;
+  created_at: string;
+}
+
+export interface IUserRestriction {
+  id: string;
+  user_id: string;
+  restriction_type: 'MUTED' | 'SUSPENDED' | 'BANNED';
+  reason: string;
+  issued_by: string;
+  starts_at: string;
+  expires_at: string | null;
+  revoked_at: string | null;
+  created_at: string;
+}

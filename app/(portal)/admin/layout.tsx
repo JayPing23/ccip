@@ -12,6 +12,7 @@ const NAV_ITEMS = [
   { href: '/admin/organizations', label: 'Organizations', icon: '🏢' },
   { href: '/admin/roles', label: 'Roles', icon: '🔑' },
   { href: '/admin/content', label: 'Content', icon: '📰' },
+  { href: '/admin/moderation', label: 'Moderation', icon: '🛡️' },
 ];
 
 /**

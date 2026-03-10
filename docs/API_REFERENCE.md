@@ -1,7 +1,6 @@
 # CCIP API Reference
 
-**Scope:** Current platform foundation, official announcements, Phase 2 shared discoverability services, and Phase 3 student publication module
-**Last Updated:** March 10, 2026
+**Scope:** Current platform foundation, official announcements, Phase 2 shared discoverability services, Phase 3 student publication module, and Phase 4 community forum & moderation\n**Last Updated:** March 10, 2026", "oldString": "**Scope:** Current platform foundation, official announcements, Phase 2 shared discoverability services, and Phase 3 student publication module\n**Last Updated:** March 10, 2026
 
 ---
 
@@ -14,7 +13,9 @@ This document describes the API surface that exists for the current implementati
 3. official announcements through the current `content` module,
 4. notifications, notification preferences, and search,
 5. admin stats and digest cron utilities,
-6. student publication through the `publication` module.
+6. student publication through the `publication` module,
+7. community forum through the `forum` module,
+8. moderation through the `moderation` module.
 
 Important rule:
 
@@ -221,15 +222,102 @@ Implementation notes:
 ### Search (extended)
 
 - `GET /api/search`
-  Query params: `type` (default: `announcements`, optionally `articles`), `q`, `section`, `status`, `visibility`, `tag`, `org`, `sort`, `page`, `pageSize`
+  Query params: `type` (default: `announcements`, optionally `articles` or `forum`), `q`, `section`, `status`, `visibility`, `tag`, `org`, `category_id`, `sort`, `page`, `pageSize`
   When `type=articles`, searches published articles by query and section.
+  When `type=forum`, searches open forum threads by query and optional category.
+
+### Forum
+
+- `GET /api/forum/categories`
+  Returns all forum categories ordered by display_order.
+  Query params: `slug` (optional, returns single category)
+
+- `GET /api/forum/threads`
+  Query params: `category_id`, `page`, `pageSize`, `slug` (for single thread lookup)
+  Lists threads in a category or fetches a single thread by slug.
+
+- `POST /api/forum/threads`
+  Creates a new forum thread. Requires authentication and forum posting permission. Rate-limited (5/min). Blocked for restricted users. Triggers notification fan-out.
+  Body: `{ category_id, title, body }`
+
+- `GET /api/forum/threads/[id]`
+  Returns a single thread by ID.
+
+- `PATCH /api/forum/threads/[id]`
+  Updates a thread (owner or moderator). Body: `{ title?, body? }`
+
+- `DELETE /api/forum/threads/[id]`
+  Soft-deletes a thread (owner or moderator).
+
+- `GET /api/forum/threads/[id]/reply`
+  Lists replies for a thread.
+
+- `POST /api/forum/threads/[id]/reply`
+  Creates a reply. Requires authentication. Rate-limited (10/min). Blocked for restricted users. Locked threads reject replies. Triggers author notification.
+  Body: `{ body, parent_reply_id? }`
+
+- `GET /api/forum/threads/[id]/react`
+  Query params: `reply_id` (optional)
+  Returns aggregated reaction counts.
+
+- `POST /api/forum/threads/[id]/react`
+  Toggles a reaction. Body: `{ reaction_type, reply_id? }`
+
+- `POST /api/forum/threads/[id]/report`
+  Reports a thread or reply. Rate-limited (5/5min).
+  Body: `{ reason, description?, reply_id? }`
+
+Implementation notes:
+
+- Forum routes use the `forum_threads`, `forum_replies`, and `forum_reactions` tables, separate from announcements and articles.
+- Thread and reply creation are rate-limited and check for active user restrictions.
+- Creating a thread triggers in-app notification fan-out to all users except the author.
+- Creating a reply notifies the thread author via in-app notification.
+
+### Moderation
+
+- `GET /api/moderation/queue`
+  Query params: `status`, `content_type` (optional filters)
+  Returns the moderation report queue. Moderators only.
+
+- `PATCH /api/moderation/queue`
+  Reviews a report. Body: `{ report_id, status }`
+  Moderators only.
+
+- `GET /api/moderation/reports?id=`
+  Returns a single report by ID. Moderators only.
+
+- `GET /api/moderation/actions`
+  Query params: `content_type`, `content_id`
+  Lists moderation action history. Moderators only.
+
+- `POST /api/moderation/actions`
+  Creates a moderation action. Body: `{ content_type, content_id, action, reason, report_id? }`
+  Moderators only.
+
+- `GET /api/moderation/restrictions?user_id=`
+  Returns active restrictions for a user. Moderators only.
+
+- `POST /api/moderation/restrictions`
+  Creates a restriction. Body: `{ user_id, restriction_type, reason, expires_at? }`
+  Moderators only.
+
+- `PATCH /api/moderation/restrictions`
+  Revokes a restriction. Body: `{ restriction_id }`
+  Moderators only.
+
+Implementation notes:
+
+- Moderation routes are restricted to users with the `canModerate` permission (university editors and super admins).
+- Report statuses: PENDING, REVIEWED, DISMISSED, ACTIONED.
+- Moderation action types: HIDE, LOCK, REMOVE, WARN.
+- Restriction types: MUTED, SUSPENDED, BANNED.
 
 ## Planned Future Endpoint Families
 
 These are intentionally separate from the existing APIs:
 
-- `/api/forum/*`
-- `/api/moderation/*`
+- `/api/external_publish/*`
 
 ---
 

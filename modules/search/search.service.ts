@@ -6,6 +6,9 @@ import type {
   ArticleSearchResult,
   ArticleSearchResultSet,
   ArticleSearchSortOption,
+  ForumThreadSearchParams,
+  ForumThreadSearchResult,
+  ForumThreadSearchResultSet,
   SearchQueryState,
   SearchResultSet,
   SearchSortOption,
@@ -14,6 +17,7 @@ import { SEARCH_DEFAULTS } from '@/modules/search/types';
 import { createServerSupabaseClient } from '@/shared/lib/supabase-server';
 import type { IContent } from '@/shared/types/database.types';
 import type { IArticle } from '@/modules/publication/types';
+import type { IForumThread } from '@/modules/forum/types';
 
 function normalizeSearchQuery(query?: string): string {
   return query?.trim().toLowerCase() ?? '';
@@ -284,9 +288,7 @@ function resolveArticleSortOrder(sort: ArticleSearchSortOption): {
  * Search published articles by query and optional section filter.
  * Uses ILIKE-based filtering on title, body, and excerpt.
  */
-export async function searchArticles(
-  params: ArticleSearchParams
-): Promise<ArticleSearchResultSet> {
+export async function searchArticles(params: ArticleSearchParams): Promise<ArticleSearchResultSet> {
   const supabase = await createServerSupabaseClient();
 
   const page = params.page ?? 1;
@@ -329,6 +331,88 @@ export async function searchArticles(
   const items: ArticleSearchResult[] = rows.map((article) => ({
     article,
     matchedFields: getArticleMatchedFields(article, normalizedQuery),
+  }));
+
+  const total = count ?? 0;
+
+  return {
+    items,
+    total,
+    page,
+    pageSize,
+    totalPages: Math.ceil(total / pageSize),
+  };
+}
+
+// ---------------------------------------------------------------------------
+// Forum thread search
+// ---------------------------------------------------------------------------
+
+function getForumThreadMatchedFields(
+  thread: IForumThread,
+  normalizedQuery: string
+): ForumThreadSearchResult['matchedFields'] {
+  if (!normalizedQuery) return [];
+
+  const matched: ForumThreadSearchResult['matchedFields'] = [];
+
+  if (thread.title.toLowerCase().includes(normalizedQuery)) {
+    matched.push('title');
+  }
+  if (thread.body.toLowerCase().includes(normalizedQuery)) {
+    matched.push('body');
+  }
+
+  return matched;
+}
+
+/**
+ * Search open, non-deleted forum threads by query and optional category.
+ * Uses ILIKE-based filtering on title and body.
+ */
+export async function searchForumThreads(
+  params: ForumThreadSearchParams
+): Promise<ForumThreadSearchResultSet> {
+  const supabase = await createServerSupabaseClient();
+
+  const page = params.page ?? 1;
+  const pageSize = Math.min(
+    params.pageSize ?? SEARCH_DEFAULTS.PAGE_SIZE,
+    SEARCH_DEFAULTS.MAX_PAGE_SIZE
+  );
+  const sort = params.sort ?? 'relevance';
+  const from = (page - 1) * pageSize;
+  const to = from + pageSize - 1;
+
+  const normalizedQuery = params.query?.trim().toLowerCase() ?? '';
+
+  let query = supabase
+    .from('forum_threads')
+    .select('*', { count: 'exact' })
+    .eq('status', 'OPEN')
+    .is('deleted_at', null);
+
+  if (normalizedQuery) {
+    query = query.or(`title.ilike.%${normalizedQuery}%,body.ilike.%${normalizedQuery}%`);
+  }
+
+  if (params.categoryId) {
+    query = query.eq('category_id', params.categoryId);
+  }
+
+  const ascending = sort === 'oldest';
+  query = query.order('created_at', { ascending, nullsFirst: false });
+  query = query.range(from, to);
+
+  const { data, count, error } = await query;
+
+  if (error) throw new Error(error.message);
+
+  const rows = (data ?? []) as IForumThread[];
+
+  const items: ForumThreadSearchResult[] = rows.map((thread) => ({
+    thread,
+    matchedFields: getForumThreadMatchedFields(thread, normalizedQuery),
   }));
 
   const total = count ?? 0;
