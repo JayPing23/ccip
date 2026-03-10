@@ -1,9 +1,13 @@
 'use client';
 
 import LogoutButton from '@/modules/auth/components/LogoutButton';
+import NotificationBell from '@/modules/notifications/components/NotificationBell';
+import NotificationCenter from '@/modules/notifications/components/NotificationCenter';
+import { useUnreadCount } from '@/modules/notifications/hooks/useNotifications';
 import type { IUser } from '@/shared/types/database.types';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useCallback, useState } from 'react';
 
 interface HeaderLink {
   href: string;
@@ -34,6 +38,17 @@ export default function Header({
   brandHref = '/dashboard',
   brandLabel = 'CCIP',
 }: HeaderProps) {
+  const [notificationsOpen, setNotificationsOpen] = useState(false);
+  const { refresh: refreshUnread } = useUnreadCount();
+
+  const toggleNotifications = useCallback(() => {
+    setNotificationsOpen((prev) => !prev);
+  }, []);
+
+  const closeNotifications = useCallback(() => {
+    setNotificationsOpen(false);
+  }, []);
+
   if (!user) {
     return null;
   }
@@ -71,6 +86,15 @@ export default function Header({
               ))}
             </div>
           )}
+
+          <div className="relative">
+            <NotificationBell onClick={toggleNotifications} />
+            <NotificationCenter
+              open={notificationsOpen}
+              onClose={closeNotifications}
+              onCountChange={refreshUnread}
+            />
+          </div>
 
           <div className="flex items-center gap-3 border-l border-gray-300 pl-6">
             {user.avatar_url && (

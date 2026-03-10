@@ -1,6 +1,6 @@
 # CCIP API Reference
 
-**Scope:** Current platform foundation and official announcements module
+**Scope:** Current platform foundation, official announcements, and Phase 2 shared discoverability services
 **Last Updated:** March 10, 2026
 
 ---
@@ -12,7 +12,8 @@ This document describes the API surface that exists for the current implementati
 1. authentication and session-related flows,
 2. users, roles, and organizations,
 3. official announcements through the current `content` module,
-4. basic admin stats.
+4. notifications, notification preferences, and search,
+5. admin stats and digest cron utilities.
 
 Important rule:
 
@@ -44,6 +45,53 @@ Important rule:
 - `GET /api/content/manage`
 - `GET /api/content/admin` (legacy compatibility alias)
 - `GET /api/admin/content` (admin namespace alias)
+
+Implementation notes:
+
+- `GET /api/content?slug=...` is used for slug-based announcement lookup.
+- `POST /api/content` and `POST /api/content/[id]/publish` use per-user rate limiting and may return `429` with the `RATE_LIMIT` error code.
+
+### Notifications
+
+- `GET /api/notifications`
+  Query params: `page`, `pageSize`, `unreadOnly`
+- `PATCH /api/notifications`
+  Marks all unread notifications for the authenticated user as read.
+- `GET /api/notifications/unread`
+  Returns unread count summary for the authenticated user.
+- `GET /api/notifications/preferences`
+  Returns all saved per-organization notification preferences for the authenticated user.
+- `PUT /api/notifications/preferences`
+  Upserts a per-organization notification preference.
+- `PATCH /api/notifications/[id]/read`
+  Marks a single notification as read.
+
+Implementation notes:
+
+- Notification routes are authenticated and user-scoped.
+- `GET /api/notifications` returns paginated data in the form `{ items, total, page, pageSize, totalPages }`.
+
+### Search
+
+- `GET /api/search`
+  Query params: `q`, `status`, `visibility`, `tag`, `org`, `sort`, `page`, `pageSize`
+
+Implementation notes:
+
+- Search is backed by the additive `content.search_vector` full-text migration.
+- The current public runtime scope searches published, non-deleted announcements.
+- `sort=relevance` is part of the shared search contract, but the current implementation uses default published-date ordering after text filtering.
+
+### Cron
+
+- `GET /api/cron/digests/daily`
+- `GET /api/cron/digests/weekly`
+
+Implementation notes:
+
+- These routes are intended for server-to-server schedulers, not interactive browser use.
+- When `CRON_SECRET` is set, callers must send `Authorization: Bearer <CRON_SECRET>`.
+- Digest routes return operational summaries such as `{ sent, failed, totalItems }` or `{ sent, reason }` rather than the standard `{ data, error }` resource wrapper.
 
 ### Users
 
@@ -93,7 +141,7 @@ The preferred platform-wide response format is:
 
 ### Implementation Note
 
-Most resource-oriented routes follow the standardized `{ data, error }` shape. Some auth helper routes still expose a legacy `{ success, error }` structure and should be normalized in a later cleanup pass.
+Most resource-oriented routes follow the standardized `{ data, error }` shape. Some auth helper routes still expose a legacy `{ success, error }` structure, and cron routes intentionally return direct operational summaries.
 
 ---
 
@@ -119,6 +167,18 @@ Important implementation note:
 
 The management API is now owned by the announcements module. Admin pages may reuse that route, but the route is no longer the source of truth for announcement workflows.
 
+### `/api/notifications/*`
+
+Use this namespace for shared in-app notification state and per-organization delivery preferences.
+
+### `/api/search`
+
+Use this route for shared announcement search and URL-driven feed filtering.
+
+### `/api/cron/digests/*`
+
+Use these routes for scheduled email digests only. They are operational routes and should stay separate from interactive user-facing APIs.
+
 ### `/api/users/*`
 
 Supports current user-management and role-change flows used by the existing foundation.
@@ -133,8 +193,6 @@ Supports organization listing and update flows for the current institutional hie
 
 These are intentionally separate from the current announcements API:
 
-- `/api/notifications/*`
-- `/api/search/*`
 - `/api/publication/*`
 - `/api/forum/*`
 - `/api/moderation/*`
@@ -152,15 +210,16 @@ Preferred meanings:
 - `403` unauthorized
 - `404` not found
 - `422` validation failure
+- `429` rate limited
 - `500` server error
 
 ---
 
 ## Documentation Rule
 
-When new endpoint families are introduced for publication or forum work, update this file together with:
+When current endpoint families change or new endpoint families are introduced, update this file together with:
 
-1. `CCIP_PROJECT_PROPOSAL.md`
+1. `docs/CCIP_PROJECT_PROPOSAL.md`
 2. `README.md`
 3. `IMPLEMENTATION_LOG.md`
 

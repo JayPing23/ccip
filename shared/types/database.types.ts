@@ -6,6 +6,14 @@
 
 import type { ContentTag } from '@/shared/constants/tags';
 
+export interface PaginatedResult<T> {
+  items: T[];
+  total: number;
+  page: number;
+  pageSize: number;
+  totalPages: number;
+}
+
 export interface IRole {
   id: string;
   name: 'STUDENT' | 'DEPT_EDITOR' | 'UNIVERSITY_EDITOR' | 'SUPER_ADMIN';
@@ -42,6 +50,8 @@ export interface IContent {
   visibility: 'PUBLIC' | 'ORG_ONLY' | 'DEPT_ONLY';
   author_id: string;
   tags?: ContentTag[];
+  /** Generated tsvector column — present in DB rows but normally excluded from API responses. */
+  search_vector?: string;
   created_at: string;
   updated_at: string;
   published_at: string | null;

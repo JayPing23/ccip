@@ -1,14 +1,18 @@
 'use client';
 
-import ContentFeed from '@/modules/content/components/ContentFeed';
+import RecentAnnouncements from '@/modules/content/components/RecentAnnouncements';
+import { useContent } from '@/modules/content/hooks/useContent';
+import NotificationPreferences from '@/modules/notifications/components/NotificationPreferences';
 import Header from '@/shared/components/Header';
 import { useCurrentUser } from '@/shared/hooks/useCurrentUser';
+import type { IOrganization } from '@/shared/types/database.types';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 /**
  * Dashboard Page (Portal Home)
- * Protected route - shows user info and content feed
+ * Protected route - discoverable home surface for campus announcements
  */
 export default function DashboardPage() {
   const router = useRouter();
@@ -21,11 +25,47 @@ export default function DashboardPage() {
     canAccessAdminConsole,
   } = useCurrentUser();
 
+  const {
+    content: recentItems,
+    loading: contentLoading,
+    error: contentError,
+  } = useContent({ status: 'PUBLISHED', visibility: 'PUBLIC', limit: 5 });
+
+  const [organizations, setOrganizations] = useState<IOrganization[]>([]);
+  const [orgsLoading, setOrgsLoading] = useState(true);
+  const [searchInput, setSearchInput] = useState('');
+
   useEffect(() => {
     if (!loading && !user) {
       router.replace('/login');
     }
   }, [loading, router, user]);
+
+  useEffect(() => {
+    if (!user) return;
+
+    async function fetchOrgs() {
+      try {
+        const response = await fetch('/api/organizations');
+        if (!response.ok) return;
+        const json = await response.json();
+        setOrganizations(json.data ?? []);
+      } finally {
+        setOrgsLoading(false);
+      }
+    }
+
+    void fetchOrgs();
+  }, [user]);
+
+  const handleSearch = useCallback(
+    (e: React.FormEvent) => {
+      e.preventDefault();
+      const q = searchInput.trim();
+      router.push(q ? `/feed?q=${encodeURIComponent(q)}` : '/feed');
+    },
+    [searchInput, router]
+  );
 
   if (loading) {
     return (
@@ -77,18 +117,89 @@ export default function DashboardPage() {
       <Header user={user} actions={actions} />
 
       <main className="mx-auto max-w-4xl px-4 py-8">
-        <div className="mb-8">
+        {/* Hero / welcome section with quick search */}
+        <section className="mb-10 rounded-xl bg-white p-8 shadow-sm">
           <p className="text-sm font-semibold tracking-[0.2em] text-blue-600 uppercase">
-            Official Announcements
+            Welcome back, {user.display_name}
           </p>
-          <h2 className="mt-3 text-3xl font-bold text-gray-900">Campus updates in one workspace</h2>
+          <h1 className="mt-2 text-3xl font-bold text-gray-900">Campus Announcements</h1>
           <p className="mt-2 max-w-2xl text-gray-600">
-            The dashboard stays focused on the current announcements foundation so publication and
-            forum modules can be added later without overloading this surface.
+            Stay up to date with the latest official campus notices. Search or browse the full feed
+            to find what you need.
           </p>
-        </div>
 
-        <ContentFeed visibility="PUBLIC" showFilters={false} />
+          <form onSubmit={handleSearch} className="mt-6 flex gap-3">
+            <input
+              type="search"
+              placeholder="Search announcements…"
+              value={searchInput}
+              onChange={(e) => setSearchInput(e.target.value)}
+              className="min-w-0 flex-1 rounded-lg border border-gray-300 px-4 py-2 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+              aria-label="Quick search announcements"
+            />
+            <button
+              type="submit"
+              className="rounded-lg bg-blue-600 px-5 py-2 text-sm font-medium text-white hover:bg-blue-700"
+            >
+              Search
+            </button>
+          </form>
+        </section>
+
+        {/* Quick links */}
+        <section className="mb-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <Link
+            href="/feed"
+            className="rounded-lg border border-gray-200 bg-white p-5 shadow-sm transition hover:shadow-md"
+          >
+            <h3 className="text-sm font-semibold text-gray-900">Browse All Announcements</h3>
+            <p className="mt-1 text-sm text-gray-500">
+              View the full feed with search and filter controls.
+            </p>
+          </Link>
+
+          {canCreateAnnouncements && (
+            <Link
+              href="/content/create"
+              className="rounded-lg border border-gray-200 bg-white p-5 shadow-sm transition hover:shadow-md"
+            >
+              <h3 className="text-sm font-semibold text-gray-900">Create Announcement</h3>
+              <p className="mt-1 text-sm text-gray-500">Draft and publish a new campus notice.</p>
+            </Link>
+          )}
+
+          {canManageAnnouncements && (
+            <Link
+              href="/content/manage"
+              className="rounded-lg border border-gray-200 bg-white p-5 shadow-sm transition hover:shadow-md"
+            >
+              <h3 className="text-sm font-semibold text-gray-900">Manage Announcements</h3>
+              <p className="mt-1 text-sm text-gray-500">
+                Edit, schedule, or archive existing notices.
+              </p>
+            </Link>
+          )}
+        </section>
+
+        {/* Recent announcements */}
+        <section className="mb-10 rounded-xl bg-white p-6 shadow-sm">
+          <div className="mb-4 flex items-center justify-between">
+            <h2 className="text-lg font-semibold text-gray-900">Recent Announcements</h2>
+            <Link href="/feed" className="text-sm font-medium text-blue-600 hover:text-blue-700">
+              View all &rarr;
+            </Link>
+          </div>
+          <RecentAnnouncements items={recentItems} loading={contentLoading} error={contentError} />
+        </section>
+
+        {/* Notification preferences */}
+        <section className="rounded-xl bg-white p-6 shadow-sm">
+          <h2 className="mb-2 text-lg font-semibold text-gray-900">Notification Preferences</h2>
+          <p className="mb-4 text-sm text-gray-600">
+            Choose how you want to be notified for each organization.
+          </p>
+          <NotificationPreferences organizations={organizations} orgsLoading={orgsLoading} />
+        </section>
       </main>
     </div>
   );

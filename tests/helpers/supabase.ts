@@ -18,12 +18,17 @@ export interface MockQueryBuilder<T> extends PromiseLike<SupabaseQueryResult<T>>
   eq: jest.Mock;
   is: jest.Mock;
   neq: jest.Mock;
+  gte: jest.Mock;
+  in: jest.Mock;
+  contains: jest.Mock;
+  textSearch: jest.Mock;
   order: jest.Mock;
   range: jest.Mock;
   insert: jest.Mock;
   update: jest.Mock;
   upsert: jest.Mock;
   single: jest.Mock;
+  maybeSingle: jest.Mock;
 }
 
 export interface SupabaseClientMock {
@@ -41,12 +46,17 @@ export function createQueryBuilder<T>(result: SupabaseQueryResult<T>): MockQuery
   builder.eq = jest.fn(() => builder);
   builder.is = jest.fn(() => builder);
   builder.neq = jest.fn(() => builder);
+  builder.gte = jest.fn(() => builder);
+  builder.in = jest.fn(() => builder);
+  builder.contains = jest.fn(() => builder);
+  builder.textSearch = jest.fn(() => builder);
   builder.order = jest.fn(() => builder);
   builder.range = jest.fn(() => builder);
   builder.insert = jest.fn(() => builder);
   builder.update = jest.fn(() => builder);
   builder.upsert = jest.fn(() => builder);
   builder.single = jest.fn(() => builder);
+  builder.maybeSingle = jest.fn(() => builder);
   builder.then = (onFulfilled, onRejected) => Promise.resolve(result).then(onFulfilled, onRejected);
 
   return builder;

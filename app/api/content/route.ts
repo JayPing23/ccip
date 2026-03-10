@@ -14,6 +14,7 @@ import {
 } from '@/shared/utils/api-errors';
 import { successResponse } from '@/shared/utils/api-response';
 import { canCreateContent } from '@/shared/utils/permissions';
+import { contentCreateLimiter } from '@/shared/utils/rate-limit';
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 
@@ -50,6 +51,10 @@ export async function POST(request: NextRequest) {
   try {
     const user = await getCurrentUser();
     if (!user) return unauthorizedError();
+
+    // Rate limit by user ID
+    const rateLimited = contentCreateLimiter.check(user.id);
+    if (rateLimited) return rateLimited;
 
     // Check permission using role_name
     if (!user.role_name || !canCreateContent(user.role_name)) {

@@ -344,10 +344,10 @@ npm install @supabase/supabase-js @supabase/ssr
 # Validation
 npm install zod
 
-# Rich Text Editor (Phase 3 — install now, use later)
+# Rich Text Editor (Phase 3 — install when publication work starts)
 npm install @tiptap/react @tiptap/pm @tiptap/starter-kit
 
-# Email (Phase 2 — install now, use later)
+# Email (Phase 2 — already used by notifications and digests)
 npm install resend
 
 # HTML Sanitization

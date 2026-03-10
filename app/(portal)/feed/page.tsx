@@ -1,6 +1,8 @@
 'use client';
 
-import ContentFeed from '@/modules/content/components/ContentFeed';
+import ContentCard from '@/modules/content/components/ContentCard';
+import SearchFilters from '@/modules/search/components/SearchFilters';
+import { useSearchFilters } from '@/modules/search/hooks/useSearchFilters';
 import Header from '@/shared/components/Header';
 import { useCurrentUser } from '@/shared/hooks/useCurrentUser';
 import { useRouter } from 'next/navigation';
@@ -8,12 +10,26 @@ import { useEffect } from 'react';
 
 /**
  * Feed Page (Portal Home)
- * Displays all published content in a feed format
+ * Displays all published content in a searchable, filterable feed
  */
 export default function FeedPage() {
   const router = useRouter();
   const { user, loading, canCreateAnnouncements, canManageAnnouncements, canAccessAdminConsole } =
     useCurrentUser();
+
+  const {
+    filters,
+    results,
+    loading: searchLoading,
+    error: searchError,
+    setQuery,
+    setStatus,
+    setVisibility,
+    setTag,
+    setSort,
+    setPage,
+    resetFilters,
+  } = useSearchFilters();
 
   useEffect(() => {
     if (!loading && !user) {
@@ -63,7 +79,79 @@ export default function FeedPage() {
           </p>
         </div>
 
-        <ContentFeed visibility="PUBLIC" showFilters={true} />
+        {/* Search & filter controls */}
+        <div className="mb-6">
+          <SearchFilters
+            filters={filters}
+            onQueryChange={setQuery}
+            onStatusChange={setStatus}
+            onVisibilityChange={setVisibility}
+            onTagChange={setTag}
+            onSortChange={setSort}
+            onReset={resetFilters}
+          />
+        </div>
+
+        {/* Results */}
+        {searchLoading && (
+          <div className="space-y-4">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="h-32 animate-pulse rounded-lg bg-gray-200" />
+            ))}
+          </div>
+        )}
+
+        {searchError && (
+          <div className="rounded-lg bg-red-50 p-4 text-red-800">
+            <p className="font-medium">Failed to load announcements</p>
+            <p className="text-sm">{searchError}</p>
+          </div>
+        )}
+
+        {!searchLoading && !searchError && results.items.length === 0 && (
+          <div className="rounded-lg bg-blue-50 p-8 text-center">
+            <p className="text-gray-700">No announcements found.</p>
+            <p className="text-sm text-gray-500">Try adjusting your search or filters.</p>
+          </div>
+        )}
+
+        {!searchLoading && !searchError && results.items.length > 0 && (
+          <>
+            <p className="mb-4 text-sm text-gray-500">
+              {results.total} result{results.total === 1 ? '' : 's'} found
+            </p>
+            <div className="space-y-4">
+              {results.items.map((item) => (
+                <ContentCard key={item.content.id} content={item.content} />
+              ))}
+            </div>
+
+            {/* Pagination */}
+            {results.totalPages > 1 && (
+              <nav className="mt-8 flex items-center justify-center gap-2" aria-label="Pagination">
+                <button
+                  type="button"
+                  disabled={results.page <= 1}
+                  onClick={() => setPage(results.page - 1)}
+                  className="rounded border border-gray-300 px-3 py-2 text-sm disabled:opacity-50"
+                >
+                  Previous
+                </button>
+                <span className="text-sm text-gray-600">
+                  Page {results.page} of {results.totalPages}
+                </span>
+                <button
+                  type="button"
+                  disabled={results.page >= results.totalPages}
+                  onClick={() => setPage(results.page + 1)}
+                  className="rounded border border-gray-300 px-3 py-2 text-sm disabled:opacity-50"
+                >
+                  Next
+                </button>
+              </nav>
+            )}
+          </>
+        )}
       </div>
     </main>
   );

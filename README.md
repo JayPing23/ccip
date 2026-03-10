@@ -6,18 +6,19 @@ CCIP is a modular campus platform for three related experiences:
 2. Student publication content such as campus news, features, and opinion pieces.
 3. A moderated forum where students and faculty can discuss campus issues.
 
-The current codebase implements the shared platform foundation and the official announcements module first. Publication and forum capabilities are planned as additive modules, not as rewrites of the existing announcement system.
+The current codebase implements the shared platform foundation, the official announcements module, and the Phase 2 shared discoverability layer. Publication and forum capabilities remain planned as additive modules, not as rewrites of the existing announcement system.
 
 ---
 
 ## Current Status
 
-- Foundation and official announcements are the current implemented product scope.
-- Authentication, organizations, roles, admin basics, announcement CRUD, and tests are already in place.
-- Announcement management is now content-owned: editors work from `/content/manage`, while super admins can reuse the same workspace from `/admin/content`.
-- The next planned work focuses on shared discoverability: notifications, search, preferences, and home/feed improvements.
-- Notification and search modules now include Phase 2 scaffolding contracts so runtime work can stay additive instead of growing out of the announcements module.
-- Student publication is the next major domain module after that.
+- Foundation, official announcements, and the shared portal shell are implemented.
+- Authentication, organizations, roles, admin basics, announcement CRUD, and announcement management are in place.
+- Notifications are live: unread badge, notification center, mark-read flows, and per-organization preferences.
+- Search and discoverability are live: PostgreSQL full-text search support, `/api/search`, URL-driven filters, dashboard quick search, recent announcements, and a searchable feed.
+- Immediate publish emails and daily/weekly digests are implemented; they require the email and cron environment variables documented in `.env.example`.
+- User-based rate limiting protects announcement create and publish actions, and targeted tests now exist for notifications, search helpers, digests, and rate limiting.
+- Student publication is the next major domain module.
 - Forum and moderation ship later, together.
 
 ---
@@ -27,17 +28,17 @@ The current codebase implements the shared platform foundation and the official 
 Start with these files:
 
 1. [IMPLEMENTATION_LOG.md](IMPLEMENTATION_LOG.md)
-   Current status, roadmap alignment, and next recommended work.
-2. [CCIP_PROJECT_PROPOSAL.md](CCIP_PROJECT_PROPOSAL.md)
+   Current delivery position, implementation truth, and the next recommended entry point.
+2. [docs/CCIP_PROJECT_PROPOSAL.md](docs/CCIP_PROJECT_PROPOSAL.md)
    Full product and architecture source of truth.
-3. [SETUP_GUIDE.md](SETUP_GUIDE.md)
-   Environment, Supabase, OAuth, and migration setup.
+3. [docs/SETUP_GUIDE.md](docs/SETUP_GUIDE.md)
+   Environment, Supabase, OAuth, and foundation migration setup.
 4. [docs/API_REFERENCE.md](docs/API_REFERENCE.md)
-   Current API surface for foundation and official announcements.
+   Current API surface for announcements, notifications, search, and digest routes.
 5. [docs/phase-planning/PHASE_1_CHECKLIST.md](docs/phase-planning/PHASE_1_CHECKLIST.md)
    Foundation and announcements phase record.
 6. [docs/phase-planning/PHASE_2_PLAN.md](docs/phase-planning/PHASE_2_PLAN.md)
-   Shared discoverability and notifications roadmap.
+   Shared discoverability and notifications roadmap that now matches the implemented runtime.
 
 Additional roadmap detail for later phases lives in `docs/phase-planning/PHASE_3_PLAN.md`, `PHASE_4_PLAN.md`, `PHASE_5_PLAN.md`, and their matching `_AGENT_TASKS` files.
 
@@ -55,7 +56,7 @@ Additional roadmap detail for later phases lives in `docs/phase-planning/PHASE_3
 - `admin`
 - shared utilities, types, validation, and Supabase clients
 
-### Shared Platform Services
+### Implemented Shared Platform Services
 
 - `notifications`
 - `search`
@@ -78,6 +79,7 @@ Additional roadmap detail for later phases lives in `docs/phase-planning/PHASE_3
 - npm
 - Supabase project
 - Google OAuth credentials for your institutional domain
+- Resend account credentials if you want email delivery and digests enabled
 
 ### Setup
 
@@ -89,7 +91,9 @@ npm install
 
 2. Create `.env.local` from `.env.example` and fill in your environment values.
 
-3. Run the current database migrations described in [SETUP_GUIDE.md](SETUP_GUIDE.md).
+   If you want Phase 2 email delivery and digests, also set `RESEND_API_KEY`, `RESEND_FROM_EMAIL`, and `CRON_SECRET`.
+
+3. Run the foundation migrations described in [docs/SETUP_GUIDE.md](docs/SETUP_GUIDE.md), and make sure [supabase/migrations/002_content_full_text_search.sql](supabase/migrations/002_content_full_text_search.sql) is also applied for Phase 2 search.
 
 4. Start the development server:
 
@@ -99,7 +103,7 @@ npm run dev
 
 5. Open `http://localhost:3000`.
 
-Note: current setup provisions the platform foundation and official announcements module. Publication and forum tables are future additive migrations.
+Note: current setup provisions the platform foundation, official announcements, notifications, search, and shared discoverability. Publication and forum tables remain future additive migrations.
 
 ---
 
@@ -116,7 +120,7 @@ docs/              API reference and phase planning
 
 Important current note: `modules/content` is the official announcements module in the current codebase. Publication and forum should be added as separate modules rather than merged into `content`.
 
-Important current note: announcement-specific schemas, constants, services, and management UI now live under `modules/content`, while `shared/` stays focused on platform-level primitives such as permissions, shared shell components, and Supabase clients.
+Important current note: announcement-specific schemas, constants, services, and management UI now live under `modules/content`, while `shared/` stays focused on platform-level primitives such as permissions, shared shell components, notifications, search, and Supabase clients.
 
 ---
 
@@ -141,7 +145,7 @@ Important current note: announcement-specific schemas, constants, services, and 
 - Use Zod for request and form validation.
 - Keep server-side auth checks on `supabase.auth.getUser()`.
 - Keep RLS enabled on all current and future tables.
-- Update the proposal, README, and implementation log together when the roadmap changes.
+- Update the proposal, README, API reference, and implementation log together when the roadmap or implementation boundary changes.
 
 ---
 
@@ -163,7 +167,10 @@ The current API reference covers:
 - users,
 - organizations,
 - roles,
-- official announcements.
+- official announcements,
+- notifications and notification preferences,
+- search,
+- digest cron utilities.
 
 Publication and forum endpoint families are planned and will be documented separately when those modules are introduced.
 

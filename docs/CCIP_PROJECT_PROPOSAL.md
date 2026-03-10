@@ -330,7 +330,7 @@ These modules should exist before advanced product work:
 
 1. Editors manage official announcements from the content-owned workspace at `/content/manage`.
 2. Admin oversight may reuse the same announcement module UI from `/admin/content`, but admin does not own announcement domain logic.
-3. Shared services such as notifications and search may keep scaffold-only contracts before their Phase 2 runtime work begins.
+3. Shared services such as notifications and search are implemented Phase 2 runtime capabilities and should be reused by later modules instead of duplicated.
 
 ### UI Principle
 
@@ -754,6 +754,8 @@ Moderation is not optional forum polish. It is a launch requirement for any disc
 - URL-driven discoverability,
 - rate limiting,
 - home/feed composition groundwork.
+
+**Current Status:** Implemented. Notifications, preferences, search/filter infrastructure, digest routes, dashboard/feed discoverability, and rate limiting now exist as shared reusable platform services in the current repo state.
 
 **Phase 2 DO NOT:**
 

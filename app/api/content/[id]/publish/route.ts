@@ -1,4 +1,5 @@
 import { getContentById, publishContent } from '@/modules/content/content.service';
+import { notifyOnPublish } from '@/modules/notifications/notifications.service';
 import { getCurrentUser } from '@/modules/users/users.service';
 import {
   forbiddenError,
@@ -8,6 +9,7 @@ import {
 } from '@/shared/utils/api-errors';
 import { successResponse } from '@/shared/utils/api-response';
 import { canEditAnyContent, canEditOwnContent } from '@/shared/utils/permissions';
+import { contentPublishLimiter } from '@/shared/utils/rate-limit';
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 
@@ -21,6 +23,10 @@ export async function POST(_request: NextRequest, { params }: { params: Promise<
     const { id } = await params;
     const user = await getCurrentUser();
     if (!user) return unauthorizedError();
+
+    // Rate limit by user ID
+    const rateLimited = contentPublishLimiter.check(user.id);
+    if (rateLimited) return rateLimited;
 
     // Get content to check ownership and current status
     const content = await getContentById(id);
@@ -42,6 +48,9 @@ export async function POST(_request: NextRequest, { params }: { params: Promise<
 
     // Publish content using service layer
     const published = await publishContent(id, user.id);
+
+    // Fire-and-forget: create in-app notifications and send immediate emails.
+    void notifyOnPublish(published).catch((err) => console.error('[Publish Notify Error]', err));
 
     return NextResponse.json(successResponse(published), { status: 200 });
   } catch (error) {

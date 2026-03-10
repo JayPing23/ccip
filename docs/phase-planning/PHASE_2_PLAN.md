@@ -1,9 +1,11 @@
 # CCIP Phase 2 Plan
 
 **Phase Name:** Shared Discoverability, Notifications & Experience
-**Status:** Planned
+**Status:** Complete
 **Execution Model:** One micro-task per agent run
 **Last Updated:** March 10, 2026
+
+**Completion Note:** All Phase 2 definition-of-done items are implemented in the current repo state. This file remains as the record of the phase scope and boundaries.
 
 ---
 
@@ -147,13 +149,15 @@ Run the full gate set:
 
 ## Recommended Starting Point
 
-Start with `P2-01`.
+Phase 2 is complete.
+
+Recommended next step: start with `P3-01` in `docs/phase-planning/PHASE_3_AGENT_TASKS.md`.
 
 Reason:
 
-- it verifies current readiness,
-- it prevents later tasks from assuming nonexistent shared scaffolding,
-- it keeps the platform roadmap aligned with the new modular product direction.
+- publication is the next additive domain module,
+- the shared notification, search, and discoverability layer is now in place,
+- the next architectural risk is protecting the boundary between announcements and publication.
 
 ---
 

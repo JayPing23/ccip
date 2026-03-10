@@ -1,6 +1,6 @@
 # CCIP — Foundation Setup Guide
 
-Complete step-by-step instructions to set up Supabase, Google OAuth, environment variables, database migrations, and seed data for the current platform foundation and official announcements module. **Estimated time: 90 minutes total.**
+Complete step-by-step instructions to set up Supabase, Google OAuth, environment variables, database migrations, and seed data for the current platform foundation and official announcements module. Optional Phase 2 search and email-delivery settings are documented alongside the foundation setup. **Estimated time: 90 minutes total.**
 
 ---
 
@@ -11,6 +11,8 @@ This guide provisions the currently implemented base of CCIP:
 1. platform foundation,
 2. official announcements,
 3. admin and RBAC groundwork.
+
+Optional Phase 2 capabilities depend on the additive search migration and, for email delivery, the environment variables documented in [../.env.example](../.env.example).
 
 Student publication and forum features are future additive modules and are not part of this setup guide yet.
 
@@ -760,12 +762,12 @@ Ready in XXXms
 
 ✅ **The current CCIP foundation is now set up!** You can now:
 
-1. **Work on the announcements foundation** — See `CCIP_PROJECT_PROPOSAL.md` for the current implemented boundary
-2. **Build shared platform services next** — Notifications, search, and discoverability belong in Phase 2
-3. **Keep future modules additive** — Publication and forum come later as separate modules
+1. **Work on the implemented announcements and shared services** — See `CCIP_PROJECT_PROPOSAL.md` for the current implementation boundary
+2. **Start Phase 3 next** — Publication is the next additive domain module after the completed Phase 2 shared-service layer
+3. **Keep future modules additive** — Publication and forum continue as separate modules
 4. **Write and run tests** — Use `npm test` and `npm run test:coverage`
 
-For ongoing development tips, see [CONTRIBUTING.md](CONTRIBUTING.md).
+For ongoing development tips, see [CONTRIBUTING.md](../CONTRIBUTING.md).
 
 ---
 
@@ -782,10 +784,10 @@ npm test              # Run unit tests
 ```
 
 **Important Files:**
-- [.env.local](.env.local) - Environment variables (not in git)
-- [.env.example](.env.example) - Template (in git)
+- [.env.local](../.env.local) - Environment variables (not in git)
+- [.env.example](../.env.example) - Template (in git)
 - [CCIP_PROJECT_PROPOSAL.md](CCIP_PROJECT_PROPOSAL.md) - Project specification
-- [CONTRIBUTING.md](CONTRIBUTING.md) - Code guidelines
+- [CONTRIBUTING.md](../CONTRIBUTING.md) - Code guidelines
 
 **Supabase Dashboard:**
 - Tables: https://app.supabase.com/project/xxxxx/editor

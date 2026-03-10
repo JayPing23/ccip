@@ -25,7 +25,30 @@ export interface AnnouncementSearchResult {
   matchedFields: Array<'title' | 'body' | 'tags'>;
 }
 
+export type SearchSortOption = 'relevance' | 'newest' | 'oldest';
+
 export interface SearchResultSet {
   total: number;
   items: AnnouncementSearchResult[];
+  page: number;
+  pageSize: number;
+  totalPages: number;
 }
+
+export interface AnnouncementSearchParams extends AnnouncementSearchFilters {
+  page?: number;
+  pageSize?: number;
+  sort?: SearchSortOption;
+}
+
+export const SEARCH_SORT_OPTIONS: readonly SearchSortOption[] = [
+  'relevance',
+  'newest',
+  'oldest',
+] as const;
+
+export const SEARCH_DEFAULTS = {
+  PAGE_SIZE: 20,
+  MAX_PAGE_SIZE: 100,
+  SORT: 'relevance' as SearchSortOption,
+} as const;
