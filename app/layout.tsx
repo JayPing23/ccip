@@ -18,7 +18,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={inter.variable} suppressHydrationWarning>
-      <head>
+      <body className="bg-brand-bg text-brand-text-primary antialiased">
         <Script
           id="theme-init"
           strategy="beforeInteractive"
@@ -35,8 +35,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             `,
           }}
         />
-      </head>
-      <body className="bg-brand-bg text-brand-text-primary antialiased">{children}</body>
+        {children}
+      </body>
     </html>
   );
 }
