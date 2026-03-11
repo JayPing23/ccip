@@ -1,5 +1,11 @@
 'use client';
 
+import type {
+  ModerationActionType,
+  ReportableContentType,
+  ReportStatus,
+  RestrictionType,
+} from '@/modules/moderation/constants';
 import {
   MODERATION_ACTION_TYPE,
   REPORT_REASON_LABELS,
@@ -7,12 +13,6 @@ import {
   REPORTABLE_CONTENT_TYPE,
   RESTRICTION_TYPE,
   RESTRICTION_TYPE_LABELS,
-} from '@/modules/moderation/constants';
-import type {
-  ModerationActionType,
-  ReportStatus,
-  ReportableContentType,
-  RestrictionType,
 } from '@/modules/moderation/constants';
 import type { IModerationReport } from '@/modules/moderation/types';
 import { useToast } from '@/shared/components/Toast';
@@ -38,6 +38,8 @@ export default function ModerationQueue() {
   const [reports, setReports] = useState<IModerationReport[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [page, setPage] = useState(1);
+  const PAGE_SIZE = 20;
 
   // Filters
   const [statusFilter, setStatusFilter] = useState<ReportStatus | ''>('PENDING');
@@ -87,7 +89,7 @@ export default function ModerationQueue() {
 
   return (
     <div className="space-y-6">
-      <h2 className="text-xl font-bold text-gray-900">Moderation Queue</h2>
+      <h2 className="text-brand-text-primary text-xl font-bold">Moderation Queue</h2>
 
       {/* Filters */}
       <div className="flex flex-wrap gap-3">
@@ -95,7 +97,7 @@ export default function ModerationQueue() {
           value={statusFilter}
           onChange={(e) => setStatusFilter(e.target.value as ReportStatus | '')}
           title="Filter by report status"
-          className="rounded-md border border-gray-300 px-3 py-1.5 text-sm"
+          className="border-brand-secondary/30 rounded-md border px-3 py-1.5 text-sm"
         >
           <option value="">All Statuses</option>
           {Object.values(REPORT_STATUS).map((s) => (
@@ -109,7 +111,7 @@ export default function ModerationQueue() {
           value={contentTypeFilter}
           onChange={(e) => setContentTypeFilter(e.target.value as ReportableContentType | '')}
           title="Filter by content type"
-          className="rounded-md border border-gray-300 px-3 py-1.5 text-sm"
+          className="border-brand-secondary/30 rounded-md border px-3 py-1.5 text-sm"
         >
           <option value="">All Types</option>
           {Object.values(REPORTABLE_CONTENT_TYPE).map((t) => (
@@ -121,20 +123,20 @@ export default function ModerationQueue() {
       </div>
 
       {/* Report list */}
-      {loading && <p className="text-sm text-gray-500">Loading reports…</p>}
+      {loading && <p className="text-brand-text-muted text-sm">Loading reports…</p>}
       {error && (
-        <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+        <div className="border-status-error/20 bg-status-error/10 text-status-error rounded-lg border p-4 text-sm">
           {error}
         </div>
       )}
 
       {!loading && !error && reports.length === 0 && (
-        <p className="text-sm text-gray-500">No reports match the selected filters.</p>
+        <p className="text-brand-text-muted text-sm">No reports match the selected filters.</p>
       )}
 
       {!loading && reports.length > 0 && (
         <div className="space-y-3">
-          {reports.map((report) => (
+          {reports.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE).map((report) => (
             <ReportCard
               key={report.id}
               report={report}
@@ -142,6 +144,31 @@ export default function ModerationQueue() {
               onAction={() => setActionTarget(report)}
             />
           ))}
+
+          {/* Pagination */}
+          {reports.length > PAGE_SIZE && (
+            <nav className="flex items-center justify-center gap-2 pt-4" aria-label="Pagination">
+              <button
+                type="button"
+                disabled={page <= 1}
+                onClick={() => setPage(page - 1)}
+                className="border-brand-secondary/30 rounded border px-3 py-1.5 text-sm disabled:opacity-50"
+              >
+                Previous
+              </button>
+              <span className="text-brand-text-muted text-sm">
+                Page {page} of {Math.ceil(reports.length / PAGE_SIZE)}
+              </span>
+              <button
+                type="button"
+                disabled={page >= Math.ceil(reports.length / PAGE_SIZE)}
+                onClick={() => setPage(page + 1)}
+                className="border-brand-secondary/30 rounded border px-3 py-1.5 text-sm disabled:opacity-50"
+              >
+                Next
+              </button>
+            </nav>
+          )}
         </div>
       )}
 
@@ -174,18 +201,20 @@ function ReportCard({ report, onReview, onAction }: ReportCardProps) {
   const isPending = report.status === REPORT_STATUS.PENDING;
 
   return (
-    <div className="rounded-lg border border-gray-200 bg-white p-4">
+    <div className="border-brand-secondary/20 bg-brand-surface rounded-lg border p-4">
       <div className="flex items-start justify-between gap-4">
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2 text-sm">
-            <span className="font-medium text-gray-800">{report.content_type}</span>
-            <span className="text-gray-400">·</span>
-            <span className="text-gray-600">{REPORT_REASON_LABELS[report.reason]}</span>
-            <span className="text-gray-400">·</span>
+            <span className="text-brand-text-primary font-medium">{report.content_type}</span>
+            <span className="text-brand-text-muted">·</span>
+            <span className="text-brand-text-secondary">{REPORT_REASON_LABELS[report.reason]}</span>
+            <span className="text-brand-text-muted">·</span>
             <StatusBadge status={report.status} />
           </div>
-          {report.description && <p className="mt-1 text-sm text-gray-600">{report.description}</p>}
-          <p className="mt-1 text-xs text-gray-400">
+          {report.description && (
+            <p className="text-brand-text-secondary mt-1 text-sm">{report.description}</p>
+          )}
+          <p className="text-brand-text-muted mt-1 text-xs">
             Reported {new Date(report.created_at).toLocaleString()} · ID:{' '}
             {report.content_id.slice(0, 8)}…
           </p>
@@ -195,13 +224,13 @@ function ReportCard({ report, onReview, onAction }: ReportCardProps) {
           <div className="flex shrink-0 items-center gap-2">
             <button
               onClick={() => onReview(report.id, REPORT_STATUS.DISMISSED)}
-              className="rounded border border-gray-300 px-3 py-1 text-xs font-medium text-gray-600 transition hover:bg-gray-50"
+              className="border-brand-secondary/30 text-brand-text-secondary hover:bg-brand-bg rounded border px-3 py-1 text-xs font-medium transition"
             >
               Dismiss
             </button>
             <button
               onClick={onAction}
-              className="rounded bg-red-600 px-3 py-1 text-xs font-medium text-white transition hover:bg-red-700"
+              className="bg-status-error hover:bg-status-error/80 rounded px-3 py-1 text-xs font-medium text-white transition"
             >
               Take Action
             </button>
@@ -218,10 +247,10 @@ function ReportCard({ report, onReview, onAction }: ReportCardProps) {
 
 function StatusBadge({ status }: { status: ReportStatus }) {
   const colors: Record<ReportStatus, string> = {
-    PENDING: 'bg-yellow-100 text-yellow-800',
-    REVIEWED: 'bg-blue-100 text-blue-800',
-    DISMISSED: 'bg-gray-100 text-gray-600',
-    ACTIONED: 'bg-green-100 text-green-800',
+    PENDING: 'bg-status-warning/15 text-status-warning',
+    REVIEWED: 'bg-brand-accent/15 text-brand-primary',
+    DISMISSED: 'bg-brand-secondary/10 text-brand-text-secondary',
+    ACTIONED: 'bg-status-success/15 text-status-success',
   };
 
   return (
@@ -309,23 +338,28 @@ function ActionModal({ report, onClose, onComplete }: ActionModalProps) {
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
       <form
         onSubmit={handleSubmit}
-        className="w-full max-w-md rounded-lg bg-white p-6 shadow-xl"
+        className="bg-brand-surface w-full max-w-md rounded-lg p-6 shadow-xl"
         onClick={(e) => e.stopPropagation()}
       >
-        <h3 className="mb-4 text-lg font-semibold text-gray-900">Take Moderation Action</h3>
-        <p className="mb-3 text-xs text-gray-500">
+        <h3 className="text-brand-text-primary mb-4 text-lg font-semibold">
+          Take Moderation Action
+        </h3>
+        <p className="text-brand-text-muted mb-3 text-xs">
           Report: {REPORT_REASON_LABELS[report.reason]} on {report.content_type} (
           {report.content_id.slice(0, 8)}…)
         </p>
 
-        <label htmlFor="mod-action" className="mb-1 block text-sm font-medium text-gray-700">
+        <label
+          htmlFor="mod-action"
+          className="text-brand-text-secondary mb-1 block text-sm font-medium"
+        >
           Action
         </label>
         <select
           id="mod-action"
           value={action}
           onChange={(e) => setAction(e.target.value as ModerationActionType)}
-          className="mb-3 w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+          className="border-brand-secondary/30 mb-3 w-full rounded-md border px-3 py-2 text-sm"
         >
           <option value="">Select an action…</option>
           {Object.values(MODERATION_ACTION_TYPE).map((a) => (
@@ -335,7 +369,10 @@ function ActionModal({ report, onClose, onComplete }: ActionModalProps) {
           ))}
         </select>
 
-        <label htmlFor="mod-reason" className="mb-1 block text-sm font-medium text-gray-700">
+        <label
+          htmlFor="mod-reason"
+          className="text-brand-text-secondary mb-1 block text-sm font-medium"
+        >
           Reason
         </label>
         <textarea
@@ -343,18 +380,21 @@ function ActionModal({ report, onClose, onComplete }: ActionModalProps) {
           value={reason}
           onChange={(e) => setReason(e.target.value)}
           rows={3}
-          className="mb-3 w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+          className="border-brand-secondary/30 mb-3 w-full rounded-md border px-3 py-2 text-sm"
           placeholder="Explain your decision…"
         />
 
-        <label htmlFor="mod-restrict" className="mb-1 block text-sm font-medium text-gray-700">
+        <label
+          htmlFor="mod-restrict"
+          className="text-brand-text-secondary mb-1 block text-sm font-medium"
+        >
           User Restriction (optional)
         </label>
         <select
           id="mod-restrict"
           value={restrictType}
           onChange={(e) => setRestrictType(e.target.value as RestrictionType | '')}
-          className="mb-4 w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+          className="border-brand-secondary/30 mb-4 w-full rounded-md border px-3 py-2 text-sm"
         >
           <option value="">None</option>
           {Object.values(RESTRICTION_TYPE).map((r) => (
@@ -368,14 +408,14 @@ function ActionModal({ report, onClose, onComplete }: ActionModalProps) {
           <button
             type="button"
             onClick={onClose}
-            className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-50"
+            className="border-brand-secondary/30 text-brand-text-secondary hover:bg-brand-bg rounded-lg border px-4 py-2 text-sm font-medium transition"
           >
             Cancel
           </button>
           <button
             type="submit"
             disabled={loading || !action || !reason.trim()}
-            className="rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-red-700 disabled:opacity-50"
+            className="bg-status-error hover:bg-status-error/80 rounded-lg px-4 py-2 text-sm font-medium text-white transition disabled:opacity-50"
           >
             {loading ? 'Applying…' : 'Apply Action'}
           </button>

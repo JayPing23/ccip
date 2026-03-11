@@ -41,12 +41,15 @@ export default function ThreadComposer({ categoryId, categorySlug }: ThreadCompo
   return (
     <form
       onSubmit={handleSubmit}
-      className="space-y-4 rounded-lg border border-gray-200 bg-white p-5"
+      className="border-brand-secondary/20 bg-brand-surface space-y-4 rounded-lg border p-5"
     >
-      <h2 className="text-lg font-semibold text-gray-900">New Thread</h2>
+      <h2 className="text-brand-text-primary text-lg font-semibold">New Thread</h2>
 
       <div>
-        <label htmlFor="thread-title" className="mb-1 block text-sm font-medium text-gray-700">
+        <label
+          htmlFor="thread-title"
+          className="text-brand-text-secondary mb-1 block text-sm font-medium"
+        >
           Title
         </label>
         <input
@@ -55,14 +58,17 @@ export default function ThreadComposer({ categoryId, categorySlug }: ThreadCompo
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           maxLength={200}
-          className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none"
+          className="border-brand-secondary/30 focus:border-brand-primary focus:ring-brand-primary w-full rounded-md border px-3 py-2 text-sm focus:ring-1 focus:outline-none"
           placeholder="Thread title"
           disabled={loading}
         />
       </div>
 
       <div>
-        <label htmlFor="thread-body" className="mb-1 block text-sm font-medium text-gray-700">
+        <label
+          htmlFor="thread-body"
+          className="text-brand-text-secondary mb-1 block text-sm font-medium"
+        >
           Body
         </label>
         <textarea
@@ -70,26 +76,26 @@ export default function ThreadComposer({ categoryId, categorySlug }: ThreadCompo
           value={body}
           onChange={(e) => setBody(e.target.value)}
           rows={6}
-          className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none"
+          className="border-brand-secondary/30 focus:border-brand-primary focus:ring-brand-primary w-full rounded-md border px-3 py-2 text-sm focus:ring-1 focus:outline-none"
           placeholder="Write your discussion topic…"
           disabled={loading}
         />
       </div>
 
-      {error && <p className="text-sm text-red-600">{error}</p>}
+      {error && <p className="text-status-error text-sm">{error}</p>}
 
       <div className="flex items-center gap-3">
         <button
           type="submit"
           disabled={loading}
-          className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-blue-700 disabled:opacity-50"
+          className="bg-brand-primary hover:bg-brand-primary/80 rounded-lg px-4 py-2 text-sm font-medium text-white transition disabled:opacity-50"
         >
           {loading ? 'Posting…' : 'Create Thread'}
         </button>
         <button
           type="button"
           onClick={() => router.push(`/forum/${categorySlug}`)}
-          className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-50"
+          className="border-brand-secondary/30 text-brand-text-secondary hover:bg-brand-bg rounded-lg border px-4 py-2 text-sm font-medium transition"
         >
           Cancel
         </button>

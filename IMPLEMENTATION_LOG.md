@@ -2,8 +2,8 @@
 
 **Project:** Campus Communications & Interaction Platform (CCIP)
 **Last Updated:** March 11, 2026
-**Current Product Boundary:** Platform foundation + official announcements + Phase 2 shared discoverability services + Phase 3 student publication module + Phase 4 community forum & moderation + Phase 5 analytics, retention & external distribution are implemented
-**Current Delivery Position:** Phase 5 complete
+**Current Product Boundary:** Platform foundation + official announcements + Phase 2 shared discoverability services + Phase 3 student publication module + Phase 4 community forum & moderation + Phase 5 analytics, retention & external distribution + Design System implementation are implemented
+**Current Delivery Position:** Phase 5 complete + Design System applied
 **Next Recommended Entry Point:** Operational deployment and monitoring
 
 ---
@@ -55,7 +55,8 @@ What exists today is:
 - content lifecycle management with retention policies, stale content detection, and batch archiving,
 - external distribution service for announcements and articles to Facebook and Instagram (stub with retry handling),
 - security hardening with response headers, accessibility skip links, and ARIA navigation labels,
-- cross-module tests for analytics, retention, and external publish.
+- cross-module tests for analytics, retention, and external publish,
+- the complete Design System implementation per `Design_Plan.md` including brand color token migration, dark mode, responsive layouts, micro-interactions, accessibility conformance, and UX validation.
 
 ---
 
@@ -110,6 +111,7 @@ The current architecture target remains a modular monolith:
 | External publishing | Implemented | P5-08–P5-09: service, types, routes, retry handling |
 | Platform hardening | Implemented | P5-10: security headers, accessibility, rate limiting |
 | Cross-module tests | Implemented | P5-11: analytics, retention, external publish tests |
+| Design System | Implemented | Brand tokens, dark mode, responsive layouts, micro-interactions, accessibility, UX validation per Design_Plan.md |
 
 ---
 
@@ -244,6 +246,169 @@ Phase 5 delivered analytics, content lifecycle management, external distribution
 
 ---
 
+## Design System Implementation (Design_Plan.md)
+
+### Summary
+
+Applied the comprehensive Design System defined in `Design_Plan.md` across the entire codebase. This covered brand color token migration, dark mode theming, responsive layout restructuring, micro-interaction animations, accessibility conformance, component standardization, and Phase 12 UX validation.
+
+### Tailwind Theme & Global Styles (Design Plan Phases 3–5, 7)
+
+- Tailwind v4 CSS-first approach with `@import 'tailwindcss'` and `@theme` block in `app/globals.css`.
+- Brand palette tokens: `brand-primary` (#355872), `brand-secondary` (#7AAACE), `brand-accent` (#9CD5FF), `brand-bg` (#F7F8F0), `brand-surface` (#FFFFFF).
+- Text tokens: `brand-text-primary` (#355872), `brand-text-secondary` (#5A7A8F), `brand-text-muted` (#8FA5B5).
+- Semantic status tokens: `status-success`, `status-error`, `status-warning`, `status-info`.
+- Content-type accent tokens: `content-announcement` (#355872), `content-article` (#7AAACE), `content-forum` (#9CD5FF).
+- Dark mode via `.dark` class strategy with CSS variable overrides: bg→#1E3A4F, surface→#355872, text-primary→#F7F8F0, text-secondary→#9CD5FF, text-muted→#7AAACE.
+- Inter font loaded via `next/font/google` with `--font-sans` CSS variable.
+- Type scale: H1 2.25rem, H2 1.75rem, H3 1.375rem, Body 1rem, Small 0.875rem, Caption 0.75rem.
+- `prefers-reduced-motion: reduce` media query disables all animations.
+
+### Brand Color Migration (Design Plan Phase 4)
+
+- Replaced ~40 instances of hardcoded `bg-white` with `bg-brand-surface` across 30+ component and page files.
+- Replaced `text-amber-600` with `text-status-warning` in ThreadView.tsx pinned indicators.
+- All components now use brand tokens exclusively (no hardcoded `blue-600`, `gray-50`, etc.).
+
+**Files migrated:**
+- Shared: Toast, Header.
+- Content module: ContentCard, ContentForm, AnnouncementCard, AnnouncementManagement.
+- Publication module: ArticleCard, ArticleForm, ArticleFeed, PublicationWorkflowPanel.
+- Forum module: ThreadCard, ThreadView, ThreadComposer, ForumCategoryList, ReportDialog.
+- Notifications module: NotificationBell, NotificationCenter, NotificationPreferences.
+- Auth module: LoginForm, AuthCallbackHandler, AuthCallbackRedirect.
+- Admin module: OrganizationList, RolesList, UserListTable, ModerationQueue.
+- Pages: login, signup, dashboard, all admin pages (users, organizations, roles, retention), content detail/edit pages, news detail page.
+
+### Responsive Layout Restructuring (Design Plan Phase 6)
+
+- **Dashboard**: Restructured content sections into responsive `grid-cols-1 lg:grid-cols-3` grid with content-type color marker bars (announcement=primary, article=secondary, forum=accent).
+- **Announcement Feed**: Restructured from stacked filters-above-content to `lg:flex-row` layout with `SearchFilters` in a sticky `lg:w-72` sidebar and content in `flex-1` main area. Container widened to `max-w-6xl`.
+- **Campus News Feed**: Container widened to `max-w-6xl`. ArticleFeed now receives `layout="magazine"` prop.
+- **ArticleFeed magazine layout**: First article renders as large featured card (2xl/3xl heading, full excerpt), remaining articles in responsive `sm:grid-cols-2 lg:grid-cols-3` grid with truncated excerpts.
+
+### Micro-Interaction Animations (Design Plan Phase 9)
+
+- **Card hover**: All card components (ContentCard, AnnouncementCard, ArticleCard, ThreadCard, ForumCategoryList, ThreadList items) have `transition-all duration-200 ease-out hover:-translate-y-px hover:shadow-md`.
+- **Toast slide-in**: `toast-in` keyframe (opacity 0→1, translateY 1rem→0) at 250ms ease-out. Applied via `animate-toast-in` class.
+- **NotificationBell pulse**: `bell-pulse` keyframe (scale 1→1.2→1) at 300ms ease-in-out. Applied via `animate-bell-pulse` class on unread badge.
+
+### Accessibility (Design Plan Phase 11)
+
+- **Toast**: `aria-live="polite"` on container, `aria-atomic="false"`, `role="status"` on each toast, `aria-hidden="true"` on icons, `aria-label="Dismiss notification"` on close button.
+- **Header**: `aria-current="page"` on active desktop and mobile nav links, active link styling (font-semibold + border-b-2 border-brand-accent for desktop, bg-brand-accent/15 for mobile).
+- **MobileBottomNav**: `aria-current="page"` on active tab, `aria-label="Mobile navigation"` on nav element.
+- **Breadcrumbs**: `aria-label="Breadcrumb"` on nav, `aria-current="page"` on last item.
+- **StatusBadge**: Uses both color AND text labels (not color alone).
+- **EmptyState**: `aria-hidden="true"` on decorative emoji icons.
+- **ConfirmDialog**: Native `<dialog>` with Escape key handling, backdrop click dismiss, focus trap to Cancel button, `aria-labelledby` and `aria-describedby`.
+
+### Component Standardization (Design Plan Phase 8)
+
+- **EmptyState usage**: Replaced inline empty state markup in ContentFeed.tsx (`<EmptyState type="announcement" />`), ArticleFeed.tsx (`<EmptyState type="article" />`), and feed page.tsx.
+- **ConfirmDialog usage**: Replaced `window.confirm()` in ContentCard.tsx and OrganizationList.tsx with the shared `ConfirmDialog` component for destructive delete actions.
+- **Content-type color markers**: Added `bg-content-announcement`, `bg-content-article`, `bg-content-forum` marker bars to AnnouncementCard, ArticleCard, ThreadCard, ForumCategoryList, and dashboard content pillars.
+- **Admin Console link**: Added `canAccessAdminConsole` check and Admin Console action link to the forum page Header to ensure admin access from all portal pages (was already present on dashboard, feed, news, content pages).
+- **ModerationQueue pagination**: Added client-side pagination (PAGE_SIZE=20) with Previous/Next navigation controls.
+
+### Header Null Safety Fix
+
+- Fixed `pathname.startsWith()` call in both desktop and mobile nav to handle null `pathname` from `usePathname()` (`pathname?.startsWith(...) ?? false`). All Header tests pass.
+
+### Phase 12 — UX Validation Results
+
+All 18 checklist items verified against the codebase:
+
+**Content Discovery**
+- [x] Student can find latest announcement within 2 clicks from dashboard (RecentAnnouncements + "View all" link)
+- [x] Content types distinguishable at a glance (distinct color markers: announcement=#355872, article=#7AAACE, forum=#9CD5FF)
+- [x] Feed page communicates active filters (`hasActiveFilters()` check + "Reset filters" button)
+
+**Content Creation**
+- [x] Editor can create and publish announcement quickly ("New Announcement" action link for authorized users)
+- [x] Article editorial workflow visible (PublicationWorkflowPanel with status steps: Draft → In Review → Approved → Published)
+- [x] Forum thread creation clear (ThreadComposer with pre-selected category, title + body fields)
+
+**Navigation**
+- [x] Current page always clear from header/nav state (`aria-current="page"` + accent underline/bold styling)
+- [x] Dashboard reachable from any page in one click (Dashboard in DEFAULT_NAV_LINKS + MobileBottomNav + brand logo link)
+- [x] Breadcrumbs reflect user position (Breadcrumbs component with `aria-label="Breadcrumb"` and ordered `<ol>`)
+
+**Admin**
+- [x] Admin can access moderation queue in 2 clicks (Admin Console in header → Moderation sidebar link)
+- [x] Destructive actions protected with ConfirmDialog (ContentCard delete, OrganizationList delete)
+- [x] Admin dashboard legible at scale (UserListTable: PAGE_SIZE=20 pagination; ModerationQueue: PAGE_SIZE=20 pagination)
+
+**Responsiveness**
+- [x] Dashboard usable on 375px screen (mobile-first grid-cols-1 with lg: breakpoints)
+- [x] Form fields reachable on touch devices (px-3 py-2 inputs, min 40px touch targets)
+- [x] Mobile bottom nav highlights active section (`text-brand-primary` + `bg-brand-accent` indicator bar)
+
+**Dark Mode**
+- [x] Status badges readable in dark mode (semantic tokens with opacity-based backgrounds)
+- [x] Forum thread view maintains hierarchy (all text/surface classes use CSS custom properties)
+- [x] Form borders/focus rings visible (brand-secondary/30 border + brand-primary focus ring via CSS variables)
+
+### Files Modified
+
+**Global / Shared:**
+- `app/globals.css` — toast-in and bell-pulse keyframe animations
+- `shared/components/Toast.tsx` — aria-live, role, aria-label, animate-toast-in
+- `shared/components/Header.tsx` — usePathname, aria-current, active nav styling, null safety
+
+**Content module:**
+- `modules/content/components/ContentCard.tsx` — bg-brand-surface, hover animation, ConfirmDialog
+- `modules/content/components/ContentForm.tsx` — bg-brand-surface
+- `modules/content/components/ContentFeed.tsx` — EmptyState component
+- `modules/content/components/AnnouncementCard.tsx` — hover animation
+- `modules/content/components/AnnouncementManagement.tsx` — bg-brand-surface
+
+**Publication module:**
+- `modules/publication/components/ArticleCard.tsx` — hover animation
+- `modules/publication/components/ArticleForm.tsx` — bg-brand-surface
+- `modules/publication/components/ArticleFeed.tsx` — EmptyState, magazine layout prop
+- `modules/publication/components/PublicationWorkflowPanel.tsx` — bg-brand-surface
+
+**Forum module:**
+- `modules/forum/components/ThreadCard.tsx` — hover animation
+- `modules/forum/components/ThreadView.tsx` — bg-brand-surface, hover animation on ThreadList, text-status-warning for pinned
+- `modules/forum/components/ThreadComposer.tsx` — bg-brand-surface
+- `modules/forum/components/ForumCategoryList.tsx` — hover animation, content-type marker
+- `modules/forum/components/ReportDialog.tsx` — bg-brand-surface
+
+**Notifications module:**
+- `modules/notifications/components/NotificationBell.tsx` — animate-bell-pulse on unread badge
+- `modules/notifications/components/NotificationCenter.tsx` — bg-brand-surface
+- `modules/notifications/components/NotificationPreferences.tsx` — bg-brand-surface
+
+**Auth module:**
+- `modules/auth/components/LoginForm.tsx` — bg-brand-surface
+- `modules/auth/components/AuthCallbackHandler.tsx` — bg-brand-surface
+- `modules/auth/components/AuthCallbackRedirect.tsx` — bg-brand-surface
+
+**Admin module:**
+- `modules/admin/components/OrganizationList.tsx` — bg-brand-surface, ConfirmDialog
+- `modules/admin/components/RolesList.tsx` — bg-brand-surface
+- `modules/admin/components/UserListTable.tsx` — bg-brand-surface
+- `modules/moderation/components/ModerationQueue.tsx` — bg-brand-surface, pagination
+
+**Pages:**
+- `app/(auth)/login/page.tsx` — bg-brand-surface
+- `app/(auth)/signup/page.tsx` — bg-brand-surface
+- `app/(portal)/dashboard/page.tsx` — 3-column grid, content-type markers
+- `app/(portal)/feed/page.tsx` — sidebar filter layout, EmptyState, max-w-6xl
+- `app/(portal)/news/page.tsx` — magazine layout, max-w-6xl
+- `app/(portal)/forum/page.tsx` — Admin Console action link
+- `app/(portal)/admin/users/page.tsx` — bg-brand-surface
+- `app/(portal)/admin/organizations/page.tsx` — bg-brand-surface
+- `app/(portal)/admin/roles/page.tsx` — bg-brand-surface
+- `app/(portal)/admin/retention/page.tsx` — bg-brand-surface
+- `app/(portal)/content/[slug]/page.tsx` — bg-brand-surface
+- `app/(portal)/content/[slug]/edit/page.tsx` — bg-brand-surface
+- `app/(portal)/news/[slug]/page.tsx` — bg-brand-surface
+
+---
+
 ## Phase 4 Forum & Moderation Module Completion
 
 ### Summary
@@ -318,6 +483,7 @@ Phase 3 delivered the student publication module as an additive domain that oper
 | Phase 3 | Student Publication Module | Complete | Implemented publication module |
 | Phase 4 | Community Forum & Moderation | Complete | Implemented forum, moderation, notifications, search, rate limiting, tests |
 | Phase 5 | Unified Campus Platform Hardening | Complete | Analytics, retention, external publish, hardening, tests, docs |
+| Design System | UI/UX Implementation (Design_Plan.md) | Complete | Brand migration, dark mode, responsive layouts, micro-interactions, accessibility, UX validation |
 
 ---
 

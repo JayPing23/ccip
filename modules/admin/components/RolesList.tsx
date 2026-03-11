@@ -14,8 +14,7 @@ const ROLE_DESCRIPTIONS: Record<string, string> = {
   DEPT_EDITOR: 'Can create and manage content within their assigned department/organization.',
   UNIVERSITY_EDITOR:
     'Can create and manage content across all departments and organizations university-wide.',
-  SUPER_ADMIN:
-    'Full system access. Can manage users, organizations, roles, and all content.',
+  SUPER_ADMIN: 'Full system access. Can manage users, organizations, roles, and all content.',
 };
 
 /**
@@ -29,10 +28,7 @@ export default function RolesList() {
   useEffect(() => {
     async function load() {
       try {
-        const [rolesRes, usersRes] = await Promise.all([
-          fetch('/api/roles'),
-          fetch('/api/users'),
-        ]);
+        const [rolesRes, usersRes] = await Promise.all([fetch('/api/roles'), fetch('/api/users')]);
         const rolesData = await rolesRes.json();
         const usersData = await usersRes.json();
 
@@ -61,15 +57,15 @@ export default function RolesList() {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-16">
-        <div className="h-8 w-8 animate-spin rounded-full border-4 border-indigo-600 border-t-transparent" />
-        <span className="ml-3 text-gray-500">Loading roles...</span>
+        <div className="border-brand-primary h-8 w-8 animate-spin rounded-full border-4 border-t-transparent" />
+        <span className="text-brand-text-muted ml-3">Loading roles...</span>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+      <div className="border-status-error/20 bg-status-error/10 text-status-error rounded-md border px-4 py-3 text-sm">
         {error}
       </div>
     );
@@ -80,17 +76,17 @@ export default function RolesList() {
       {roles.map((role) => (
         <div
           key={role.id}
-          className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm"
+          className="border-brand-secondary/20 bg-brand-surface rounded-xl border p-5 shadow-sm"
         >
           <div className="mb-2 flex items-center justify-between">
-            <span className="inline-flex rounded-full bg-indigo-100 px-3 py-0.5 text-xs font-bold uppercase tracking-wide text-indigo-800">
+            <span className="bg-brand-accent/15 text-brand-primary inline-flex rounded-full px-3 py-0.5 text-xs font-bold tracking-wide uppercase">
               {role.name.replace(/_/g, ' ')}
             </span>
-            <span className="text-sm text-gray-500">
+            <span className="text-brand-text-muted text-sm">
               {role.user_count ?? 0} {role.user_count === 1 ? 'user' : 'users'}
             </span>
           </div>
-          <p className="text-sm text-gray-600">{role.description}</p>
+          <p className="text-brand-text-secondary text-sm">{role.description}</p>
         </div>
       ))}
     </div>

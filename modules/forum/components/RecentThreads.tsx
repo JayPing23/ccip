@@ -15,7 +15,7 @@ export default function RecentThreads({ items, loading, error }: RecentThreadsPr
     return (
       <div className="space-y-3">
         {[1, 2, 3].map((i) => (
-          <div key={i} className="h-16 animate-pulse rounded-lg bg-gray-200" />
+          <div key={i} className="bg-brand-secondary/20 h-16 animate-pulse rounded-lg" />
         ))}
       </div>
     );
@@ -23,7 +23,7 @@ export default function RecentThreads({ items, loading, error }: RecentThreadsPr
 
   if (error) {
     return (
-      <div className="rounded-lg bg-red-50 p-4 text-sm text-red-700">
+      <div className="bg-status-error/10 text-status-error rounded-lg p-4 text-sm">
         Failed to load recent threads.
       </div>
     );
@@ -31,21 +31,21 @@ export default function RecentThreads({ items, loading, error }: RecentThreadsPr
 
   if (items.length === 0) {
     return (
-      <div className="rounded-lg bg-blue-50 p-6 text-center">
-        <p className="text-gray-700">No forum discussions yet.</p>
-        <p className="text-sm text-gray-500">Start or join a conversation in the forum!</p>
+      <div className="bg-brand-accent/10 rounded-lg p-6 text-center">
+        <p className="text-brand-text-primary">No forum discussions yet.</p>
+        <p className="text-brand-text-muted text-sm">Start or join a conversation in the forum!</p>
       </div>
     );
   }
 
   return (
-    <ul className="divide-y divide-gray-200">
+    <ul className="divide-brand-secondary/10 divide-y">
       {items.map((item) => (
         <li key={item.id} className="py-4 first:pt-0 last:pb-0">
           <Link href={`/forum/${item.slug}`} className="group block">
             <div className="flex items-start justify-between gap-4">
               <div className="min-w-0 flex-1">
-                <h4 className="truncate text-sm font-semibold text-gray-900 group-hover:text-blue-600">
+                <h4 className="text-brand-text-primary group-hover:text-brand-primary truncate text-sm font-semibold">
                   {item.pinned && (
                     <span className="mr-1.5 text-amber-500" aria-label="Pinned">
                       📌
@@ -53,11 +53,11 @@ export default function RecentThreads({ items, loading, error }: RecentThreadsPr
                   )}
                   {item.title}
                 </h4>
-                <p className="mt-1 text-xs text-gray-500">
+                <p className="text-brand-text-muted mt-1 text-xs">
                   {item.reply_count} {item.reply_count === 1 ? 'reply' : 'replies'}
                 </p>
               </div>
-              <time className="shrink-0 text-xs text-gray-400">
+              <time className="text-brand-text-muted shrink-0 text-xs">
                 {formatDistanceToNow(new Date(item.created_at), { addSuffix: true })}
               </time>
             </div>

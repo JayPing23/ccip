@@ -31,19 +31,23 @@ function NotificationRow({
   const content = (
     <div
       className={`flex items-start gap-3 px-4 py-3 transition-colors ${
-        isUnread ? 'bg-blue-50' : 'bg-white'
-      } hover:bg-gray-50`}
+        isUnread ? 'bg-brand-accent/10' : 'bg-brand-surface'
+      } hover:bg-brand-bg`}
     >
       {isUnread && (
-        <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-blue-500" aria-hidden="true" />
+        <span className="bg-brand-accent mt-1.5 h-2 w-2 shrink-0 rounded-full" aria-hidden="true" />
       )}
       {!isUnread && <span className="mt-1.5 h-2 w-2 shrink-0" aria-hidden="true" />}
 
       <div className="min-w-0 flex-1">
-        <p className={`text-sm ${isUnread ? 'font-semibold text-gray-900' : 'text-gray-700'}`}>
+        <p
+          className={`text-sm ${isUnread ? 'text-brand-text-primary font-semibold' : 'text-brand-text-secondary'}`}
+        >
           {notification.notification_text ?? notification.content_title ?? 'Notification'}
         </p>
-        <p className="mt-0.5 text-xs text-gray-500">{getRelativeTime(notification.created_at)}</p>
+        <p className="text-brand-text-muted mt-0.5 text-xs">
+          {getRelativeTime(notification.created_at)}
+        </p>
       </div>
 
       {isUnread && (
@@ -55,7 +59,7 @@ function NotificationRow({
             onMarkRead(notification.id);
           }}
           disabled={isMarking}
-          className="shrink-0 rounded p-1 text-gray-400 hover:bg-gray-200 hover:text-gray-600 disabled:opacity-50"
+          className="text-brand-text-muted hover:bg-brand-secondary/20 hover:text-brand-text-secondary shrink-0 rounded p-1 disabled:opacity-50"
           aria-label="Mark as read"
         >
           <svg
@@ -156,17 +160,17 @@ export default function NotificationCenter({
       ref={panelRef}
       role="dialog"
       aria-label="Notifications"
-      className="absolute top-full right-0 z-50 mt-2 w-96 overflow-hidden rounded-xl border border-gray-200 bg-white shadow-lg"
+      className="border-brand-secondary/20 bg-brand-surface absolute top-full right-0 z-50 mt-2 w-96 overflow-hidden rounded-xl border shadow-lg"
     >
       {/* Header */}
-      <div className="flex items-center justify-between border-b border-gray-100 px-4 py-3">
-        <h2 className="text-sm font-semibold text-gray-900">Notifications</h2>
+      <div className="border-brand-secondary/10 flex items-center justify-between border-b px-4 py-3">
+        <h2 className="text-brand-text-primary text-sm font-semibold">Notifications</h2>
         <div className="flex items-center gap-2">
           <button
             type="button"
             onClick={() => void markAllRead()}
             disabled={markingAll}
-            className="text-xs font-medium text-blue-600 hover:text-blue-800 disabled:opacity-50"
+            className="text-brand-primary hover:text-brand-primary text-xs font-medium disabled:opacity-50"
           >
             Mark all read
           </button>
@@ -174,14 +178,14 @@ export default function NotificationCenter({
       </div>
 
       {/* Filter tabs */}
-      <div className="flex border-b border-gray-100">
+      <div className="border-brand-secondary/10 flex border-b">
         <button
           type="button"
           onClick={() => setFilter('all')}
           className={`flex-1 px-4 py-2 text-xs font-medium ${
             filter === 'all'
-              ? 'border-b-2 border-blue-600 text-blue-600'
-              : 'text-gray-500 hover:text-gray-700'
+              ? 'border-brand-primary text-brand-primary border-b-2'
+              : 'text-brand-text-muted hover:text-brand-text-secondary'
           }`}
         >
           All
@@ -191,8 +195,8 @@ export default function NotificationCenter({
           onClick={() => setFilter('unread')}
           className={`flex-1 px-4 py-2 text-xs font-medium ${
             filter === 'unread'
-              ? 'border-b-2 border-blue-600 text-blue-600'
-              : 'text-gray-500 hover:text-gray-700'
+              ? 'border-brand-primary text-brand-primary border-b-2'
+              : 'text-brand-text-muted hover:text-brand-text-secondary'
           }`}
         >
           Unread
@@ -203,17 +207,17 @@ export default function NotificationCenter({
       <div className="max-h-96 overflow-y-auto">
         {loading && items.length === 0 && (
           <div className="flex items-center justify-center py-12">
-            <div className="h-6 w-6 animate-spin rounded-full border-2 border-blue-300 border-t-blue-600" />
+            <div className="border-brand-secondary border-t-brand-primary h-6 w-6 animate-spin rounded-full border-2" />
           </div>
         )}
 
         {error && (
           <div className="px-4 py-8 text-center">
-            <p className="text-sm text-red-600">{error}</p>
+            <p className="text-status-error text-sm">{error}</p>
             <button
               type="button"
               onClick={() => void refreshList()}
-              className="mt-2 text-xs font-medium text-blue-600 hover:text-blue-800"
+              className="text-brand-primary hover:text-brand-primary mt-2 text-xs font-medium"
             >
               Try again
             </button>
@@ -222,7 +226,7 @@ export default function NotificationCenter({
 
         {!loading && !error && items.length === 0 && (
           <div className="px-4 py-12 text-center">
-            <p className="text-sm text-gray-500">
+            <p className="text-brand-text-muted text-sm">
               {filter === 'unread' ? 'No unread notifications' : 'No notifications yet'}
             </p>
           </div>
@@ -240,8 +244,8 @@ export default function NotificationCenter({
 
       {/* Footer */}
       {total > items.length && (
-        <div className="border-t border-gray-100 px-4 py-2 text-center">
-          <p className="text-xs text-gray-500">
+        <div className="border-brand-secondary/10 border-t px-4 py-2 text-center">
+          <p className="text-brand-text-muted text-xs">
             Showing {items.length} of {total}
           </p>
         </div>

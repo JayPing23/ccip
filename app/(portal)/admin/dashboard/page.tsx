@@ -11,8 +11,8 @@ export default async function AdminDashboardPage() {
   return (
     <div className="p-6 sm:p-8">
       <div className="mb-8">
-        <h2 className="text-2xl font-bold text-gray-900">Dashboard</h2>
-        <p className="mt-1 text-gray-600">Welcome back, {user.display_name}.</p>
+        <h2 className="text-brand-text-primary text-2xl font-bold">Dashboard</h2>
+        <p className="text-brand-text-secondary mt-1">Welcome back, {user.display_name}.</p>
       </div>
       <div className="mb-8">
         <StatsGrid />
@@ -21,24 +21,24 @@ export default async function AdminDashboardPage() {
         <div className="lg:col-span-2">
           <ActivityFeed />
         </div>
-        <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
-          <h3 className="mb-4 text-lg font-bold text-gray-900">Quick Actions</h3>
+        <div className="bg-brand-surface border-brand-secondary/20 rounded-lg border p-6 shadow-sm">
+          <h3 className="text-brand-text-primary mb-4 text-lg font-bold">Quick Actions</h3>
           <nav className="space-y-2">
             <a
               href="/admin/users"
-              className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-700"
+              className="text-brand-text-secondary hover:bg-brand-accent/10 hover:text-brand-primary flex items-center gap-3 rounded-lg px-3 py-2 text-sm"
             >
               <span>Users</span>
             </a>
             <a
               href="/admin/organizations"
-              className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-700"
+              className="text-brand-text-secondary hover:bg-brand-accent/10 hover:text-brand-primary flex items-center gap-3 rounded-lg px-3 py-2 text-sm"
             >
               <span>Organizations</span>
             </a>
             <a
               href="/admin/roles"
-              className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-700"
+              className="text-brand-text-secondary hover:bg-brand-accent/10 hover:text-brand-primary flex items-center gap-3 rounded-lg px-3 py-2 text-sm"
             >
               <span>Roles</span>
             </a>

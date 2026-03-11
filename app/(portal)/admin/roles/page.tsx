@@ -9,29 +9,41 @@ export default function AdminRolesPage() {
   return (
     <div className="p-6 sm:p-8">
       <div className="mb-6">
-        <h2 className="text-2xl font-bold text-gray-900">Roles &amp; Permissions</h2>
-        <p className="mt-1 text-gray-600">Understand the role hierarchy and permissions in your system.</p>
+        <h2 className="text-brand-text-primary text-2xl font-bold">Roles &amp; Permissions</h2>
+        <p className="text-brand-text-secondary mt-1">
+          Understand the role hierarchy and permissions in your system.
+        </p>
       </div>
 
-      <div className="rounded-lg bg-white p-6 shadow-sm">
+      <div className="bg-brand-surface rounded-lg p-6 shadow-sm">
         <RolesList />
       </div>
 
       {/* Permissions Matrix */}
-      <div className="mt-8 rounded-lg bg-white p-6 shadow-sm">
-        <h3 className="mb-6 text-xl font-bold text-gray-900">Permissions Matrix</h3>
+      <div className="bg-brand-surface mt-8 rounded-lg p-6 shadow-sm">
+        <h3 className="text-brand-text-primary mb-6 text-xl font-bold">Permissions Matrix</h3>
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-gray-200 bg-gray-50">
-                <th className="px-4 py-3 text-left font-semibold text-gray-900">Permission</th>
-                <th className="px-4 py-3 text-center font-semibold text-gray-900">STUDENT</th>
-                <th className="px-4 py-3 text-center font-semibold text-gray-900">DEPT_EDITOR</th>
-                <th className="px-4 py-3 text-center font-semibold text-gray-900">UNIV_EDITOR</th>
-                <th className="px-4 py-3 text-center font-semibold text-gray-900">SUPER_ADMIN</th>
+              <tr className="border-brand-secondary/20 bg-brand-bg border-b">
+                <th className="text-brand-text-primary px-4 py-3 text-left font-semibold">
+                  Permission
+                </th>
+                <th className="text-brand-text-primary px-4 py-3 text-center font-semibold">
+                  STUDENT
+                </th>
+                <th className="text-brand-text-primary px-4 py-3 text-center font-semibold">
+                  DEPT_EDITOR
+                </th>
+                <th className="text-brand-text-primary px-4 py-3 text-center font-semibold">
+                  UNIV_EDITOR
+                </th>
+                <th className="text-brand-text-primary px-4 py-3 text-center font-semibold">
+                  SUPER_ADMIN
+                </th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-200">
+            <tbody className="divide-brand-secondary/20 divide-y">
               {[
                 ['View Published Content', true, true, true, true],
                 ['Create Content', false, true, true, true],
@@ -42,7 +54,7 @@ export default function AdminRolesPage() {
                 ['Manage Organizations', false, false, false, true],
               ].map(([label, s, d, u, a]) => (
                 <tr key={label as string}>
-                  <td className="px-4 py-3 font-medium text-gray-900">{label}</td>
+                  <td className="text-brand-text-primary px-4 py-3 font-medium">{label}</td>
                   <td className="px-4 py-3 text-center">{s ? '✅' : '❌'}</td>
                   <td className="px-4 py-3 text-center">{d ? '✅' : '❌'}</td>
                   <td className="px-4 py-3 text-center">{u ? '✅' : '❌'}</td>

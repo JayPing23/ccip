@@ -1,5 +1,6 @@
 'use client';
 
+import ConfirmDialog from '@/shared/components/ConfirmDialog';
 import type { IOrganization } from '@/shared/types/database.types';
 import { useState } from 'react';
 import { useDeleteOrganization, useUpdateOrganization } from '../hooks/index';
@@ -21,21 +22,25 @@ export default function OrganizationList({
 }: OrganizationListProps) {
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [editingOrgId, setEditingOrgId] = useState<string | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<{ id: string; name: string } | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
   const { updateOrganization } = useUpdateOrganization();
   const { deleteOrganization } = useDeleteOrganization();
 
   if (loading) {
-    return <div className="py-8 text-center text-gray-500">Loading organizations...</div>;
+    return <div className="text-brand-text-muted py-8 text-center">Loading organizations...</div>;
   }
 
-  const handleDelete = async (orgId: string, orgName: string) => {
-    if (confirm(`Are you sure you want to delete "${orgName}"? This cannot be undone.`)) {
-      try {
-        await deleteOrganization(orgId);
-        onRefresh();
-      } catch (err) {
-        console.error('Failed to delete organization:', err);
-      }
+  const handleDelete = async (orgId: string) => {
+    setIsDeleting(true);
+    try {
+      await deleteOrganization(orgId);
+      onRefresh();
+    } catch (err) {
+      console.error('Failed to delete organization:', err);
+    } finally {
+      setIsDeleting(false);
+      setDeleteTarget(null);
     }
   };
 
@@ -53,10 +58,10 @@ export default function OrganizationList({
     <div className="space-y-6">
       {/* Create Button */}
       <div className="flex justify-between">
-        <h2 className="text-xl font-bold text-gray-900">Organizations</h2>
+        <h2 className="text-brand-text-primary text-xl font-bold">Organizations</h2>
         <button
           onClick={() => setShowCreateForm(!showCreateForm)}
-          className="rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700"
+          className="bg-brand-primary hover:bg-brand-primary/80 rounded-md px-4 py-2 text-sm font-medium text-white"
         >
           {showCreateForm ? 'Cancel' : '+ Create Organization'}
         </button>
@@ -75,11 +80,11 @@ export default function OrganizationList({
       )}
 
       {/* Organizations Tree */}
-      <div className="rounded-lg border border-gray-200 bg-white">
+      <div className="border-brand-secondary/20 bg-brand-surface rounded-lg border">
         {organizations.length === 0 ? (
-          <div className="py-8 text-center text-gray-500">No organizations found</div>
+          <div className="text-brand-text-muted py-8 text-center">No organizations found</div>
         ) : (
-          <div className="divide-y divide-gray-200">
+          <div className="divide-brand-secondary/20 divide-y">
             {organizations.map((org) => (
               <OrgRow
                 key={org.id}
@@ -87,7 +92,7 @@ export default function OrganizationList({
                 organizations={organizations}
                 isEditing={editingOrgId === org.id}
                 onEdit={handleEdit}
-                onDelete={handleDelete}
+                onDelete={(orgId, orgName) => setDeleteTarget({ id: orgId, name: orgName })}
                 onEditCancel={() => setEditingOrgId(null)}
                 onEditClick={() => setEditingOrgId(org.id)}
               />
@@ -95,6 +100,17 @@ export default function OrganizationList({
           </div>
         )}
       </div>
+
+      <ConfirmDialog
+        open={deleteTarget !== null}
+        title="Delete Organization"
+        description={`Are you sure you want to delete "${deleteTarget?.name ?? ''}"? This cannot be undone.`}
+        confirmLabel="Delete"
+        variant="danger"
+        loading={isDeleting}
+        onConfirm={() => deleteTarget && handleDelete(deleteTarget.id)}
+        onCancel={() => setDeleteTarget(null)}
+      />
     </div>
   );
 }
@@ -141,7 +157,7 @@ function OrgRow({
 
   return (
     <>
-      <div className="flex items-center justify-between px-4 py-4 hover:bg-gray-50">
+      <div className="hover:bg-brand-bg flex items-center justify-between px-4 py-4">
         <div className="flex-1">
           {isEditing ? (
             <input
@@ -150,13 +166,13 @@ function OrgRow({
               aria-label="Organization name"
               value={editName}
               onChange={(e) => setEditName(e.target.value)}
-              className="rounded-md border border-gray-300 px-2 py-1"
+              className="border-brand-secondary/30 rounded-md border px-2 py-1"
               autoFocus
             />
           ) : (
             <div>
-              <div className="font-medium text-gray-900">{org.name}</div>
-              <div className="flex gap-4 text-sm text-gray-500">
+              <div className="text-brand-text-primary font-medium">{org.name}</div>
+              <div className="text-brand-text-muted flex gap-4 text-sm">
                 <span>Type: {org.type}</span>
                 {parentOrg && <span>Parent: {parentOrg.name}</span>}
                 {childOrgs.length > 0 && <span>Children: {childOrgs.length}</span>}
@@ -172,13 +188,13 @@ function OrgRow({
               <button
                 onClick={handleSubmit}
                 disabled={isSubmitting}
-                className="rounded-md bg-green-600 px-3 py-1 text-sm font-medium text-white hover:bg-green-700 disabled:opacity-50"
+                className="bg-status-success hover:bg-status-success/80 rounded-md px-3 py-1 text-sm font-medium text-white disabled:opacity-50"
               >
                 Save
               </button>
               <button
                 onClick={onEditCancel}
-                className="rounded-md border border-gray-300 px-3 py-1 text-sm font-medium text-gray-700 hover:bg-gray-50"
+                className="border-brand-secondary/30 text-brand-text-secondary hover:bg-brand-bg rounded-md border px-3 py-1 text-sm font-medium"
               >
                 Cancel
               </button>
@@ -187,13 +203,13 @@ function OrgRow({
             <>
               <button
                 onClick={onEditClick}
-                className="rounded-md border border-gray-300 px-3 py-1 text-sm font-medium text-gray-700 hover:bg-gray-50"
+                className="border-brand-secondary/30 text-brand-text-secondary hover:bg-brand-bg rounded-md border px-3 py-1 text-sm font-medium"
               >
                 Edit
               </button>
               <button
                 onClick={() => onDelete(org.id, org.name)}
-                className="rounded-md border border-red-300 px-3 py-1 text-sm font-medium text-red-700 hover:bg-red-50"
+                className="border-status-error/30 text-status-error hover:bg-status-error/10 rounded-md border px-3 py-1 text-sm font-medium"
               >
                 Delete
               </button>
@@ -270,30 +286,30 @@ function CreateOrganizationForm({
   }
 
   return (
-    <div className="rounded-lg border border-gray-200 bg-white p-6">
-      <h3 className="mb-4 text-lg font-bold text-gray-900">Create Organization</h3>
+    <div className="border-brand-secondary/20 bg-brand-surface rounded-lg border p-6">
+      <h3 className="text-brand-text-primary mb-4 text-lg font-bold">Create Organization</h3>
 
       <form onSubmit={handleSubmit} className="space-y-4">
         {error && (
-          <div className="rounded-lg border border-red-200 bg-red-50 p-3">
-            <p className="text-sm text-red-800">{error}</p>
+          <div className="border-status-error/20 bg-status-error/10 rounded-lg border p-3">
+            <p className="text-status-error text-sm">{error}</p>
           </div>
         )}
 
         <div>
-          <label className="block text-sm font-medium text-gray-700">Name *</label>
+          <label className="text-brand-text-secondary block text-sm font-medium">Name *</label>
           <input
             type="text"
             value={name}
             onChange={(e) => setName(e.target.value)}
             placeholder="Organization name"
-            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2"
+            className="border-brand-secondary/30 mt-1 block w-full rounded-md border px-3 py-2"
             disabled={isSubmitting}
           />
         </div>
 
         <div>
-          <label htmlFor="org-type" className="block text-sm font-medium text-gray-700">
+          <label htmlFor="org-type" className="text-brand-text-secondary block text-sm font-medium">
             Type *
           </label>
           <select
@@ -303,7 +319,7 @@ function CreateOrganizationForm({
               setType(e.target.value as IOrganization['type']);
               setParentId(''); // Reset parent when type changes
             }}
-            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2"
+            className="border-brand-secondary/30 mt-1 block w-full rounded-md border px-3 py-2"
             disabled={isSubmitting}
           >
             <option value="UNIVERSITY">University</option>
@@ -314,14 +330,17 @@ function CreateOrganizationForm({
 
         {type !== 'UNIVERSITY' && (
           <div>
-            <label htmlFor="org-parent" className="block text-sm font-medium text-gray-700">
+            <label
+              htmlFor="org-parent"
+              className="text-brand-text-secondary block text-sm font-medium"
+            >
               Parent Organization *
             </label>
             <select
               id="org-parent"
               value={parentId}
               onChange={(e) => setParentId(e.target.value)}
-              className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2"
+              className="border-brand-secondary/30 mt-1 block w-full rounded-md border px-3 py-2"
               disabled={isSubmitting}
             >
               <option value="">Select parent...</option>
@@ -338,14 +357,14 @@ function CreateOrganizationForm({
           <button
             type="button"
             onClick={onClose}
-            className="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+            className="border-brand-secondary/30 text-brand-text-secondary hover:bg-brand-bg rounded-md border px-4 py-2 text-sm font-medium"
             disabled={isSubmitting}
           >
             Cancel
           </button>
           <button
             type="submit"
-            className="rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700 disabled:opacity-50"
+            className="bg-brand-primary hover:bg-brand-primary/80 rounded-md px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
             disabled={isSubmitting}
           >
             {isSubmitting ? 'Creating...' : 'Create Organization'}

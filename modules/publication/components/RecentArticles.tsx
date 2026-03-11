@@ -16,7 +16,7 @@ export default function RecentArticles({ items, loading, error }: RecentArticles
     return (
       <div className="space-y-3">
         {[1, 2, 3].map((i) => (
-          <div key={i} className="h-20 animate-pulse rounded-lg bg-gray-200" />
+          <div key={i} className="bg-brand-secondary/20 h-20 animate-pulse rounded-lg" />
         ))}
       </div>
     );
@@ -24,7 +24,7 @@ export default function RecentArticles({ items, loading, error }: RecentArticles
 
   if (error) {
     return (
-      <div className="rounded-lg bg-red-50 p-4 text-sm text-red-700">
+      <div className="bg-status-error/10 text-status-error rounded-lg p-4 text-sm">
         Failed to load recent articles.
       </div>
     );
@@ -32,33 +32,35 @@ export default function RecentArticles({ items, loading, error }: RecentArticles
 
   if (items.length === 0) {
     return (
-      <div className="rounded-lg bg-blue-50 p-6 text-center">
-        <p className="text-gray-700">No campus news articles yet.</p>
-        <p className="text-sm text-gray-500">Check back soon for campus news!</p>
+      <div className="bg-brand-accent/10 rounded-lg p-6 text-center">
+        <p className="text-brand-text-primary">No campus news articles yet.</p>
+        <p className="text-brand-text-muted text-sm">Check back soon for campus news!</p>
       </div>
     );
   }
 
   return (
-    <ul className="divide-y divide-gray-200">
+    <ul className="divide-brand-secondary/10 divide-y">
       {items.map((item) => (
         <li key={item.id} className="py-4 first:pt-0 last:pb-0">
           <Link href={`/news/${item.slug}`} className="group block">
             <div className="flex items-start justify-between gap-4">
               <div className="min-w-0 flex-1">
-                <h4 className="truncate text-sm font-semibold text-gray-900 group-hover:text-blue-600">
+                <h4 className="text-brand-text-primary group-hover:text-brand-primary truncate text-sm font-semibold">
                   {item.title}
                 </h4>
                 {item.excerpt && (
-                  <p className="mt-1 line-clamp-2 text-sm text-gray-600">{item.excerpt}</p>
+                  <p className="text-brand-text-secondary mt-1 line-clamp-2 text-sm">
+                    {item.excerpt}
+                  </p>
                 )}
               </div>
               <div className="flex shrink-0 flex-col items-end gap-1">
-                <span className="inline-block rounded bg-blue-100 px-2 py-0.5 text-xs font-medium text-blue-800">
+                <span className="bg-content-article/15 text-brand-primary inline-block rounded px-2 py-0.5 text-xs font-medium">
                   {ARTICLE_SECTION_LABELS[item.section] ?? item.section}
                 </span>
                 {item.published_at && (
-                  <time className="text-xs text-gray-400">
+                  <time className="text-brand-text-muted text-xs">
                     {formatDistanceToNow(new Date(item.published_at), { addSuffix: true })}
                   </time>
                 )}

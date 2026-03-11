@@ -33,10 +33,10 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const colorMap: Record<ToastType, string> = {
-    success: 'bg-green-600',
-    error: 'bg-red-600',
-    info: 'bg-blue-600',
-    warning: 'bg-yellow-500',
+    success: 'bg-status-success',
+    error: 'bg-status-error',
+    info: 'bg-brand-primary',
+    warning: 'bg-status-warning',
   };
 
   const iconMap: Record<ToastType, string> = {
@@ -49,17 +49,25 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
   return (
     <ToastContext.Provider value={{ showToast }}>
       {children}
-      <div className="pointer-events-none fixed right-4 bottom-4 z-[100] flex flex-col gap-2">
+      <div
+        className="pointer-events-none fixed right-4 bottom-4 z-100 flex flex-col gap-2"
+        aria-live="polite"
+        aria-atomic="false"
+      >
         {toasts.map((toast) => (
           <div
             key={toast.id}
-            className={`pointer-events-auto flex min-w-72 items-center gap-3 rounded-lg px-4 py-3 text-white shadow-lg ${colorMap[toast.type]}`}
+            role="status"
+            className={`animate-toast-in pointer-events-auto flex min-w-72 items-center gap-3 rounded-lg px-4 py-3 text-white shadow-lg ${colorMap[toast.type]}`}
           >
-            <span className="flex-shrink-0 font-bold">{iconMap[toast.type]}</span>
+            <span className="shrink-0 font-bold" aria-hidden="true">
+              {iconMap[toast.type]}
+            </span>
             <span className="flex-1 text-sm">{toast.message}</span>
             <button
               onClick={() => dismiss(toast.id)}
-              className="flex-shrink-0 opacity-70 hover:opacity-100"
+              className="shrink-0 opacity-70 hover:opacity-100"
+              aria-label="Dismiss notification"
             >
               ✕
             </button>

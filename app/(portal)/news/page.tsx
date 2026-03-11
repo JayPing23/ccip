@@ -2,6 +2,7 @@
 
 import ArticleFeed from '@/modules/publication/components/ArticleFeed';
 import Header from '@/shared/components/Header';
+import MobileBottomNav from '@/shared/components/MobileBottomNav';
 import { useCurrentUser } from '@/shared/hooks/useCurrentUser';
 import { canCreateArticle } from '@/shared/utils/permissions';
 import { useRouter } from 'next/navigation';
@@ -24,7 +25,7 @@ export default function NewsPage() {
   if (loading) {
     return (
       <div className="flex min-h-screen items-center justify-center">
-        <div className="h-12 w-12 animate-spin rounded-full border-4 border-blue-300 border-t-blue-600" />
+        <div className="border-brand-accent border-t-brand-primary h-12 w-12 animate-spin rounded-full border-4" />
       </div>
     );
   }
@@ -53,19 +54,20 @@ export default function NewsPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="bg-brand-bg min-h-screen pb-20 md:pb-0">
       <Header user={user} navLinks={navLinks} actions={actions} />
+      <MobileBottomNav />
 
-      <main className="mx-auto max-w-4xl px-4 py-8">
-        <section className="mb-8 rounded-xl bg-white p-8 shadow-sm">
-          <h1 className="text-3xl font-bold text-gray-900">Campus News</h1>
-          <p className="mt-2 text-gray-600">
+      <main className="mx-auto max-w-6xl px-4 py-8">
+        <section className="bg-brand-surface border-brand-secondary/20 mb-8 rounded-xl border p-8 shadow-sm">
+          <h1 className="text-brand-text-primary text-3xl font-bold">Campus News</h1>
+          <p className="text-brand-text-secondary mt-2">
             Stories, features, and opinion pieces from the campus community.
           </p>
         </section>
 
-        <section className="rounded-xl bg-white p-6 shadow-sm">
-          <ArticleFeed />
+        <section className="bg-brand-surface border-brand-secondary/20 rounded-xl border p-6 shadow-sm">
+          <ArticleFeed layout="magazine" />
         </section>
       </main>
     </div>

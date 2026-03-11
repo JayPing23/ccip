@@ -101,14 +101,14 @@ export default function SearchFilters({
           }}
           onKeyDown={handleQueryKeyDown}
           onBlur={handleQueryBlur}
-          className="w-full rounded-lg border border-gray-300 py-2 pr-10 pl-4 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+          className="border-brand-secondary/30 bg-brand-surface text-brand-text-primary focus:border-brand-primary focus:ring-brand-primary/30 w-full rounded-lg border py-2 pr-10 pl-4 text-sm focus:ring-1"
           aria-label="Search announcements"
         />
         {localQuery && (
           <button
             type="button"
             onClick={handleClearQuery}
-            className="absolute top-1/2 right-3 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+            className="text-brand-text-muted hover:text-brand-text-secondary absolute top-1/2 right-3 -translate-y-1/2"
             aria-label="Clear search"
           >
             ✕
@@ -122,7 +122,7 @@ export default function SearchFilters({
         <select
           value={filters.status ?? 'ALL'}
           onChange={(e) => onStatusChange(e.target.value as AnnouncementStatusFilter)}
-          className="rounded border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:ring-blue-500"
+          className="border-brand-secondary/30 bg-brand-surface text-brand-text-primary focus:border-brand-primary focus:ring-brand-primary/30 rounded border px-3 py-2 text-sm"
           aria-label="Filter by status"
         >
           {STATUS_OPTIONS.map((opt) => (
@@ -136,7 +136,7 @@ export default function SearchFilters({
         <select
           value={filters.visibility ?? 'ALL'}
           onChange={(e) => onVisibilityChange(e.target.value as AnnouncementVisibilityFilter)}
-          className="rounded border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:ring-blue-500"
+          className="border-brand-secondary/30 bg-brand-surface text-brand-text-primary focus:border-brand-primary focus:ring-brand-primary/30 rounded border px-3 py-2 text-sm"
           aria-label="Filter by visibility"
         >
           {VISIBILITY_OPTIONS.map((opt) => (
@@ -150,7 +150,7 @@ export default function SearchFilters({
         <select
           value={filters.tag ?? ''}
           onChange={(e) => onTagChange((e.target.value as ContentTag) || null)}
-          className="rounded border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:ring-blue-500"
+          className="border-brand-secondary/30 bg-brand-surface text-brand-text-primary focus:border-brand-primary focus:ring-brand-primary/30 rounded border px-3 py-2 text-sm"
           aria-label="Filter by tag"
         >
           <option value="">All tags</option>
@@ -165,7 +165,7 @@ export default function SearchFilters({
         <select
           value={filters.sort ?? 'relevance'}
           onChange={(e) => onSortChange(e.target.value as SearchSortOption)}
-          className="rounded border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:ring-blue-500"
+          className="border-brand-secondary/30 bg-brand-surface text-brand-text-primary focus:border-brand-primary focus:ring-brand-primary/30 rounded border px-3 py-2 text-sm"
           aria-label="Sort results"
         >
           {SEARCH_SORT_OPTIONS.map((opt) => (
@@ -183,7 +183,7 @@ export default function SearchFilters({
               setLocalQuery('');
               onReset();
             }}
-            className="rounded border border-gray-300 bg-white px-3 py-2 text-sm text-gray-600 hover:bg-gray-50"
+            className="border-brand-secondary/30 bg-brand-surface text-brand-text-secondary hover:bg-brand-bg rounded border px-3 py-2 text-sm"
           >
             Reset filters
           </button>

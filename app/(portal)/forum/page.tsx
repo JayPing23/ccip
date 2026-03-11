@@ -3,6 +3,7 @@
 import ForumCategoryList from '@/modules/forum/components/ForumCategoryList';
 import { useForumCategories } from '@/modules/forum/hooks/useForumThread';
 import Header from '@/shared/components/Header';
+import MobileBottomNav from '@/shared/components/MobileBottomNav';
 import { useCurrentUser } from '@/shared/hooks/useCurrentUser';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
@@ -16,7 +17,7 @@ const FORUM_NAV = [
 
 export default function ForumPage() {
   const router = useRouter();
-  const { user, loading } = useCurrentUser();
+  const { user, loading, canAccessAdminConsole } = useCurrentUser();
   const { categories, loading: catsLoading, error: catsError } = useForumCategories();
 
   useEffect(() => {
@@ -26,18 +27,24 @@ export default function ForumPage() {
   if (loading) {
     return (
       <div className="flex min-h-screen items-center justify-center">
-        <p className="text-gray-500">Loading…</p>
+        <p className="text-brand-text-muted">Loading…</p>
       </div>
     );
   }
 
   if (!user) return null;
 
+  const actions = [] as Array<{ href: string; label: string; tone?: 'primary' | 'neutral' }>;
+  if (canAccessAdminConsole) {
+    actions.push({ href: '/admin/dashboard', label: 'Admin Console' });
+  }
+
   return (
-    <div className="min-h-screen bg-gray-50">
-      <Header user={user} navLinks={FORUM_NAV} />
+    <div className="bg-brand-bg min-h-screen pb-20 md:pb-0">
+      <Header user={user} navLinks={FORUM_NAV} actions={actions} />
+      <MobileBottomNav />
       <main className="mx-auto max-w-4xl px-4 py-8">
-        <h1 className="mb-6 text-2xl font-bold text-gray-900">Forum</h1>
+        <h1 className="text-brand-text-primary mb-6 text-2xl font-bold">Forum</h1>
         <ForumCategoryList categories={categories} loading={catsLoading} error={catsError} />
       </main>
     </div>

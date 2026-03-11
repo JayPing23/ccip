@@ -38,11 +38,11 @@ export default function ReactionBar({ threadId, replyId, counts, onReacted }: Re
             key={type}
             onClick={() => handleClick(type)}
             disabled={loading}
-            className="inline-flex items-center gap-1 rounded-full border border-gray-200 px-3 py-1 text-xs font-medium text-gray-700 transition hover:border-blue-300 hover:bg-blue-50 disabled:opacity-50"
+            className="inline-flex items-center gap-1 rounded-full border border-brand-secondary/20 px-3 py-1 text-xs font-medium text-brand-text-secondary transition hover:border-brand-secondary hover:bg-brand-accent/10 disabled:opacity-50"
           >
             <span>{REACTION_EMOJI[type]}</span>
             <span>{REACTION_TYPE_LABELS[type]}</span>
-            {count > 0 && <span className="ml-0.5 text-gray-500">{count}</span>}
+            {count > 0 && <span className="ml-0.5 text-brand-text-muted">{count}</span>}
           </button>
         );
       })}

@@ -43,20 +43,20 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-gray-900">
-        <p className="text-gray-400">Verifying admin access...</p>
+      <div className="bg-brand-dark-bg flex min-h-screen items-center justify-center">
+        <p className="text-brand-text-muted">Verifying admin access...</p>
       </div>
     );
   }
 
   return (
-    <div className="flex min-h-screen bg-gray-100">
+    <div className="bg-brand-bg flex min-h-screen">
       {/* Sidebar */}
       <aside
-        className={`fixed inset-y-0 left-0 z-50 w-64 bg-gray-900 text-white transition-transform duration-300 lg:static lg:translate-x-0 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}
+        className={`bg-brand-dark-bg fixed inset-y-0 left-0 z-50 w-64 text-white transition-transform duration-300 lg:static lg:translate-x-0 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}
       >
         {/* Brand */}
-        <div className="flex h-16 items-center border-b border-gray-700 px-6">
+        <div className="border-brand-secondary/30 flex h-16 items-center border-b px-6">
           <span className="text-lg font-bold text-white">CCIP Admin</span>
         </div>
 
@@ -71,8 +71,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 onClick={() => setSidebarOpen(false)}
                 className={`flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
                   isActive
-                    ? 'bg-indigo-600 text-white'
-                    : 'text-gray-300 hover:bg-gray-800 hover:text-white'
+                    ? 'bg-brand-primary text-white'
+                    : 'text-brand-text-muted hover:bg-brand-primary/20 hover:text-white'
                 }`}
               >
                 <span>{item.icon}</span>
@@ -83,13 +83,13 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         </nav>
 
         {/* Divider */}
-        <div className="mx-3 my-4 border-t border-gray-700" />
+        <div className="border-brand-secondary/30 mx-3 my-4 border-t" />
 
         {/* Bottom links */}
         <div className="px-3">
           <Link
             href="/dashboard"
-            className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-gray-400 hover:bg-gray-800 hover:text-white"
+            className="text-brand-text-muted hover:bg-brand-primary/20 flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium hover:text-white"
           >
             ← Portal Dashboard
           </Link>
@@ -97,9 +97,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
         {/* User info */}
         {user && (
-          <div className="absolute right-0 bottom-0 left-0 border-t border-gray-700 px-4 py-4">
+          <div className="border-brand-secondary/30 absolute right-0 bottom-0 left-0 border-t px-4 py-4">
             <p className="truncate text-sm font-medium text-white">{user.display_name}</p>
-            <p className="truncate text-xs text-gray-400">{user.email}</p>
+            <p className="text-brand-text-muted truncate text-xs">{user.email}</p>
           </div>
         )}
       </aside>
@@ -107,7 +107,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       {/* Mobile overlay */}
       {sidebarOpen && (
         <div
-          className="bg-opacity-50 fixed inset-0 z-40 bg-black lg:hidden"
+          className="fixed inset-0 z-40 bg-black/50 lg:hidden"
           onClick={() => setSidebarOpen(false)}
         />
       )}
@@ -115,19 +115,21 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       {/* Main */}
       <div className="flex flex-1 flex-col overflow-hidden">
         {/* Top bar */}
-        <header className="flex h-16 items-center justify-between border-b border-gray-200 bg-white px-4 shadow-sm">
+        <header className="bg-brand-surface border-brand-secondary/20 flex h-16 items-center justify-between border-b px-4 shadow-sm">
           <button
             onClick={() => setSidebarOpen(true)}
-            className="rounded-md p-2 text-gray-500 hover:bg-gray-100 lg:hidden"
+            className="text-brand-text-secondary hover:bg-brand-bg rounded-md p-2 lg:hidden"
             aria-label="Open sidebar navigation"
           >
             ☰
           </button>
           <div className="flex items-center gap-2">
-            <span className="rounded-full bg-red-100 px-2 py-0.5 text-xs font-semibold text-red-700">
+            <span className="bg-status-error/15 text-status-error rounded-full px-2 py-0.5 text-xs font-semibold">
               ADMIN
             </span>
-            <span className="hidden text-sm text-gray-600 sm:block">{user?.display_name}</span>
+            <span className="text-brand-text-secondary hidden text-sm sm:block">
+              {user?.display_name}
+            </span>
           </div>
         </header>
 

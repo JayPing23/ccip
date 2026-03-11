@@ -43,7 +43,11 @@ describe('SQL helper function logic: is_admin', () => {
 
 describe('SQL helper function logic: is_editor', () => {
   // SQL: get_user_role(user_id) IN ('DEPT_EDITOR', 'UNIVERSITY_EDITOR', 'SUPER_ADMIN')
-  const EDITOR_ROLES: Set<Role> = new Set([ROLES.DEPT_EDITOR, ROLES.UNIVERSITY_EDITOR, ROLES.SUPER_ADMIN]);
+  const EDITOR_ROLES: Set<Role> = new Set([
+    ROLES.DEPT_EDITOR,
+    ROLES.UNIVERSITY_EDITOR,
+    ROLES.SUPER_ADMIN,
+  ]);
 
   it.each([
     { role: ROLES.SUPER_ADMIN, expected: true },

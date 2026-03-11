@@ -12,17 +12,21 @@ export default function AdminUsersPage() {
   return (
     <div className="p-6 sm:p-8">
       <div className="mb-6">
-        <h2 className="text-2xl font-bold text-gray-900">User Management</h2>
-        <p className="mt-1 text-gray-600">View and manage all users, assign roles and organizations.</p>
+        <h2 className="text-brand-text-primary text-2xl font-bold">User Management</h2>
+        <p className="text-brand-text-secondary mt-1">
+          View and manage all users, assign roles and organizations.
+        </p>
       </div>
 
       {error && (
-        <div className="mb-6 rounded-lg border border-red-200 bg-red-50 p-4">
-          <p className="text-red-800"><strong>Error:</strong> {error}</p>
+        <div className="border-status-error/20 bg-status-error/10 mb-6 rounded-lg border p-4">
+          <p className="text-status-error">
+            <strong>Error:</strong> {error}
+          </p>
         </div>
       )}
 
-      <div className="rounded-lg bg-white p-6 shadow-sm">
+      <div className="bg-brand-surface rounded-lg p-6 shadow-sm">
         <UserListTable users={users} loading={loading} onRefresh={refetch} />
       </div>
     </div>

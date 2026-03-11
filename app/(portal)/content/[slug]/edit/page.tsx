@@ -71,23 +71,23 @@ export default function EditContentPage() {
 
   if (userLoading || isLoading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-gray-50">
-        <div className="text-gray-600">Loading content...</div>
+      <div className="bg-brand-bg flex min-h-screen items-center justify-center">
+        <div className="text-brand-text-secondary">Loading content...</div>
       </div>
     );
   }
 
   if (error || !content) {
     return (
-      <div className="min-h-screen bg-gray-50">
-        <header className="border-b border-gray-200 bg-white shadow-sm">
+      <div className="bg-brand-bg min-h-screen">
+        <header className="border-brand-secondary/20 bg-brand-surface border-b shadow-sm">
           <div className="mx-auto flex max-w-4xl items-center gap-4 px-4 py-4">
-            <h1 className="text-2xl font-bold text-gray-900">CCIP</h1>
+            <h1 className="text-brand-text-primary text-2xl font-bold">CCIP</h1>
           </div>
         </header>
         <div className="mx-auto max-w-4xl px-4 py-8">
-          <div className="rounded-lg bg-white p-8 shadow">
-            <p className="font-medium text-red-600">{error || 'Content not found'}</p>
+          <div className="bg-brand-surface rounded-lg p-8 shadow">
+            <p className="text-status-error font-medium">{error || 'Content not found'}</p>
           </div>
         </div>
       </div>

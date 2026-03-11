@@ -144,16 +144,16 @@ export default function LoginForm() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 px-4">
-      <div className="w-full max-w-md rounded-lg bg-white p-8 shadow-lg">
+    <div className="from-brand-accent/10 to-brand-secondary/15 flex min-h-screen items-center justify-center bg-linear-to-br px-4">
+      <div className="bg-brand-surface w-full max-w-md rounded-lg p-8 shadow-lg">
         {/* Header */}
         <div className="mb-8 text-center">
-          <h1 className="mb-2 text-3xl font-bold text-gray-900">CCIP</h1>
-          <p className="text-gray-600">Centralized Campus Information Portal</p>
+          <h1 className="text-brand-text-primary mb-2 text-3xl font-bold">CCIP</h1>
+          <p className="text-brand-text-secondary">Centralized Campus Information Portal</p>
         </div>
 
         {/* Tabs */}
-        <div className="mb-6 flex gap-2 border-b border-gray-200">
+        <div className="border-brand-secondary/20 mb-6 flex gap-2 border-b">
           <button
             onClick={() => {
               setTab('email');
@@ -161,8 +161,8 @@ export default function LoginForm() {
             }}
             className={`flex-1 pb-2 font-semibold transition ${
               tab === 'email'
-                ? 'border-b-2 border-blue-600 text-blue-600'
-                : 'text-gray-600 hover:text-gray-900'
+                ? 'border-brand-primary text-brand-primary border-b-2'
+                : 'text-brand-text-secondary hover:text-brand-text-primary'
             }`}
           >
             Email & Password
@@ -174,8 +174,8 @@ export default function LoginForm() {
             }}
             className={`flex-1 pb-2 font-semibold transition ${
               tab === 'google'
-                ? 'border-b-2 border-blue-600 text-blue-600'
-                : 'text-gray-600 hover:text-gray-900'
+                ? 'border-brand-primary text-brand-primary border-b-2'
+                : 'text-brand-text-secondary hover:text-brand-text-primary'
             }`}
           >
             Google
@@ -184,8 +184,8 @@ export default function LoginForm() {
 
         {/* Error Message */}
         {error && (
-          <div className="mb-6 rounded-lg bg-red-50 p-4">
-            <p className="text-sm font-medium text-red-800">{error}</p>
+          <div className="bg-status-error/10 mb-6 rounded-lg p-4">
+            <p className="text-status-error text-sm font-medium">{error}</p>
           </div>
         )}
 
@@ -193,7 +193,10 @@ export default function LoginForm() {
         {tab === 'email' && (
           <form onSubmit={handleEmailLogin} className="space-y-4">
             <div>
-              <label htmlFor="email" className="mb-1 block text-sm font-medium text-gray-700">
+              <label
+                htmlFor="email"
+                className="text-brand-text-secondary mb-1 block text-sm font-medium"
+              >
                 Email Address
               </label>
               <input
@@ -205,14 +208,19 @@ export default function LoginForm() {
                 value={formData.email}
                 onChange={handleChange}
                 disabled={loading}
-                className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-blue-500 disabled:opacity-50"
+                className="border-brand-secondary/30 focus:ring-brand-primary w-full rounded-lg border px-4 py-2 focus:border-transparent focus:ring-2 disabled:opacity-50"
                 placeholder="name@slu.edu.ph"
               />
-              <p className="mt-1 text-xs text-gray-500">Must be a @slu.edu.ph email address</p>
+              <p className="text-brand-text-muted mt-1 text-xs">
+                Must be a @slu.edu.ph email address
+              </p>
             </div>
 
             <div>
-              <label htmlFor="password" className="mb-1 block text-sm font-medium text-gray-700">
+              <label
+                htmlFor="password"
+                className="text-brand-text-secondary mb-1 block text-sm font-medium"
+              >
                 Password
               </label>
               <input
@@ -224,7 +232,7 @@ export default function LoginForm() {
                 value={formData.password}
                 onChange={handleChange}
                 disabled={loading}
-                className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-blue-500 disabled:opacity-50"
+                className="border-brand-secondary/30 focus:ring-brand-primary w-full rounded-lg border px-4 py-2 focus:border-transparent focus:ring-2 disabled:opacity-50"
                 placeholder="Enter your password"
               />
             </div>
@@ -233,17 +241,17 @@ export default function LoginForm() {
               type="submit"
               data-testid="login-submit-button"
               disabled={loading}
-              className="w-full rounded-lg bg-blue-600 py-2 font-semibold text-white transition hover:bg-blue-700 disabled:bg-blue-400"
+              className="bg-brand-primary hover:bg-brand-primary/80 disabled:bg-brand-secondary w-full rounded-lg py-2 font-semibold text-white transition"
             >
               {loading ? 'Signing in...' : 'Sign In'}
             </button>
 
-            <div className="text-center text-sm text-gray-600">
+            <div className="text-brand-text-secondary text-center text-sm">
               Don&apos;t have an account?{' '}
               <button
                 type="button"
                 onClick={() => router.push('/signup')}
-                className="font-semibold text-blue-600 hover:text-blue-700"
+                className="text-brand-primary hover:text-brand-primary font-semibold"
               >
                 Sign up here
               </button>
@@ -257,7 +265,7 @@ export default function LoginForm() {
             <button
               onClick={handleGoogleLogin}
               disabled={loading}
-              className="flex w-full items-center justify-center gap-3 rounded-lg border border-gray-300 bg-white px-4 py-3 font-semibold text-gray-900 transition hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
+              className="border-brand-secondary/30 bg-brand-surface text-brand-text-primary hover:bg-brand-bg flex w-full items-center justify-center gap-3 rounded-lg border px-4 py-3 font-semibold transition disabled:cursor-not-allowed disabled:opacity-50"
             >
               <svg
                 className="h-5 w-5"
@@ -285,15 +293,15 @@ export default function LoginForm() {
               {loading ? 'Signing in...' : 'Sign in with Google'}
             </button>
 
-            <p className="text-center text-xs text-gray-600">
+            <p className="text-brand-text-secondary text-center text-xs">
               You&apos;ll be automatically logged in if you use your institutional Google account.
             </p>
           </div>
         )}
 
         {/* Info Text */}
-        <div className="mt-6 rounded-lg bg-blue-50 p-4">
-          <p className="text-xs text-gray-700">
+        <div className="bg-brand-accent/10 mt-6 rounded-lg p-4">
+          <p className="text-brand-text-secondary text-xs">
             <strong>Institutional Email Required:</strong> Only @{institutionalDomain} email
             addresses can access this portal.
           </p>

@@ -72,7 +72,7 @@ export default function ContentDetailPage({ params }: ContentDetailPageProps) {
   if (userLoading || loading) {
     return (
       <div className="flex min-h-screen items-center justify-center">
-        <div className="h-12 w-12 animate-spin rounded-full border-4 border-blue-300 border-t-blue-600"></div>
+        <div className="border-brand-secondary border-t-brand-primary h-12 w-12 animate-spin rounded-full border-4"></div>
       </div>
     );
   }
@@ -104,14 +104,14 @@ export default function ContentDetailPage({ params }: ContentDetailPageProps) {
 
   if (error || !content) {
     return (
-      <main className="min-h-screen bg-gray-50">
+      <main className="bg-brand-bg min-h-screen">
         <Header user={user} actions={actions} />
         <div className="mx-auto max-w-4xl px-4 py-8">
-          <div className="rounded-lg bg-red-50 p-6 text-red-800">
+          <div className="bg-status-error/10 text-status-error rounded-lg p-6">
             <p className="text-lg font-medium">{error || 'Announcement not found'}</p>
             <button
               onClick={() => router.push('/feed')}
-              className="mt-4 text-blue-600 hover:underline"
+              className="text-brand-primary mt-4 hover:underline"
             >
               ← Back to Feed
             </button>
@@ -122,33 +122,36 @@ export default function ContentDetailPage({ params }: ContentDetailPageProps) {
   }
 
   const statusColors = {
-    DRAFT: 'bg-gray-100 text-gray-800',
-    SCHEDULED: 'bg-blue-100 text-blue-800',
-    PUBLISHED: 'bg-green-100 text-green-800',
-    ARCHIVED: 'bg-red-100 text-red-800',
+    DRAFT: 'bg-brand-secondary/10 text-brand-text-primary',
+    SCHEDULED: 'bg-brand-accent/15 text-brand-primary',
+    PUBLISHED: 'bg-status-success/15 text-status-success',
+    ARCHIVED: 'bg-status-error/15 text-status-error',
   };
 
   return (
-    <main className="min-h-screen bg-gray-50">
+    <main className="bg-brand-bg min-h-screen">
       <Header user={user} actions={actions} />
 
       <div className="mx-auto max-w-4xl px-4 py-8">
-        <button onClick={() => router.push('/feed')} className="mb-6 text-blue-600 hover:underline">
+        <button
+          onClick={() => router.push('/feed')}
+          className="text-brand-primary mb-6 hover:underline"
+        >
           ← Back to Feed
         </button>
 
-        <article className="rounded-lg bg-white p-8 shadow">
-          <div className="mb-6 border-b border-gray-200 pb-6">
+        <article className="bg-brand-surface rounded-lg p-8 shadow">
+          <div className="border-brand-secondary/20 mb-6 border-b pb-6">
             <div className="mb-4 flex items-start justify-between">
               <div className="flex-1">
-                <h1 className="mb-4 text-4xl font-bold text-gray-900">{content.title}</h1>
+                <h1 className="text-brand-text-primary mb-4 text-4xl font-bold">{content.title}</h1>
                 <div className="flex flex-wrap gap-2">
                   <span
                     className={`inline-block rounded px-3 py-1 text-sm font-medium ${statusColors[content.status]}`}
                   >
                     {content.status}
                   </span>
-                  <span className="inline-block rounded bg-gray-100 px-3 py-1 text-sm font-medium text-gray-700">
+                  <span className="bg-brand-secondary/10 text-brand-text-secondary inline-block rounded px-3 py-1 text-sm font-medium">
                     {content.visibility}
                   </span>
                 </div>
@@ -157,14 +160,14 @@ export default function ContentDetailPage({ params }: ContentDetailPageProps) {
               {canEdit && (
                 <Link
                   href={`/content/${content.slug}/edit`}
-                  className="ml-4 rounded bg-blue-600 px-4 py-2 font-medium text-white transition hover:bg-blue-700"
+                  className="bg-brand-primary hover:bg-brand-primary/80 ml-4 rounded px-4 py-2 font-medium text-white transition"
                 >
                   Edit
                 </Link>
               )}
             </div>
 
-            <div className="text-sm text-gray-600">
+            <div className="text-brand-text-secondary text-sm">
               <p>Posted {formatDistanceToNow(new Date(content.created_at), { addSuffix: true })}</p>
               {content.updated_at && content.updated_at !== content.created_at && (
                 <p>
@@ -175,7 +178,7 @@ export default function ContentDetailPage({ params }: ContentDetailPageProps) {
           </div>
 
           <div className="mb-6">
-            <p className="whitespace-pre-wrap text-gray-800">{content.body}</p>
+            <p className="text-brand-text-primary whitespace-pre-wrap">{content.body}</p>
           </div>
 
           {content.tags && content.tags.length > 0 && (
@@ -183,7 +186,7 @@ export default function ContentDetailPage({ params }: ContentDetailPageProps) {
               {content.tags.map((tag) => (
                 <span
                   key={tag}
-                  className="inline-block rounded-full bg-blue-100 px-3 py-1 text-sm text-blue-800"
+                  className="bg-brand-accent/15 text-brand-primary inline-block rounded-full px-3 py-1 text-sm"
                 >
                   #{tag}
                 </span>

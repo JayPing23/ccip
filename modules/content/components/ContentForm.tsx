@@ -92,14 +92,14 @@ export default function ContentForm({
   const pageTitle = isEditing ? 'Edit Announcement' : 'Create Announcement';
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="bg-brand-bg min-h-screen">
       {/* Header */}
-      <header className="sticky top-0 z-10 border-b border-gray-200 bg-white shadow-sm">
+      <header className="border-brand-secondary/20 bg-brand-surface sticky top-0 z-10 border-b shadow-sm">
         <div className="mx-auto flex max-w-4xl items-center justify-between px-4 py-4">
-          <h1 className="text-2xl font-bold text-gray-900">CCIP</h1>
+          <h1 className="text-brand-text-primary text-2xl font-bold">CCIP</h1>
           <button
             onClick={() => router.back()}
-            className="text-sm font-medium text-gray-700 hover:text-gray-900"
+            className="text-brand-text-secondary hover:text-brand-text-primary text-sm font-medium"
           >
             ← Back
           </button>
@@ -108,35 +108,38 @@ export default function ContentForm({
 
       {/* Content */}
       <div className="mx-auto max-w-4xl px-4 py-8">
-        <div className="rounded-lg bg-white p-8 shadow">
-          <h2 className="mb-6 text-3xl font-bold text-gray-900">{pageTitle}</h2>
+        <div className="bg-brand-surface rounded-lg p-8 shadow">
+          <h2 className="text-brand-text-primary mb-6 text-3xl font-bold">{pageTitle}</h2>
 
           {/* Success Message */}
           {successMessage && (
-            <div className="mb-6 rounded-lg border border-green-200 bg-green-50 p-4">
-              <p className="font-medium text-green-800">{successMessage}</p>
+            <div className="border-status-success/20 bg-status-success/10 mb-6 rounded-lg border p-4">
+              <p className="text-status-success font-medium">{successMessage}</p>
             </div>
           )}
 
           {/* Error Message */}
           {errorMessage && (
-            <div className="mb-6 rounded-lg border border-red-200 bg-red-50 p-4">
-              <p className="font-medium text-red-800">{errorMessage}</p>
+            <div className="border-status-error/20 bg-status-error/10 mb-6 rounded-lg border p-4">
+              <p className="text-status-error font-medium">{errorMessage}</p>
             </div>
           )}
 
           {/* Auto-save Status */}
           {isDirty && isAutoSaving && (
-            <div className="mb-6 rounded-lg border border-blue-200 bg-blue-50 p-4">
-              <p className="text-sm font-medium text-blue-800">💾 Auto-saving draft...</p>
+            <div className="border-brand-accent/20 bg-brand-accent/10 mb-6 rounded-lg border p-4">
+              <p className="text-brand-primary text-sm font-medium">💾 Auto-saving draft...</p>
             </div>
           )}
 
           <form className="space-y-8">
             {/* Title Section */}
             <div>
-              <label htmlFor="title" className="mb-2 block text-sm font-semibold text-gray-700">
-                Title <span className="text-red-500">*</span>
+              <label
+                htmlFor="title"
+                className="text-brand-text-secondary mb-2 block text-sm font-semibold"
+              >
+                Title <span className="text-status-error">*</span>
               </label>
               <input
                 type="text"
@@ -149,20 +152,23 @@ export default function ContentForm({
                 maxLength={200}
                 className={`w-full rounded-lg border px-4 py-2 focus:ring-2 focus:outline-none ${
                   errors.title
-                    ? 'border-red-500 focus:ring-red-500'
-                    : 'border-gray-300 focus:ring-blue-500'
+                    ? 'border-status-error focus:ring-status-error'
+                    : 'border-brand-secondary/30 focus:ring-brand-primary'
                 }`}
               />
               <div className="mt-1 flex justify-between">
-                {errors.title && <p className="text-sm text-red-600">{errors.title}</p>}
-                <p className="text-sm text-gray-500">{formData.title.length}/200</p>
+                {errors.title && <p className="text-status-error text-sm">{errors.title}</p>}
+                <p className="text-brand-text-muted text-sm">{formData.title.length}/200</p>
               </div>
             </div>
 
             {/* Body Section */}
             <div>
-              <label htmlFor="body" className="mb-2 block text-sm font-semibold text-gray-700">
-                Content <span className="text-red-500">*</span>
+              <label
+                htmlFor="body"
+                className="text-brand-text-secondary mb-2 block text-sm font-semibold"
+              >
+                Content <span className="text-status-error">*</span>
               </label>
               <textarea
                 id="body"
@@ -175,13 +181,13 @@ export default function ContentForm({
                 maxLength={10000}
                 className={`w-full rounded-lg border px-4 py-2 focus:ring-2 focus:outline-none ${
                   errors.body
-                    ? 'border-red-500 focus:ring-red-500'
-                    : 'border-gray-300 focus:ring-blue-500'
+                    ? 'border-status-error focus:ring-status-error'
+                    : 'border-brand-secondary/30 focus:ring-brand-primary'
                 }`}
               />
               <div className="mt-1 flex justify-between">
-                {errors.body && <p className="text-sm text-red-600">{errors.body}</p>}
-                <p className="text-sm text-gray-500">{formData.body.length}/10000</p>
+                {errors.body && <p className="text-status-error text-sm">{errors.body}</p>}
+                <p className="text-brand-text-muted text-sm">{formData.body.length}/10000</p>
               </div>
             </div>
 
@@ -189,9 +195,9 @@ export default function ContentForm({
             <div>
               <label
                 htmlFor="visibility"
-                className="mb-2 block text-sm font-semibold text-gray-700"
+                className="text-brand-text-secondary mb-2 block text-sm font-semibold"
               >
-                Visibility <span className="text-red-500">*</span>
+                Visibility <span className="text-status-error">*</span>
               </label>
               <select
                 id="visibility"
@@ -200,8 +206,8 @@ export default function ContentForm({
                 onChange={handleChange}
                 className={`w-full rounded-lg border px-4 py-2 focus:ring-2 focus:outline-none ${
                   errors.visibility
-                    ? 'border-red-500 focus:ring-red-500'
-                    : 'border-gray-300 focus:ring-blue-500'
+                    ? 'border-status-error focus:ring-status-error'
+                    : 'border-brand-secondary/30 focus:ring-brand-primary'
                 }`}
               >
                 <option value={ANNOUNCEMENT_VISIBILITY.PUBLIC}>Public - Everyone can see</option>
@@ -213,18 +219,18 @@ export default function ContentForm({
                 </option>
               </select>
               {errors.visibility && (
-                <p className="mt-1 text-sm text-red-600">{errors.visibility}</p>
+                <p className="text-status-error mt-1 text-sm">{errors.visibility}</p>
               )}
             </div>
 
             {/* Organizations Section (if needed for restricted visibility) */}
             {formData.visibility !== ANNOUNCEMENT_VISIBILITY.PUBLIC && (
               <div>
-                <label className="mb-3 block text-sm font-semibold text-gray-700">
+                <label className="text-brand-text-secondary mb-3 block text-sm font-semibold">
                   Target Organizations
                 </label>
                 {orgsLoading ? (
-                  <p className="text-gray-500">Loading organizations...</p>
+                  <p className="text-brand-text-muted">Loading organizations...</p>
                 ) : (
                   <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
                     {organizations.map((org) => (
@@ -233,25 +239,28 @@ export default function ContentForm({
                           type="checkbox"
                           checked={formData.org_ids.includes(org.id)}
                           onChange={() => toggleOrganization(org.id)}
-                          className="h-4 w-4 rounded border border-gray-300"
+                          className="border-brand-secondary/30 h-4 w-4 rounded border"
                         />
-                        <span className="text-gray-700">
-                          {org.name} <span className="text-sm text-gray-500">({org.type})</span>
+                        <span className="text-brand-text-secondary">
+                          {org.name}{' '}
+                          <span className="text-brand-text-muted text-sm">({org.type})</span>
                         </span>
                       </label>
                     ))}
                   </div>
                 )}
-                {errors.org_ids && <p className="mt-2 text-sm text-red-600">{errors.org_ids}</p>}
+                {errors.org_ids && (
+                  <p className="text-status-error mt-2 text-sm">{errors.org_ids}</p>
+                )}
               </div>
             )}
 
             {/* Tags Section */}
             <div>
-              <label className="mb-3 block text-sm font-semibold text-gray-700">
-                Tags <span className="text-xs font-normal text-gray-400">(Optional)</span>
+              <label className="text-brand-text-secondary mb-3 block text-sm font-semibold">
+                Tags <span className="text-brand-text-muted text-xs font-normal">(Optional)</span>
               </label>
-              <p className="mb-3 text-sm text-gray-600">Click to select tags</p>
+              <p className="text-brand-text-secondary mb-3 text-sm">Click to select tags</p>
               <div className="flex flex-wrap gap-2">
                 {CONTENT_TAGS.map((tag) => (
                   <button
@@ -260,8 +269,8 @@ export default function ContentForm({
                     onClick={() => toggleTag(tag)}
                     className={`rounded-full px-3 py-1.5 text-sm font-medium transition-colors ${
                       formData.tags.includes(tag)
-                        ? 'bg-blue-500 text-white'
-                        : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                        ? 'bg-brand-accent text-white'
+                        : 'bg-brand-secondary/20 text-brand-text-secondary hover:bg-brand-secondary/30'
                     }`}
                   >
                     {tag}
@@ -275,10 +284,10 @@ export default function ContentForm({
               <div>
                 <label
                   htmlFor="scheduled_at"
-                  className="mb-2 block text-sm font-semibold text-gray-700"
+                  className="text-brand-text-secondary mb-2 block text-sm font-semibold"
                 >
                   Schedule for Later{' '}
-                  <span className="text-xs font-normal text-gray-400">(Optional)</span>
+                  <span className="text-brand-text-muted text-xs font-normal">(Optional)</span>
                 </label>
                 <input
                   type="datetime-local"
@@ -290,20 +299,22 @@ export default function ContentForm({
                       : ''
                   }
                   onChange={handleChange}
-                  className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                  className="border-brand-secondary/30 focus:ring-brand-primary w-full rounded-lg border px-4 py-2 focus:ring-2 focus:outline-none"
                 />
-                <p className="mt-1 text-sm text-gray-500">Leave empty to publish immediately</p>
+                <p className="text-brand-text-muted mt-1 text-sm">
+                  Leave empty to publish immediately
+                </p>
               </div>
             )}
 
             {/* Action Buttons */}
-            <div className="flex flex-col gap-4 border-t border-gray-200 pt-6 sm:flex-row">
+            <div className="border-brand-secondary/20 flex flex-col gap-4 border-t pt-6 sm:flex-row">
               <button
                 type="button"
                 onClick={handleSaveDraft}
                 data-testid="content-save-draft-button"
                 disabled={isSubmitting || !formData.title || !formData.body}
-                className="flex-1 rounded-lg border border-gray-300 px-6 py-3 font-medium text-gray-700 transition-colors hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
+                className="border-brand-secondary/30 text-brand-text-secondary hover:bg-brand-bg flex-1 rounded-lg border px-6 py-3 font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-50"
               >
                 {isSubmitting ? 'Saving...' : '💾 Save as Draft'}
               </button>
@@ -315,7 +326,7 @@ export default function ContentForm({
                     onClick={handlePublish}
                     data-testid="content-publish-button"
                     disabled={isSubmitting || !formData.title || !formData.body}
-                    className="flex-1 rounded-lg bg-blue-600 px-6 py-3 font-medium text-white transition-colors hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
+                    className="bg-brand-primary hover:bg-brand-primary/80 flex-1 rounded-lg px-6 py-3 font-medium text-white transition-colors disabled:cursor-not-allowed disabled:opacity-50"
                   >
                     {isSubmitting ? 'Publishing...' : '🚀 Publish Now'}
                   </button>
@@ -326,7 +337,7 @@ export default function ContentForm({
                     disabled={
                       isSubmitting || !formData.title || !formData.body || !formData.scheduled_at
                     }
-                    className="flex-1 rounded-lg bg-green-600 px-6 py-3 font-medium text-white transition-colors hover:bg-green-700 disabled:cursor-not-allowed disabled:opacity-50"
+                    className="bg-status-success hover:bg-status-success/80 flex-1 rounded-lg px-6 py-3 font-medium text-white transition-colors disabled:cursor-not-allowed disabled:opacity-50"
                   >
                     {isSubmitting ? 'Scheduling...' : '📅 Schedule'}
                   </button>
@@ -337,7 +348,7 @@ export default function ContentForm({
                   onClick={handlePublish}
                   data-testid="content-publish-button"
                   disabled={isSubmitting || !formData.title || !formData.body}
-                  className="flex-1 rounded-lg bg-blue-600 px-6 py-3 font-medium text-white transition-colors hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
+                  className="bg-brand-primary hover:bg-brand-primary/80 flex-1 rounded-lg px-6 py-3 font-medium text-white transition-colors disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   {isSubmitting ? 'Publishing...' : '🚀 Publish'}
                 </button>
@@ -347,7 +358,7 @@ export default function ContentForm({
                 type="button"
                 onClick={handleReset}
                 disabled={isSubmitting}
-                className="rounded-lg px-6 py-3 font-medium text-gray-700 transition-colors hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-50"
+                className="text-brand-text-secondary hover:bg-brand-secondary/10 rounded-lg px-6 py-3 font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-50"
               >
                 Reset
               </button>

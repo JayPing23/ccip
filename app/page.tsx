@@ -32,10 +32,10 @@ export default function HomePage() {
   }, [router]);
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100">
+    <div className="bg-brand-bg flex min-h-screen items-center justify-center">
       <div className="text-center">
-        <div className="mb-4 h-12 w-12 animate-spin rounded-full border-4 border-blue-300 border-t-blue-600 mx-auto"></div>
-        <p className="text-lg text-gray-600">Loading...</p>
+        <div className="border-brand-secondary border-t-brand-primary mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-4"></div>
+        <p className="text-brand-text-secondary text-lg">Loading...</p>
       </div>
     </div>
   );

@@ -1,8 +1,8 @@
 'use client';
 
-import type { IArticle } from '@/modules/publication/types';
 import type { ArticleStatus } from '@/modules/publication/constants';
 import { ARTICLE_STATUS } from '@/modules/publication/constants';
+import type { IArticle } from '@/modules/publication/types';
 import { useCallback, useState } from 'react';
 
 interface PublicationWorkflowPanelProps {
@@ -84,8 +84,8 @@ export default function PublicationWorkflowPanel({
   const currentIndex = statusSteps.findIndex((s) => s.key === article.status);
 
   return (
-    <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
-      <h3 className="mb-4 text-lg font-semibold text-gray-900">Workflow</h3>
+    <div className="border-brand-secondary/20 bg-brand-surface rounded-lg border p-6 shadow-sm">
+      <h3 className="text-brand-text-primary mb-4 text-lg font-semibold">Workflow</h3>
 
       {/* Progress indicator */}
       <div className="mb-6 flex items-center gap-1">
@@ -96,31 +96,35 @@ export default function PublicationWorkflowPanel({
             <div key={step.key} className="flex flex-1 flex-col items-center">
               <div
                 className={`h-2 w-full rounded-full ${
-                  isPast ? 'bg-green-500' : isActive ? 'bg-blue-500' : 'bg-gray-200'
+                  isPast
+                    ? 'bg-status-success'
+                    : isActive
+                      ? 'bg-brand-accent'
+                      : 'bg-brand-secondary/20'
                 }`}
               />
-              <span className="mt-1 text-xs text-gray-600">{step.label}</span>
+              <span className="text-brand-text-secondary mt-1 text-xs">{step.label}</span>
             </div>
           );
         })}
       </div>
 
       {article.status === ARTICLE_STATUS.ARCHIVED && (
-        <p className="mb-4 text-sm font-medium text-red-600">This article is archived.</p>
+        <p className="text-status-error mb-4 text-sm font-medium">This article is archived.</p>
       )}
 
       {/* Reviewer note */}
       {article.review_note && (
-        <div className="mb-4 rounded-lg border border-yellow-200 bg-yellow-50 p-3">
-          <p className="text-sm text-yellow-800">
+        <div className="border-status-warning/20 bg-status-warning/10 mb-4 rounded-lg border p-3">
+          <p className="text-status-warning text-sm">
             <span className="font-semibold">Review note:</span> {article.review_note}
           </p>
         </div>
       )}
 
       {error && (
-        <div className="mb-4 rounded-lg border border-red-200 bg-red-50 p-3">
-          <p className="text-sm text-red-700">{error}</p>
+        <div className="border-status-error/20 bg-status-error/10 mb-4 rounded-lg border p-3">
+          <p className="text-status-error text-sm">{error}</p>
         </div>
       )}
 
@@ -132,14 +136,14 @@ export default function PublicationWorkflowPanel({
             onChange={(e) => setReviewNote(e.target.value)}
             placeholder="Add a review note (required for revision requests)..."
             rows={3}
-            className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-blue-200 focus:outline-none"
+            className="border-brand-secondary/30 focus:ring-brand-primary/20 w-full rounded-lg border px-3 py-2 text-sm focus:ring-2 focus:outline-none"
           />
           <div className="flex gap-2">
             <button
               type="button"
               onClick={handleApprove}
               disabled={loading}
-              className="rounded-lg bg-green-600 px-4 py-2 text-sm font-medium text-white hover:bg-green-700 disabled:opacity-50"
+              className="bg-status-success hover:bg-status-success/80 rounded-lg px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
             >
               Approve
             </button>
@@ -147,7 +151,7 @@ export default function PublicationWorkflowPanel({
               type="button"
               onClick={handleRequestRevision}
               disabled={loading}
-              className="rounded-lg bg-yellow-500 px-4 py-2 text-sm font-medium text-white hover:bg-yellow-600 disabled:opacity-50"
+              className="bg-status-warning hover:bg-status-warning/80 rounded-lg px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
             >
               Request Revision
             </button>
@@ -163,7 +167,7 @@ export default function PublicationWorkflowPanel({
               type="button"
               onClick={handlePublish}
               disabled={loading}
-              className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50"
+              className="bg-brand-primary hover:bg-brand-primary/80 rounded-lg px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
             >
               Publish
             </button>
@@ -173,7 +177,7 @@ export default function PublicationWorkflowPanel({
               type="button"
               onClick={handleArchive}
               disabled={loading}
-              className="rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700 disabled:opacity-50"
+              className="bg-status-error hover:bg-status-error/80 rounded-lg px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
             >
               Archive
             </button>

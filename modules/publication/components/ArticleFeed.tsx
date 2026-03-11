@@ -1,8 +1,9 @@
 'use client';
 
-import { ARTICLE_SECTION_LABELS } from '@/modules/publication/constants';
 import type { ArticleSection } from '@/modules/publication/constants';
+import { ARTICLE_SECTION_LABELS } from '@/modules/publication/constants';
 import type { IArticle } from '@/modules/publication/types';
+import EmptyState from '@/shared/components/EmptyState';
 import { formatDistanceToNow } from 'date-fns';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
@@ -10,13 +11,18 @@ import { useEffect, useState } from 'react';
 interface ArticleFeedProps {
   sectionFilter?: ArticleSection;
   showFilters?: boolean;
+  layout?: 'list' | 'magazine';
 }
 
 /**
  * ArticleFeed Component
  * Displays a feed of published campus news articles with optional section filtering.
  */
-export default function ArticleFeed({ sectionFilter, showFilters = true }: ArticleFeedProps) {
+export default function ArticleFeed({
+  sectionFilter,
+  showFilters = true,
+  layout = 'list',
+}: ArticleFeedProps) {
   const [articles, setArticles] = useState<IArticle[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -53,7 +59,7 @@ export default function ArticleFeed({ sectionFilter, showFilters = true }: Artic
     return (
       <div className="space-y-4">
         {[1, 2, 3].map((i) => (
-          <div key={i} className="h-32 animate-pulse rounded-lg bg-gray-200" />
+          <div key={i} className="bg-brand-secondary/20 h-32 animate-pulse rounded-lg" />
         ))}
       </div>
     );
@@ -61,7 +67,7 @@ export default function ArticleFeed({ sectionFilter, showFilters = true }: Artic
 
   if (error) {
     return (
-      <div className="rounded-lg bg-red-50 p-4 text-red-800">
+      <div className="bg-status-error/10 text-status-error rounded-lg p-4">
         <p className="font-medium">Failed to load articles</p>
         <p className="text-sm">{error}</p>
       </div>
@@ -69,26 +75,21 @@ export default function ArticleFeed({ sectionFilter, showFilters = true }: Artic
   }
 
   if (articles.length === 0) {
-    return (
-      <div className="rounded-lg bg-blue-50 p-8 text-center">
-        <p className="text-gray-700">No articles yet.</p>
-        <p className="text-sm text-gray-500">Check back soon for campus news!</p>
-      </div>
-    );
+    return <EmptyState type="article" />;
   }
 
   return (
     <div>
       {showFilters && (
         <div className="mb-6 flex items-center gap-4">
-          <label htmlFor="section-filter" className="text-sm font-medium text-gray-700">
+          <label htmlFor="section-filter" className="text-brand-text-primary text-sm font-medium">
             Section:
           </label>
           <select
             id="section-filter"
             value={section}
             onChange={(e) => setSection(e.target.value as ArticleSection | '')}
-            className="rounded border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:ring-blue-500"
+            className="border-brand-secondary/30 bg-brand-surface text-brand-text-primary focus:border-brand-primary focus:ring-brand-primary/30 rounded border px-3 py-2 text-sm"
           >
             <option value="">All Sections</option>
             {Object.entries(ARTICLE_SECTION_LABELS).map(([value, label]) => (
@@ -100,40 +101,100 @@ export default function ArticleFeed({ sectionFilter, showFilters = true }: Artic
         </div>
       )}
 
-      <div className="space-y-4">
-        {articles.map((article) => (
-          <article
-            key={article.id}
-            className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm transition hover:shadow-md"
-          >
-            <div className="mb-2 flex items-start justify-between">
-              <div className="flex-1">
-                <h2 className="mb-1 text-xl font-semibold text-gray-900 hover:text-blue-600">
-                  <Link href={`/news/${article.slug}`}>{article.title}</Link>
-                </h2>
-                <div className="flex flex-wrap gap-2">
-                  <span className="inline-block rounded bg-blue-100 px-2 py-0.5 text-xs font-medium text-blue-800">
-                    {ARTICLE_SECTION_LABELS[article.section] ?? article.section}
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            {article.excerpt && (
-              <p className="mb-3 text-sm leading-relaxed text-gray-600">{article.excerpt}</p>
+      {layout === 'magazine' && articles.length > 0 ? (
+        <div>
+          {/* Featured article (first) */}
+          <article className="bg-brand-surface border-brand-secondary/20 mb-6 rounded-lg border p-8 shadow-sm transition-all duration-200 ease-out hover:-translate-y-px hover:shadow-md">
+            <span className="bg-content-article/15 text-brand-primary mb-3 inline-block rounded px-2 py-0.5 text-xs font-medium">
+              {ARTICLE_SECTION_LABELS[articles[0].section] ?? articles[0].section}
+            </span>
+            <h2 className="text-brand-text-primary hover:text-brand-primary/80 mb-2 text-2xl font-bold lg:text-3xl">
+              <Link href={`/news/${articles[0].slug}`}>{articles[0].title}</Link>
+            </h2>
+            {articles[0].excerpt && (
+              <p className="text-brand-text-secondary mb-3 leading-relaxed">
+                {articles[0].excerpt}
+              </p>
             )}
-
-            <div className="text-xs text-gray-500">
-              {article.published_at && (
+            <div className="text-brand-text-muted text-xs">
+              {articles[0].published_at && (
                 <span>
                   Published{' '}
-                  {formatDistanceToNow(new Date(article.published_at), { addSuffix: true })}
+                  {formatDistanceToNow(new Date(articles[0].published_at), { addSuffix: true })}
                 </span>
               )}
             </div>
           </article>
-        ))}
-      </div>
+
+          {/* Remaining articles in grid */}
+          {articles.length > 1 && (
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {articles.slice(1).map((article) => (
+                <article
+                  key={article.id}
+                  className="bg-brand-surface border-brand-secondary/20 rounded-lg border p-5 shadow-sm transition-all duration-200 ease-out hover:-translate-y-px hover:shadow-md"
+                >
+                  <span className="bg-content-article/15 text-brand-primary mb-2 inline-block rounded px-2 py-0.5 text-xs font-medium">
+                    {ARTICLE_SECTION_LABELS[article.section] ?? article.section}
+                  </span>
+                  <h3 className="text-brand-text-primary hover:text-brand-primary/80 mb-1 text-lg font-semibold">
+                    <Link href={`/news/${article.slug}`}>{article.title}</Link>
+                  </h3>
+                  {article.excerpt && (
+                    <p className="text-brand-text-secondary mb-2 line-clamp-2 text-sm">
+                      {article.excerpt}
+                    </p>
+                  )}
+                  <div className="text-brand-text-muted text-xs">
+                    {article.published_at && (
+                      <span>
+                        {formatDistanceToNow(new Date(article.published_at), { addSuffix: true })}
+                      </span>
+                    )}
+                  </div>
+                </article>
+              ))}
+            </div>
+          )}
+        </div>
+      ) : (
+        <div className="space-y-4">
+          {articles.map((article) => (
+            <article
+              key={article.id}
+              className="bg-brand-surface border-brand-secondary/20 rounded-lg border p-6 shadow-sm transition-all duration-200 ease-out hover:-translate-y-px hover:shadow-md"
+            >
+              <div className="mb-2 flex items-start justify-between">
+                <div className="flex-1">
+                  <h2 className="text-brand-text-primary hover:text-brand-primary/80 mb-1 text-xl font-semibold">
+                    <Link href={`/news/${article.slug}`}>{article.title}</Link>
+                  </h2>
+                  <div className="flex flex-wrap gap-2">
+                    <span className="bg-content-article/15 text-brand-primary inline-block rounded px-2 py-0.5 text-xs font-medium">
+                      {ARTICLE_SECTION_LABELS[article.section] ?? article.section}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {article.excerpt && (
+                <p className="text-brand-text-secondary mb-3 text-sm leading-relaxed">
+                  {article.excerpt}
+                </p>
+              )}
+
+              <div className="text-brand-text-muted text-xs">
+                {article.published_at && (
+                  <span>
+                    Published{' '}
+                    {formatDistanceToNow(new Date(article.published_at), { addSuffix: true })}
+                  </span>
+                )}
+              </div>
+            </article>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

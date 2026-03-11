@@ -1,9 +1,9 @@
 'use client';
 
-import { ARTICLE_SECTIONS, ARTICLE_SECTION_LABELS } from '@/modules/publication/constants';
 import type { ArticleSection } from '@/modules/publication/constants';
-import type { IArticle } from '@/modules/publication/types';
+import { ARTICLE_SECTIONS, ARTICLE_SECTION_LABELS } from '@/modules/publication/constants';
 import { useArticleEditor } from '@/modules/publication/hooks/useArticleEditor';
+import type { IArticle } from '@/modules/publication/types';
 import { useRouter } from 'next/navigation';
 
 interface ArticleFormProps {
@@ -39,22 +39,22 @@ export default function ArticleForm({ initialArticle, onSuccess }: ArticleFormPr
   const canEdit = workflowStatus === 'DRAFT';
 
   const statusColors: Record<string, string> = {
-    DRAFT: 'bg-gray-100 text-gray-800',
-    IN_REVIEW: 'bg-yellow-100 text-yellow-800',
-    APPROVED: 'bg-blue-100 text-blue-800',
-    PUBLISHED: 'bg-green-100 text-green-800',
-    ARCHIVED: 'bg-red-100 text-red-800',
+    DRAFT: 'bg-brand-secondary/10 text-brand-text-primary',
+    IN_REVIEW: 'bg-status-warning/15 text-status-warning',
+    APPROVED: 'bg-brand-accent/15 text-brand-primary',
+    PUBLISHED: 'bg-status-success/15 text-status-success',
+    ARCHIVED: 'bg-status-error/15 text-status-error',
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="bg-brand-bg min-h-screen">
       {/* Header */}
-      <header className="sticky top-0 z-10 border-b border-gray-200 bg-white shadow-sm">
+      <header className="border-brand-secondary/20 bg-brand-surface sticky top-0 z-10 border-b shadow-sm">
         <div className="mx-auto flex max-w-4xl items-center justify-between px-4 py-4">
-          <h1 className="text-2xl font-bold text-gray-900">CCIP</h1>
+          <h1 className="text-brand-text-primary text-2xl font-bold">CCIP</h1>
           <button
             onClick={() => router.back()}
-            className="text-sm font-medium text-gray-700 hover:text-gray-900"
+            className="text-brand-text-secondary hover:text-brand-text-primary text-sm font-medium"
           >
             &larr; Back
           </button>
@@ -62,9 +62,9 @@ export default function ArticleForm({ initialArticle, onSuccess }: ArticleFormPr
       </header>
 
       <div className="mx-auto max-w-4xl px-4 py-8">
-        <div className="rounded-lg bg-white p-8 shadow">
+        <div className="bg-brand-surface rounded-lg p-8 shadow">
           <div className="mb-6 flex items-center justify-between">
-            <h2 className="text-3xl font-bold text-gray-900">{pageTitle}</h2>
+            <h2 className="text-brand-text-primary text-3xl font-bold">{pageTitle}</h2>
             {isEditing && (
               <span
                 className={`inline-block rounded px-3 py-1 text-xs font-medium ${statusColors[workflowStatus] ?? ''}`}
@@ -76,36 +76,39 @@ export default function ArticleForm({ initialArticle, onSuccess }: ArticleFormPr
 
           {/* Review note banner */}
           {initialArticle?.review_note && workflowStatus === 'DRAFT' && (
-            <div className="mb-6 rounded-lg border border-yellow-200 bg-yellow-50 p-4">
-              <p className="text-sm font-medium text-yellow-800">
+            <div className="border-status-warning/20 bg-status-warning/10 mb-6 rounded-lg border p-4">
+              <p className="text-status-warning text-sm font-medium">
                 Revision requested: {initialArticle.review_note}
               </p>
             </div>
           )}
 
           {successMessage && (
-            <div className="mb-6 rounded-lg border border-green-200 bg-green-50 p-4">
-              <p className="font-medium text-green-800">{successMessage}</p>
+            <div className="border-status-success/20 bg-status-success/10 mb-6 rounded-lg border p-4">
+              <p className="text-status-success font-medium">{successMessage}</p>
             </div>
           )}
 
           {errorMessage && (
-            <div className="mb-6 rounded-lg border border-red-200 bg-red-50 p-4">
-              <p className="font-medium text-red-800">{errorMessage}</p>
+            <div className="border-status-error/20 bg-status-error/10 mb-6 rounded-lg border p-4">
+              <p className="text-status-error font-medium">{errorMessage}</p>
             </div>
           )}
 
           {isDirty && isAutoSaving && (
-            <div className="mb-6 rounded-lg border border-blue-200 bg-blue-50 p-4">
-              <p className="text-sm font-medium text-blue-800">Auto-saving draft...</p>
+            <div className="border-brand-accent/20 bg-brand-accent/10 mb-6 rounded-lg border p-4">
+              <p className="text-brand-primary text-sm font-medium">Auto-saving draft...</p>
             </div>
           )}
 
           <form onSubmit={handleSaveDraft} className="space-y-8">
             {/* Title */}
             <div>
-              <label htmlFor="title" className="mb-2 block text-sm font-semibold text-gray-700">
-                Title <span className="text-red-500">*</span>
+              <label
+                htmlFor="title"
+                className="text-brand-text-secondary mb-2 block text-sm font-semibold"
+              >
+                Title <span className="text-status-error">*</span>
               </label>
               <input
                 type="text"
@@ -118,17 +121,20 @@ export default function ArticleForm({ initialArticle, onSuccess }: ArticleFormPr
                 maxLength={300}
                 className={`w-full rounded-lg border px-4 py-2 focus:ring-2 focus:outline-none ${
                   errors.title
-                    ? 'border-red-500 focus:ring-red-200'
-                    : 'border-gray-300 focus:ring-blue-200'
-                } disabled:bg-gray-100`}
+                    ? 'border-status-error focus:ring-status-error/20'
+                    : 'border-brand-secondary/30 focus:ring-brand-primary/20'
+                } disabled:bg-brand-secondary/10`}
               />
-              {errors.title && <p className="mt-1 text-sm text-red-600">{errors.title}</p>}
+              {errors.title && <p className="text-status-error mt-1 text-sm">{errors.title}</p>}
             </div>
 
             {/* Section select */}
             <div>
-              <label htmlFor="section" className="mb-2 block text-sm font-semibold text-gray-700">
-                Section <span className="text-red-500">*</span>
+              <label
+                htmlFor="section"
+                className="text-brand-text-secondary mb-2 block text-sm font-semibold"
+              >
+                Section <span className="text-status-error">*</span>
               </label>
               <select
                 id="section"
@@ -136,7 +142,7 @@ export default function ArticleForm({ initialArticle, onSuccess }: ArticleFormPr
                 value={formData.section}
                 onChange={(e) => setFieldValue('section', e.target.value as ArticleSection)}
                 disabled={!canEdit}
-                className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:ring-2 focus:ring-blue-200 focus:outline-none disabled:bg-gray-100"
+                className="border-brand-secondary/30 focus:ring-brand-primary/20 disabled:bg-brand-secondary/10 w-full rounded-lg border px-4 py-2 focus:ring-2 focus:outline-none"
               >
                 {Object.entries(ARTICLE_SECTIONS).map(([key, value]) => (
                   <option key={key} value={value}>
@@ -151,7 +157,7 @@ export default function ArticleForm({ initialArticle, onSuccess }: ArticleFormPr
               <div>
                 <label
                   htmlFor="byline_name"
-                  className="mb-2 block text-sm font-semibold text-gray-700"
+                  className="text-brand-text-secondary mb-2 block text-sm font-semibold"
                 >
                   Byline Name
                 </label>
@@ -163,14 +169,17 @@ export default function ArticleForm({ initialArticle, onSuccess }: ArticleFormPr
                   onChange={handleChange}
                   placeholder="Your name as it appears on the article"
                   maxLength={200}
-                  className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:ring-2 focus:ring-blue-200 focus:outline-none"
+                  className="border-brand-secondary/30 focus:ring-brand-primary/20 w-full rounded-lg border px-4 py-2 focus:ring-2 focus:outline-none"
                 />
               </div>
             )}
 
             {/* Excerpt */}
             <div>
-              <label htmlFor="excerpt" className="mb-2 block text-sm font-semibold text-gray-700">
+              <label
+                htmlFor="excerpt"
+                className="text-brand-text-secondary mb-2 block text-sm font-semibold"
+              >
                 Excerpt
               </label>
               <textarea
@@ -182,14 +191,17 @@ export default function ArticleForm({ initialArticle, onSuccess }: ArticleFormPr
                 placeholder="Brief summary of the article (shown in listings)"
                 maxLength={500}
                 rows={2}
-                className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:ring-2 focus:ring-blue-200 focus:outline-none disabled:bg-gray-100"
+                className="border-brand-secondary/30 focus:ring-brand-primary/20 disabled:bg-brand-secondary/10 w-full rounded-lg border px-4 py-2 focus:ring-2 focus:outline-none"
               />
-              <p className="mt-1 text-xs text-gray-500">{formData.excerpt.length}/500</p>
+              <p className="text-brand-text-muted mt-1 text-xs">{formData.excerpt.length}/500</p>
             </div>
 
             {/* Body */}
             <div>
-              <label htmlFor="body" className="mb-2 block text-sm font-semibold text-gray-700">
+              <label
+                htmlFor="body"
+                className="text-brand-text-secondary mb-2 block text-sm font-semibold"
+              >
                 Body
               </label>
               <textarea
@@ -200,26 +212,26 @@ export default function ArticleForm({ initialArticle, onSuccess }: ArticleFormPr
                 disabled={!canEdit}
                 placeholder="Write your article content here..."
                 rows={16}
-                className="w-full rounded-lg border border-gray-300 px-4 py-2 font-mono text-sm leading-relaxed focus:ring-2 focus:ring-blue-200 focus:outline-none disabled:bg-gray-100"
+                className="border-brand-secondary/30 focus:ring-brand-primary/20 disabled:bg-brand-secondary/10 w-full rounded-lg border px-4 py-2 font-mono text-sm leading-relaxed focus:ring-2 focus:outline-none"
               />
-              {errors.body && <p className="mt-1 text-sm text-red-600">{errors.body}</p>}
+              {errors.body && <p className="text-status-error mt-1 text-sm">{errors.body}</p>}
             </div>
 
             {/* Media placeholder */}
-            <div className="rounded-lg border-2 border-dashed border-gray-300 p-6 text-center">
-              <p className="text-sm text-gray-500">
+            <div className="border-brand-secondary/30 rounded-lg border-2 border-dashed p-6 text-center">
+              <p className="text-brand-text-muted text-sm">
                 Media attachments will be supported in a future phase.
               </p>
             </div>
 
             {/* Actions */}
-            <div className="flex items-center gap-3 border-t border-gray-200 pt-6">
+            <div className="border-brand-secondary/20 flex items-center gap-3 border-t pt-6">
               {canEdit && (
                 <>
                   <button
                     type="submit"
                     disabled={isSubmitting}
-                    className="rounded-lg bg-blue-600 px-6 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50"
+                    className="bg-brand-primary hover:bg-brand-primary/80 rounded-lg px-6 py-2 text-sm font-medium text-white disabled:opacity-50"
                   >
                     {isSubmitting ? 'Saving...' : isEditing ? 'Save Draft' : 'Create Draft'}
                   </button>
@@ -229,7 +241,7 @@ export default function ArticleForm({ initialArticle, onSuccess }: ArticleFormPr
                       type="button"
                       disabled={isSubmitting}
                       onClick={submitForReview}
-                      className="rounded-lg bg-yellow-500 px-6 py-2 text-sm font-medium text-white hover:bg-yellow-600 disabled:opacity-50"
+                      className="bg-status-warning hover:bg-status-warning/80 rounded-lg px-6 py-2 text-sm font-medium text-white disabled:opacity-50"
                     >
                       Submit for Review
                     </button>
@@ -240,7 +252,7 @@ export default function ArticleForm({ initialArticle, onSuccess }: ArticleFormPr
               <button
                 type="button"
                 onClick={() => router.back()}
-                className="rounded-lg border border-gray-300 px-6 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+                className="border-brand-secondary/30 text-brand-text-secondary hover:bg-brand-bg rounded-lg border px-6 py-2 text-sm font-medium"
               >
                 Cancel
               </button>

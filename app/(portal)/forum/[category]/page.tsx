@@ -47,7 +47,7 @@ export default function ForumCategoryPage() {
   if (userLoading || catsLoading) {
     return (
       <div className="flex min-h-screen items-center justify-center">
-        <p className="text-gray-500">Loading…</p>
+        <p className="text-brand-text-muted">Loading…</p>
       </div>
     );
   }
@@ -55,28 +55,28 @@ export default function ForumCategoryPage() {
   if (!user) return null;
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-brand-bg">
       <Header user={user} navLinks={FORUM_NAV} />
       <main className="mx-auto max-w-4xl px-4 py-8">
         {/* Breadcrumb */}
-        <nav className="mb-4 text-sm text-gray-500">
-          <Link href="/forum" className="hover:text-blue-600">
+        <nav className="mb-4 text-sm text-brand-text-muted">
+          <Link href="/forum" className="hover:text-brand-primary">
             Forum
           </Link>
           <span className="mx-1">/</span>
-          <span className="text-gray-900">{category?.name ?? categorySlug}</span>
+          <span className="text-brand-text-primary">{category?.name ?? categorySlug}</span>
         </nav>
 
         <div className="mb-6 flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">{category?.name ?? 'Category'}</h1>
+            <h1 className="text-2xl font-bold text-brand-text-primary">{category?.name ?? 'Category'}</h1>
             {category?.description && (
-              <p className="mt-1 text-sm text-gray-500">{category.description}</p>
+              <p className="mt-1 text-sm text-brand-text-muted">{category.description}</p>
             )}
           </div>
           <Link
             href={`/forum/${categorySlug}/new`}
-            className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-blue-700"
+            className="rounded-lg bg-brand-primary px-4 py-2 text-sm font-medium text-white transition hover:bg-brand-primary/80"
           >
             New Thread
           </Link>
@@ -94,7 +94,7 @@ export default function ForumCategoryPage() {
             >
               Previous
             </button>
-            <span className="text-sm text-gray-600">
+            <span className="text-sm text-brand-text-secondary">
               Page {page} of {totalPages}
             </span>
             <button

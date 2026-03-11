@@ -63,20 +63,20 @@ export default function EditArticlePage() {
 
   if (userLoading || isLoading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-gray-50">
-        <p className="text-gray-600">Loading article...</p>
+      <div className="flex min-h-screen items-center justify-center bg-brand-bg">
+        <p className="text-brand-text-secondary">Loading article...</p>
       </div>
     );
   }
 
   if (error || !article) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-gray-50">
-        <div className="rounded-lg bg-red-50 p-8 text-center">
-          <p className="mb-4 text-red-700">{error ?? 'Article not found'}</p>
+      <div className="flex min-h-screen items-center justify-center bg-brand-bg">
+        <div className="rounded-lg bg-status-error/10 p-8 text-center">
+          <p className="mb-4 text-status-error">{error ?? 'Article not found'}</p>
           <button
             onClick={() => router.push('/news')}
-            className="rounded-lg bg-red-600 px-4 py-2 text-white hover:bg-red-700"
+            className="rounded-lg bg-status-error px-4 py-2 text-white hover:bg-status-error/80"
           >
             Back to News
           </button>

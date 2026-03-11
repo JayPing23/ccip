@@ -60,7 +60,7 @@ export default function ArticleDetailPage({ params }: ArticleDetailPageProps) {
   if (userLoading || loading) {
     return (
       <div className="flex min-h-screen items-center justify-center">
-        <div className="h-12 w-12 animate-spin rounded-full border-4 border-blue-300 border-t-blue-600" />
+        <div className="border-brand-secondary border-t-brand-primary h-12 w-12 animate-spin rounded-full border-4" />
       </div>
     );
   }
@@ -75,14 +75,14 @@ export default function ArticleDetailPage({ params }: ArticleDetailPageProps) {
 
   if (error || !article) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="bg-brand-bg min-h-screen">
         <Header user={user} navLinks={navLinks} />
         <main className="mx-auto max-w-4xl px-4 py-8">
-          <div className="rounded-lg bg-red-50 p-8 text-center">
-            <p className="mb-4 text-red-700">{error ?? 'Article not found'}</p>
+          <div className="bg-status-error/10 rounded-lg p-8 text-center">
+            <p className="text-status-error mb-4">{error ?? 'Article not found'}</p>
             <Link
               href="/news"
-              className="rounded-lg bg-red-600 px-4 py-2 text-white hover:bg-red-700"
+              className="bg-status-error hover:bg-status-error/80 rounded-lg px-4 py-2 text-white"
             >
               Back to News
             </Link>
@@ -102,45 +102,52 @@ export default function ArticleDetailPage({ params }: ArticleDetailPageProps) {
       : false;
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="bg-brand-bg min-h-screen">
       <Header user={user} navLinks={navLinks} />
 
       <main className="mx-auto max-w-4xl px-4 py-8">
-        <article className="rounded-xl bg-white p-8 shadow-sm">
+        <article className="bg-brand-surface rounded-xl p-8 shadow-sm">
           {/* Meta */}
           <div className="mb-6 flex flex-wrap items-center gap-3">
-            <span className="inline-block rounded bg-blue-100 px-2 py-0.5 text-xs font-medium text-blue-800">
+            <span className="bg-brand-accent/15 text-brand-primary inline-block rounded px-2 py-0.5 text-xs font-medium">
               {ARTICLE_SECTION_LABELS[article.section] ?? article.section}
             </span>
             {article.published_at && (
-              <span className="text-sm text-gray-500">
+              <span className="text-brand-text-muted text-sm">
                 Published {formatDistanceToNow(new Date(article.published_at), { addSuffix: true })}
               </span>
             )}
             {canEdit && (
               <Link
                 href={`/news/${article.slug}/edit`}
-                className="ml-auto text-sm font-medium text-blue-600 hover:text-blue-700"
+                className="text-brand-primary hover:text-brand-primary ml-auto text-sm font-medium"
               >
                 Edit
               </Link>
             )}
           </div>
 
-          <h1 className="mb-4 text-3xl leading-tight font-bold text-gray-900">{article.title}</h1>
+          <h1 className="text-brand-text-primary mb-4 text-3xl leading-tight font-bold">
+            {article.title}
+          </h1>
 
           {article.excerpt && (
-            <p className="mb-6 text-lg leading-relaxed text-gray-600">{article.excerpt}</p>
+            <p className="text-brand-text-secondary mb-6 text-lg leading-relaxed">
+              {article.excerpt}
+            </p>
           )}
 
           {/* Body */}
-          <div className="prose prose-lg max-w-none whitespace-pre-wrap text-gray-800">
+          <div className="prose prose-lg text-brand-text-primary max-w-none whitespace-pre-wrap">
             {article.body}
           </div>
 
           {/* Footer */}
-          <div className="mt-8 border-t border-gray-200 pt-6">
-            <Link href="/news" className="text-sm font-medium text-blue-600 hover:text-blue-700">
+          <div className="border-brand-secondary/20 mt-8 border-t pt-6">
+            <Link
+              href="/news"
+              className="text-brand-primary hover:text-brand-primary text-sm font-medium"
+            >
               &larr; Back to Campus News
             </Link>
           </div>

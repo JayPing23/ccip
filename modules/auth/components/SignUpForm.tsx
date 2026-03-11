@@ -105,12 +105,12 @@ export default function SignUpForm() {
 
   if (success) {
     return (
-      <div className="w-full max-w-md mx-auto p-6 bg-green-50 border border-green-200 rounded-lg">
+      <div className="w-full max-w-md mx-auto p-6 bg-status-success/10 border border-status-success/20 rounded-lg">
         <div className="text-center">
-          <div className="text-4xl text-green-600 mb-4">✓</div>
-          <h2 className="text-xl font-semibold text-green-900 mb-2">Account Created!</h2>
-          <p className="text-green-700"> Your account has been created successfully.</p>
-          <p className="text-sm text-green-600 mt-2">Redirecting to login...</p>
+          <div className="text-4xl text-status-success mb-4">✓</div>
+          <h2 className="text-xl font-semibold text-status-success mb-2">Account Created!</h2>
+          <p className="text-status-success"> Your account has been created successfully.</p>
+          <p className="text-sm text-status-success mt-2">Redirecting to login...</p>
         </div>
       </div>
     );
@@ -120,13 +120,13 @@ export default function SignUpForm() {
     <div className="w-full max-w-md mx-auto">
       <form onSubmit={handleSubmit} className="space-y-4">
         {error && (
-          <div className="p-4 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
+          <div className="p-4 bg-status-error/10 border border-status-error/20 rounded-lg text-status-error text-sm">
             {error}
           </div>
         )}
 
         <div>
-          <label htmlFor="displayName" className="block text-sm font-medium text-gray-700 mb-1">
+          <label htmlFor="displayName" className="block text-sm font-medium text-brand-text-secondary mb-1">
             Full Name
           </label>
           <input
@@ -137,13 +137,13 @@ export default function SignUpForm() {
             value={formData.displayName}
             onChange={handleChange}
             disabled={loading}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:opacity-50"
+            className="w-full px-4 py-2 border border-brand-secondary/30 rounded-lg focus:ring-2 focus:ring-brand-primary focus:border-transparent disabled:opacity-50"
             placeholder="e.g., Juan Dela Cruz"
           />
         </div>
 
         <div>
-          <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+          <label htmlFor="email" className="block text-sm font-medium text-brand-text-secondary mb-1">
             Email Address
           </label>
           <input
@@ -154,14 +154,14 @@ export default function SignUpForm() {
             value={formData.email}
             onChange={handleChange}
             disabled={loading}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:opacity-50"
+            className="w-full px-4 py-2 border border-brand-secondary/30 rounded-lg focus:ring-2 focus:ring-brand-primary focus:border-transparent disabled:opacity-50"
             placeholder="name@slu.edu.ph"
           />
-          <p className="text-xs text-gray-500 mt-1">Must be a @slu.edu.ph email address</p>
+          <p className="text-xs text-brand-text-muted mt-1">Must be a @slu.edu.ph email address</p>
         </div>
 
         <div>
-          <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
+          <label htmlFor="password" className="block text-sm font-medium text-brand-text-secondary mb-1">
             Password
           </label>
           <input
@@ -172,13 +172,13 @@ export default function SignUpForm() {
             value={formData.password}
             onChange={handleChange}
             disabled={loading}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:opacity-50"
+            className="w-full px-4 py-2 border border-brand-secondary/30 rounded-lg focus:ring-2 focus:ring-brand-primary focus:border-transparent disabled:opacity-50"
             placeholder="Minimum 8 characters"
           />
         </div>
 
         <div>
-          <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-1">
+          <label htmlFor="confirmPassword" className="block text-sm font-medium text-brand-text-secondary mb-1">
             Confirm Password
           </label>
           <input
@@ -189,7 +189,7 @@ export default function SignUpForm() {
             value={formData.confirmPassword}
             onChange={handleChange}
             disabled={loading}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:opacity-50"
+            className="w-full px-4 py-2 border border-brand-secondary/30 rounded-lg focus:ring-2 focus:ring-brand-primary focus:border-transparent disabled:opacity-50"
             placeholder="Re-enter your password"
           />
         </div>
@@ -197,7 +197,7 @@ export default function SignUpForm() {
         <button
           type="submit"
           disabled={loading}
-          className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white font-semibold py-2 rounded-lg transition duration-200"
+          className="w-full bg-brand-primary hover:bg-brand-primary/80 disabled:bg-brand-secondary text-white font-semibold py-2 rounded-lg transition duration-200"
         >
           {loading ? 'Creating Account...' : 'Sign Up'}
         </button>

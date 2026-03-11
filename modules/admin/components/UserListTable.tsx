@@ -29,8 +29,8 @@ export default function UserListTable({ users, loading, onRefresh }: UserListTab
   if (loading) {
     return (
       <div className="flex items-center justify-center py-16">
-        <div className="h-8 w-8 animate-spin rounded-full border-4 border-indigo-600 border-t-transparent" />
-        <span className="ml-3 text-gray-500">Loading users...</span>
+        <div className="border-brand-primary h-8 w-8 animate-spin rounded-full border-4 border-t-transparent" />
+        <span className="text-brand-text-muted ml-3">Loading users...</span>
       </div>
     );
   }
@@ -77,7 +77,7 @@ export default function UserListTable({ users, loading, onRefresh }: UserListTab
       {/* Toolbar */}
       <div className="mb-4 flex flex-wrap items-end gap-3">
         <div className="min-w-48 flex-1">
-          <label className="mb-1 block text-xs font-medium text-gray-600">Search</label>
+          <label className="text-brand-text-secondary mb-1 block text-xs font-medium">Search</label>
           <input
             type="text"
             placeholder="Name or email..."
@@ -86,11 +86,14 @@ export default function UserListTable({ users, loading, onRefresh }: UserListTab
               setSearch(e.target.value);
               setPage(1);
             }}
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-indigo-400 focus:outline-none"
+            className="border-brand-secondary/30 focus:border-brand-secondary w-full rounded-md border px-3 py-2 text-sm focus:outline-none"
           />
         </div>
         <div>
-          <label htmlFor="filter-role" className="mb-1 block text-xs font-medium text-gray-600">
+          <label
+            htmlFor="filter-role"
+            className="text-brand-text-secondary mb-1 block text-xs font-medium"
+          >
             Role
           </label>
           <select
@@ -100,7 +103,7 @@ export default function UserListTable({ users, loading, onRefresh }: UserListTab
               setFilterRole(e.target.value);
               setPage(1);
             }}
-            className="rounded-md border border-gray-300 px-3 py-2 text-sm"
+            className="border-brand-secondary/30 rounded-md border px-3 py-2 text-sm"
           >
             <option value="">All Roles</option>
             <option value="STUDENT">Student</option>
@@ -110,52 +113,67 @@ export default function UserListTable({ users, loading, onRefresh }: UserListTab
           </select>
         </div>
         <div>
-          <label htmlFor="sort-by" className="mb-1 block text-xs font-medium text-gray-600">
+          <label
+            htmlFor="sort-by"
+            className="text-brand-text-secondary mb-1 block text-xs font-medium"
+          >
             Sort by
           </label>
           <select
             id="sort-by"
             value={sortBy}
             onChange={(e) => setSortBy(e.target.value as typeof sortBy)}
-            className="rounded-md border border-gray-300 px-3 py-2 text-sm"
+            className="border-brand-secondary/30 rounded-md border px-3 py-2 text-sm"
           >
             <option value="name">Name</option>
             <option value="email">Email</option>
             <option value="joined">Joined</option>
           </select>
         </div>
-        <p className="ml-auto text-sm text-gray-500">{filtered.length} users</p>
+        <p className="text-brand-text-muted ml-auto text-sm">{filtered.length} users</p>
       </div>
 
       {/* Table */}
-      <div className="overflow-x-auto rounded-lg border border-gray-200">
-        <table className="min-w-full divide-y divide-gray-200 text-sm">
-          <thead className="bg-gray-50">
+      <div className="border-brand-secondary/20 overflow-x-auto rounded-lg border">
+        <table className="divide-brand-secondary/20 min-w-full divide-y text-sm">
+          <thead className="bg-brand-bg">
             <tr>
-              <th className="px-4 py-3 text-left font-medium text-gray-600 uppercase">Name</th>
-              <th className="px-4 py-3 text-left font-medium text-gray-600 uppercase">Email</th>
-              <th className="px-4 py-3 text-left font-medium text-gray-600 uppercase">Role</th>
-              <th className="px-4 py-3 text-left font-medium text-gray-600 uppercase">Joined</th>
-              <th className="px-4 py-3 text-left font-medium text-gray-600 uppercase">Actions</th>
+              <th className="text-brand-text-secondary px-4 py-3 text-left font-medium uppercase">
+                Name
+              </th>
+              <th className="text-brand-text-secondary px-4 py-3 text-left font-medium uppercase">
+                Email
+              </th>
+              <th className="text-brand-text-secondary px-4 py-3 text-left font-medium uppercase">
+                Role
+              </th>
+              <th className="text-brand-text-secondary px-4 py-3 text-left font-medium uppercase">
+                Joined
+              </th>
+              <th className="text-brand-text-secondary px-4 py-3 text-left font-medium uppercase">
+                Actions
+              </th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-200 bg-white">
+          <tbody className="divide-brand-secondary/20 bg-brand-surface divide-y">
             {paginated.map((user) => (
-              <tr key={user.id} className="hover:bg-gray-50">
-                <td className="px-4 py-3 font-medium text-gray-900">{user.display_name}</td>
-                <td className="px-4 py-3 text-gray-500">{user.email}</td>
+              <tr key={user.id} className="hover:bg-brand-bg">
+                <td className="text-brand-text-primary px-4 py-3 font-medium">
+                  {user.display_name}
+                </td>
+                <td className="text-brand-text-muted px-4 py-3">{user.email}</td>
                 <td className="px-4 py-3">
-                  <span className="inline-flex rounded-full bg-blue-100 px-2 py-0.5 text-xs font-semibold text-blue-800">
+                  <span className="bg-brand-accent/15 text-brand-primary inline-flex rounded-full px-2 py-0.5 text-xs font-semibold">
                     {user.role_name?.replace(/_/g, ' ') ?? 'Unknown'}
                   </span>
                 </td>
-                <td className="px-4 py-3 text-gray-500">
+                <td className="text-brand-text-muted px-4 py-3">
                   {new Date(user.created_at).toLocaleDateString()}
                 </td>
                 <td className="px-4 py-3">
                   <button
                     onClick={() => setSelectedUser(user)}
-                    className="font-medium text-indigo-600 hover:text-indigo-800"
+                    className="text-brand-primary hover:text-brand-primary font-medium"
                   >
                     Edit
                   </button>
@@ -167,7 +185,7 @@ export default function UserListTable({ users, loading, onRefresh }: UserListTab
       </div>
 
       {paginated.length === 0 && (
-        <p className="py-8 text-center text-gray-500">No users match your filter.</p>
+        <p className="text-brand-text-muted py-8 text-center">No users match your filter.</p>
       )}
 
       {/* Pagination */}
@@ -176,17 +194,17 @@ export default function UserListTable({ users, loading, onRefresh }: UserListTab
           <button
             onClick={() => setPage((p) => Math.max(1, p - 1))}
             disabled={page === 1}
-            className="rounded-md border border-gray-300 px-3 py-1 text-sm disabled:opacity-40"
+            className="border-brand-secondary/30 rounded-md border px-3 py-1 text-sm disabled:opacity-40"
           >
             Previous
           </button>
-          <span className="text-sm text-gray-600">
+          <span className="text-brand-text-secondary text-sm">
             Page {page} of {totalPages}
           </span>
           <button
             onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
             disabled={page === totalPages}
-            className="rounded-md border border-gray-300 px-3 py-1 text-sm disabled:opacity-40"
+            className="border-brand-secondary/30 rounded-md border px-3 py-1 text-sm disabled:opacity-40"
           >
             Next
           </button>
@@ -236,40 +254,49 @@ function UserEditModal({ user, onClose, onSave, isUpdating }: UserEditModalProps
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-      <div className="w-full max-w-md rounded-xl bg-white p-6 shadow-2xl">
-        <h3 className="mb-4 text-lg font-bold text-gray-900">Edit User</h3>
+      <div className="bg-brand-surface w-full max-w-md rounded-xl p-6 shadow-2xl">
+        <h3 className="text-brand-text-primary mb-4 text-lg font-bold">Edit User</h3>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label htmlFor="edit-name" className="block text-sm font-medium text-gray-700">
+            <label
+              htmlFor="edit-name"
+              className="text-brand-text-secondary block text-sm font-medium"
+            >
               Name
             </label>
             <input
               id="edit-name"
               value={user.display_name}
               disabled
-              className="mt-1 w-full rounded-md border border-gray-300 bg-gray-50 px-3 py-2 text-sm text-gray-600"
+              className="border-brand-secondary/30 bg-brand-bg text-brand-text-secondary mt-1 w-full rounded-md border px-3 py-2 text-sm"
             />
           </div>
           <div>
-            <label htmlFor="edit-email" className="block text-sm font-medium text-gray-700">
+            <label
+              htmlFor="edit-email"
+              className="text-brand-text-secondary block text-sm font-medium"
+            >
               Email
             </label>
             <input
               id="edit-email"
               value={user.email}
               disabled
-              className="mt-1 w-full rounded-md border border-gray-300 bg-gray-50 px-3 py-2 text-sm text-gray-600"
+              className="border-brand-secondary/30 bg-brand-bg text-brand-text-secondary mt-1 w-full rounded-md border px-3 py-2 text-sm"
             />
           </div>
           <div>
-            <label htmlFor="edit-role" className="block text-sm font-medium text-gray-700">
+            <label
+              htmlFor="edit-role"
+              className="text-brand-text-secondary block text-sm font-medium"
+            >
               Role
             </label>
             <select
               id="edit-role"
               value={roleId}
               onChange={(e) => setRoleId(e.target.value)}
-              className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+              className="border-brand-secondary/30 mt-1 w-full rounded-md border px-3 py-2 text-sm"
             >
               <option value="">Select role...</option>
               {roles.map((r) => (
@@ -280,14 +307,17 @@ function UserEditModal({ user, onClose, onSave, isUpdating }: UserEditModalProps
             </select>
           </div>
           <div>
-            <label htmlFor="edit-org" className="block text-sm font-medium text-gray-700">
+            <label
+              htmlFor="edit-org"
+              className="text-brand-text-secondary block text-sm font-medium"
+            >
               Organization
             </label>
             <select
               id="edit-org"
               value={orgId}
               onChange={(e) => setOrgId(e.target.value)}
-              className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+              className="border-brand-secondary/30 mt-1 w-full rounded-md border px-3 py-2 text-sm"
             >
               <option value="">None</option>
               {orgs.map((o) => (
@@ -302,14 +332,14 @@ function UserEditModal({ user, onClose, onSave, isUpdating }: UserEditModalProps
               type="button"
               onClick={onClose}
               disabled={isUpdating}
-              className="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-40"
+              className="border-brand-secondary/30 text-brand-text-secondary hover:bg-brand-bg rounded-md border px-4 py-2 text-sm font-medium disabled:opacity-40"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={isUpdating}
-              className="rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700 disabled:opacity-40"
+              className="bg-brand-primary hover:bg-brand-primary/80 rounded-md px-4 py-2 text-sm font-medium text-white disabled:opacity-40"
             >
               {isUpdating ? 'Saving...' : 'Save Changes'}
             </button>

@@ -14,7 +14,7 @@ export default function ForumCategoryList({ categories, loading, error }: ForumC
     return (
       <div className="animate-pulse space-y-3">
         {[1, 2, 3].map((i) => (
-          <div key={i} className="h-20 rounded-lg bg-gray-200" />
+          <div key={i} className="bg-brand-secondary/20 h-20 rounded-lg" />
         ))}
       </div>
     );
@@ -22,7 +22,7 @@ export default function ForumCategoryList({ categories, loading, error }: ForumC
 
   if (error) {
     return (
-      <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+      <div className="border-status-error/20 bg-status-error/10 text-status-error rounded-lg border p-4 text-sm">
         {error}
       </div>
     );
@@ -30,7 +30,7 @@ export default function ForumCategoryList({ categories, loading, error }: ForumC
 
   if (categories.length === 0) {
     return (
-      <div className="rounded-lg border border-gray-200 bg-white p-8 text-center text-gray-500">
+      <div className="bg-brand-surface border-brand-secondary/20 text-brand-text-muted rounded-lg border p-8 text-center">
         No forum categories available yet.
       </div>
     );
@@ -42,11 +42,12 @@ export default function ForumCategoryList({ categories, loading, error }: ForumC
         <Link
           key={category.id}
           href={`/forum/${category.slug}`}
-          className="block rounded-lg border border-gray-200 bg-white p-4 transition hover:border-blue-300 hover:shadow-sm"
+          className="bg-brand-surface border-brand-secondary/20 hover:border-brand-accent block rounded-lg border p-4 transition-all duration-200 ease-out hover:-translate-y-px hover:shadow-sm"
         >
-          <h3 className="text-lg font-semibold text-gray-900">{category.name}</h3>
+          <div className="bg-content-forum mb-3 h-1 w-10 rounded-full" />
+          <h3 className="text-brand-text-primary text-lg font-semibold">{category.name}</h3>
           {category.description && (
-            <p className="mt-1 text-sm text-gray-500">{category.description}</p>
+            <p className="text-brand-text-muted mt-1 text-sm">{category.description}</p>
           )}
         </Link>
       ))}

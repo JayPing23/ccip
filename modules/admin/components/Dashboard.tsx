@@ -17,17 +17,17 @@ interface StatCardProps {
 
 export function StatCard({ label, value, icon, color = 'blue' }: StatCardProps) {
   const bgMap: Record<string, string> = {
-    blue: 'bg-blue-50 text-blue-600',
-    green: 'bg-green-50 text-green-600',
-    purple: 'bg-purple-50 text-purple-600',
-    orange: 'bg-orange-50 text-orange-600',
+    blue: 'bg-brand-accent/15 text-brand-primary',
+    green: 'bg-status-success/15 text-status-success',
+    purple: 'bg-brand-secondary/15 text-brand-primary',
+    orange: 'bg-status-warning/15 text-status-warning',
   };
   return (
-    <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+    <div className="bg-brand-surface border-brand-secondary/20 rounded-lg border p-6 shadow-sm">
       <div className="flex items-center justify-between">
         <div>
-          <p className="text-sm font-medium text-gray-600">{label}</p>
-          <p className="mt-2 text-3xl font-bold text-gray-900">{value}</p>
+          <p className="text-brand-text-secondary text-sm font-medium">{label}</p>
+          <p className="text-brand-text-primary mt-2 text-3xl font-bold">{value}</p>
         </div>
         <div className={`rounded-full p-3 text-xl ${bgMap[color ?? 'blue']}`}>{icon}</div>
       </div>
@@ -76,9 +76,9 @@ export function StatsGrid() {
  */
 export function ActivityFeed() {
   return (
-    <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
-      <h3 className="mb-4 text-lg font-bold text-gray-900">Recent Activity</h3>
-      <p className="text-sm text-gray-500">
+    <div className="bg-brand-surface border-brand-secondary/20 rounded-lg border p-6 shadow-sm">
+      <h3 className="text-brand-text-primary mb-4 text-lg font-bold">Recent Activity</h3>
+      <p className="text-brand-text-muted text-sm">
         Full audit log feed will be available in Phase 2.
       </p>
     </div>

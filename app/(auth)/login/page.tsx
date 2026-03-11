@@ -15,14 +15,14 @@ export default function LoginPage() {
 
 function LoginPageFallback() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 px-4">
-      <div className="w-full max-w-md rounded-lg bg-white p-8 shadow-lg">
+    <div className="from-brand-accent/10 to-brand-secondary/15 flex min-h-screen items-center justify-center bg-linear-to-br px-4">
+      <div className="bg-brand-surface w-full max-w-md rounded-lg p-8 shadow-lg">
         <div className="mb-8 text-center">
-          <h1 className="mb-2 text-3xl font-bold text-gray-900">CCIP</h1>
-          <p className="text-gray-600">Centralized Campus Information Portal</p>
+          <h1 className="text-brand-text-primary mb-2 text-3xl font-bold">CCIP</h1>
+          <p className="text-brand-text-secondary">Centralized Campus Information Portal</p>
         </div>
         <div className="flex items-center justify-center">
-          <div className="h-12 w-12 animate-spin rounded-full border-4 border-blue-300 border-t-blue-600"></div>
+          <div className="border-brand-secondary border-t-brand-primary h-12 w-12 animate-spin rounded-full border-4"></div>
         </div>
       </div>
     </div>

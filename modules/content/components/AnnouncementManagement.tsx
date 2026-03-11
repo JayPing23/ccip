@@ -1,6 +1,7 @@
 'use client';
 
 import { useManagedAnnouncements } from '@/modules/content/hooks/useManagedAnnouncements';
+import { useToast } from '@/shared/components/Toast';
 import { useCurrentUser } from '@/shared/hooks/useCurrentUser';
 import { formatDate } from '@/shared/utils/date-helpers';
 import {
@@ -10,7 +11,6 @@ import {
   canEditAnyContent,
   canEditOwnContent,
 } from '@/shared/utils/permissions';
-import { useToast } from '@/shared/components/Toast';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
@@ -99,7 +99,7 @@ export default function AnnouncementManagement({
   if (userLoading || (loading && !announcements.length)) {
     return (
       <div className="py-12 text-center">
-        <p className="text-gray-600">Loading announcement workspace...</p>
+        <p className="text-brand-text-secondary">Loading announcement workspace...</p>
       </div>
     );
   }
@@ -112,28 +112,31 @@ export default function AnnouncementManagement({
     <div className="p-6 sm:p-8" data-testid="announcement-management">
       <div className="mb-6 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900">{title}</h2>
-          <p className="mt-1 text-gray-600">{description}</p>
+          <h2 className="text-brand-text-primary text-2xl font-bold">{title}</h2>
+          <p className="text-brand-text-secondary mt-1">{description}</p>
         </div>
         <Link
           href="/content/create"
-          className="rounded-lg bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
+          className="bg-brand-primary hover:bg-brand-primary/80 rounded-lg px-4 py-2 text-white"
         >
           New Announcement
         </Link>
       </div>
 
       {error && (
-        <div className="mb-6 rounded-lg border border-red-200 bg-red-50 p-4">
-          <p className="text-red-800">
+        <div className="border-status-error/20 bg-status-error/10 mb-6 rounded-lg border p-4">
+          <p className="text-status-error">
             <strong>Error:</strong> {error}
           </p>
         </div>
       )}
 
-      <div className="mb-6 flex gap-6 rounded-lg bg-white p-6 shadow-sm">
+      <div className="bg-brand-surface mb-6 flex gap-6 rounded-lg p-6 shadow-sm">
         <div>
-          <label htmlFor="status-filter" className="mb-2 block text-sm font-medium text-gray-700">
+          <label
+            htmlFor="status-filter"
+            className="text-brand-text-secondary mb-2 block text-sm font-medium"
+          >
             Status
           </label>
           <select
@@ -141,7 +144,7 @@ export default function AnnouncementManagement({
             data-testid="announcement-status-filter"
             value={statusFilter}
             onChange={(event) => setStatusFilter(event.target.value as typeof statusFilter)}
-            className="rounded border border-gray-300 px-3 py-2 text-sm"
+            className="border-brand-secondary/30 rounded border px-3 py-2 text-sm"
           >
             <option value="ALL">All Status</option>
             <option value="DRAFT">Draft</option>
@@ -153,7 +156,7 @@ export default function AnnouncementManagement({
         <div>
           <label
             htmlFor="visibility-filter"
-            className="mb-2 block text-sm font-medium text-gray-700"
+            className="text-brand-text-secondary mb-2 block text-sm font-medium"
           >
             Visibility
           </label>
@@ -162,7 +165,7 @@ export default function AnnouncementManagement({
             data-testid="announcement-visibility-filter"
             value={visibilityFilter}
             onChange={(event) => setVisibilityFilter(event.target.value as typeof visibilityFilter)}
-            className="rounded border border-gray-300 px-3 py-2 text-sm"
+            className="border-brand-secondary/30 rounded border px-3 py-2 text-sm"
           >
             <option value="ALL">All Visibility</option>
             <option value="PUBLIC">Public</option>
@@ -173,9 +176,11 @@ export default function AnnouncementManagement({
       </div>
 
       {announcements.length === 0 ? (
-        <div className="rounded-lg bg-white p-12 text-center shadow-sm">
-          <p className="mb-4 text-gray-600">No announcements found for the current filters.</p>
-          <Link href="/content/create" className="text-blue-600 hover:underline">
+        <div className="bg-brand-surface rounded-lg p-12 text-center shadow-sm">
+          <p className="text-brand-text-secondary mb-4">
+            No announcements found for the current filters.
+          </p>
+          <Link href="/content/create" className="text-brand-primary hover:underline">
             Create the first announcement
           </Link>
         </div>
@@ -191,24 +196,24 @@ export default function AnnouncementManagement({
                 key={announcement.id}
                 data-testid="announcement-card"
                 data-announcement-id={announcement.id}
-                className="rounded-lg bg-white p-6 shadow-sm"
+                className="bg-brand-surface rounded-lg p-6 shadow-sm"
               >
                 <div className="flex items-start justify-between gap-4">
                   <div className="flex-1">
                     <h3
                       data-testid="announcement-title"
-                      className="mb-2 text-lg font-semibold text-gray-900"
+                      className="text-brand-text-primary mb-2 text-lg font-semibold"
                     >
                       {announcement.title}
                     </h3>
-                    <p className="mb-3 text-sm text-gray-600">
+                    <p className="text-brand-text-secondary mb-3 text-sm">
                       {announcement.body.slice(0, 140)}
                       {announcement.body.length > 140 ? '...' : ''}
                     </p>
-                    <div className="flex flex-wrap items-center gap-2 text-sm text-gray-500">
+                    <div className="text-brand-text-muted flex flex-wrap items-center gap-2 text-sm">
                       <span
                         data-testid="announcement-status"
-                        className="rounded-full bg-gray-100 px-3 py-1 font-medium text-gray-700"
+                        className="bg-brand-secondary/10 text-brand-text-secondary rounded-full px-3 py-1 font-medium"
                       >
                         {announcement.status}
                       </span>
@@ -223,14 +228,14 @@ export default function AnnouncementManagement({
                   <div className="flex flex-wrap justify-end gap-2">
                     <Link
                       href={`/content/${announcement.slug}`}
-                      className="rounded border border-gray-200 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                      className="border-brand-secondary/20 text-brand-text-secondary hover:bg-brand-bg rounded border px-3 py-2 text-sm"
                     >
                       View
                     </Link>
                     {canEdit && (
                       <Link
                         href={`/content/${announcement.slug}/edit`}
-                        className="rounded bg-blue-600 px-3 py-2 text-sm text-white hover:bg-blue-700"
+                        className="bg-brand-primary hover:bg-brand-primary/80 rounded px-3 py-2 text-sm text-white"
                       >
                         Edit
                       </Link>
@@ -239,7 +244,7 @@ export default function AnnouncementManagement({
                       <button
                         onClick={() => handlePublish(announcement.id)}
                         data-testid="announcement-publish-button"
-                        className="rounded bg-green-600 px-3 py-2 text-sm text-white hover:bg-green-700"
+                        className="bg-status-success hover:bg-status-success/80 rounded px-3 py-2 text-sm text-white"
                       >
                         Publish
                       </button>
@@ -248,7 +253,7 @@ export default function AnnouncementManagement({
                       <button
                         onClick={() => handleDelete(announcement.id)}
                         data-testid="announcement-delete-button"
-                        className="rounded bg-red-600 px-3 py-2 text-sm text-white hover:bg-red-700"
+                        className="bg-status-error hover:bg-status-error/80 rounded px-3 py-2 text-sm text-white"
                       >
                         Delete
                       </button>

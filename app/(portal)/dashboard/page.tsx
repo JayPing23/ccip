@@ -8,6 +8,7 @@ import NotificationPreferences from '@/modules/notifications/components/Notifica
 import RecentArticles from '@/modules/publication/components/RecentArticles';
 import type { IArticle } from '@/modules/publication/types';
 import Header from '@/shared/components/Header';
+import MobileBottomNav from '@/shared/components/MobileBottomNav';
 import { useCurrentUser } from '@/shared/hooks/useCurrentUser';
 import type { IOrganization } from '@/shared/types/database.types';
 import Link from 'next/link';
@@ -125,8 +126,8 @@ export default function DashboardPage() {
     return (
       <div className="flex min-h-screen items-center justify-center">
         <div className="text-center">
-          <div className="mb-4 h-12 w-12 animate-spin rounded-full border-4 border-blue-300 border-t-blue-600"></div>
-          <p className="text-gray-600">Loading...</p>
+          <div className="border-brand-accent border-t-brand-primary mb-4 h-12 w-12 animate-spin rounded-full border-4"></div>
+          <p className="text-brand-text-secondary">Loading...</p>
         </div>
       </div>
     );
@@ -135,11 +136,11 @@ export default function DashboardPage() {
   if (error) {
     return (
       <div className="flex min-h-screen items-center justify-center">
-        <div className="rounded-lg bg-red-50 p-8 text-center">
-          <p className="mb-4 text-red-700">{error}</p>
+        <div className="bg-status-error/10 rounded-lg p-8 text-center">
+          <p className="text-status-error mb-4">{error}</p>
           <button
             onClick={() => router.push('/login')}
-            className="rounded-lg bg-red-600 px-4 py-2 text-white hover:bg-red-700"
+            className="bg-status-error hover:bg-status-error/90 rounded-lg px-4 py-2 text-white"
           >
             Back to Login
           </button>
@@ -167,17 +168,18 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="bg-brand-bg min-h-screen pb-20 md:pb-0">
       <Header user={user} actions={actions} />
+      <MobileBottomNav />
 
-      <main id="main-content" className="mx-auto max-w-4xl px-4 py-8">
+      <main id="main-content" className="mx-auto max-w-7xl px-4 py-8">
         {/* Hero / welcome section with quick search */}
-        <section className="mb-10 rounded-xl bg-white p-8 shadow-sm">
-          <p className="text-sm font-semibold tracking-[0.2em] text-blue-600 uppercase">
+        <section className="bg-brand-surface border-brand-secondary/20 mb-10 rounded-xl border p-8 shadow-sm">
+          <p className="text-brand-primary text-sm font-semibold tracking-[0.2em] uppercase">
             Welcome back, {user.display_name}
           </p>
-          <h1 className="mt-2 text-3xl font-bold text-gray-900">Campus Hub</h1>
-          <p className="mt-2 max-w-2xl text-gray-600">
+          <h1 className="text-brand-text-primary mt-2 text-3xl font-bold">Campus Hub</h1>
+          <p className="text-brand-text-secondary mt-2 max-w-2xl">
             Stay up to date with official announcements, campus news, and community discussions.
           </p>
 
@@ -187,12 +189,12 @@ export default function DashboardPage() {
               placeholder="Search announcements, articles, discussions…"
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
-              className="min-w-0 flex-1 rounded-lg border border-gray-300 px-4 py-2 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+              className="border-brand-secondary/30 bg-brand-surface text-brand-text-primary focus:border-brand-primary focus:ring-brand-primary/30 min-w-0 flex-1 rounded-lg border px-4 py-2 text-sm focus:ring-1"
               aria-label="Quick search announcements"
             />
             <button
               type="submit"
-              className="rounded-lg bg-blue-600 px-5 py-2 text-sm font-medium text-white hover:bg-blue-700"
+              className="bg-brand-primary hover:bg-brand-primary/90 rounded-lg px-5 py-2 text-sm font-medium text-white"
             >
               Search
             </button>
@@ -200,33 +202,35 @@ export default function DashboardPage() {
         </section>
 
         {/* Quick links */}
-        <section className="mb-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <section className="mb-10 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           <Link
             href="/feed"
-            className="rounded-lg border border-gray-200 bg-white p-5 shadow-sm transition hover:shadow-md"
+            className="bg-brand-surface border-brand-secondary/20 rounded-lg border p-5 shadow-sm transition hover:shadow-md"
           >
-            <h3 className="text-sm font-semibold text-gray-900">Browse All Announcements</h3>
-            <p className="mt-1 text-sm text-gray-500">
+            <h3 className="text-brand-text-primary text-sm font-semibold">
+              Browse All Announcements
+            </h3>
+            <p className="text-brand-text-muted mt-1 text-sm">
               View the full feed with search and filter controls.
             </p>
           </Link>
 
           <Link
             href="/news"
-            className="rounded-lg border border-gray-200 bg-white p-5 shadow-sm transition hover:shadow-md"
+            className="bg-brand-surface border-brand-secondary/20 rounded-lg border p-5 shadow-sm transition hover:shadow-md"
           >
-            <h3 className="text-sm font-semibold text-gray-900">Campus News</h3>
-            <p className="mt-1 text-sm text-gray-500">
+            <h3 className="text-brand-text-primary text-sm font-semibold">Campus News</h3>
+            <p className="text-brand-text-muted mt-1 text-sm">
               Read student articles, features, and editorials.
             </p>
           </Link>
 
           <Link
             href="/forum"
-            className="rounded-lg border border-gray-200 bg-white p-5 shadow-sm transition hover:shadow-md"
+            className="bg-brand-surface border-brand-secondary/20 rounded-lg border p-5 shadow-sm transition hover:shadow-md"
           >
-            <h3 className="text-sm font-semibold text-gray-900">Community Forum</h3>
-            <p className="mt-1 text-sm text-gray-500">
+            <h3 className="text-brand-text-primary text-sm font-semibold">Community Forum</h3>
+            <p className="text-brand-text-muted mt-1 text-sm">
               Join discussions and connect with the campus community.
             </p>
           </Link>
@@ -234,63 +238,94 @@ export default function DashboardPage() {
           {canCreateAnnouncements && (
             <Link
               href="/content/create"
-              className="rounded-lg border border-gray-200 bg-white p-5 shadow-sm transition hover:shadow-md"
+              className="bg-brand-surface border-brand-secondary/20 rounded-lg border p-5 shadow-sm transition hover:shadow-md"
             >
-              <h3 className="text-sm font-semibold text-gray-900">Create Announcement</h3>
-              <p className="mt-1 text-sm text-gray-500">Draft and publish a new campus notice.</p>
+              <h3 className="text-brand-text-primary text-sm font-semibold">Create Announcement</h3>
+              <p className="text-brand-text-muted mt-1 text-sm">
+                Draft and publish a new campus notice.
+              </p>
             </Link>
           )}
 
           {canManageAnnouncements && (
             <Link
               href="/content/manage"
-              className="rounded-lg border border-gray-200 bg-white p-5 shadow-sm transition hover:shadow-md"
+              className="bg-brand-surface border-brand-secondary/20 rounded-lg border p-5 shadow-sm transition hover:shadow-md"
             >
-              <h3 className="text-sm font-semibold text-gray-900">Manage Announcements</h3>
-              <p className="mt-1 text-sm text-gray-500">
+              <h3 className="text-brand-text-primary text-sm font-semibold">
+                Manage Announcements
+              </h3>
+              <p className="text-brand-text-muted mt-1 text-sm">
                 Edit, schedule, or archive existing notices.
               </p>
             </Link>
           )}
         </section>
 
-        {/* Recent announcements */}
-        <section className="mb-10 rounded-xl bg-white p-6 shadow-sm">
-          <div className="mb-4 flex items-center justify-between">
-            <h2 className="text-lg font-semibold text-gray-900">Recent Announcements</h2>
-            <Link href="/feed" className="text-sm font-medium text-blue-600 hover:text-blue-700">
-              View all &rarr;
-            </Link>
-          </div>
-          <RecentAnnouncements items={recentItems} loading={contentLoading} error={contentError} />
-        </section>
+        {/* Content pillars — stacked on mobile, 3-column grid on desktop (Design Plan Phase 6) */}
+        <div className="mb-10 grid grid-cols-1 gap-6 lg:grid-cols-3">
+          {/* Recent announcements */}
+          <section className="bg-brand-surface border-brand-secondary/20 rounded-xl border p-6 shadow-sm">
+            <div className="bg-content-announcement mb-4 h-1 w-10 rounded-full" />
+            <div className="mb-4 flex items-center justify-between">
+              <h2 className="text-brand-text-primary text-lg font-semibold">
+                Recent Announcements
+              </h2>
+              <Link
+                href="/feed"
+                className="text-brand-primary hover:text-brand-primary/80 text-sm font-medium"
+              >
+                View all &rarr;
+              </Link>
+            </div>
+            <RecentAnnouncements
+              items={recentItems}
+              loading={contentLoading}
+              error={contentError}
+            />
+          </section>
 
-        {/* Latest campus news */}
-        <section className="mb-10 rounded-xl bg-white p-6 shadow-sm">
-          <div className="mb-4 flex items-center justify-between">
-            <h2 className="text-lg font-semibold text-gray-900">Latest Campus News</h2>
-            <Link href="/news" className="text-sm font-medium text-blue-600 hover:text-blue-700">
-              View all &rarr;
-            </Link>
-          </div>
-          <RecentArticles items={recentArticles} loading={articlesLoading} error={articlesError} />
-        </section>
+          {/* Latest campus news */}
+          <section className="bg-brand-surface border-brand-secondary/20 rounded-xl border p-6 shadow-sm">
+            <div className="bg-content-article mb-4 h-1 w-10 rounded-full" />
+            <div className="mb-4 flex items-center justify-between">
+              <h2 className="text-brand-text-primary text-lg font-semibold">Latest Campus News</h2>
+              <Link
+                href="/news"
+                className="text-brand-primary hover:text-brand-primary/80 text-sm font-medium"
+              >
+                View all &rarr;
+              </Link>
+            </div>
+            <RecentArticles
+              items={recentArticles}
+              loading={articlesLoading}
+              error={articlesError}
+            />
+          </section>
 
-        {/* Recent forum discussions */}
-        <section className="mb-10 rounded-xl bg-white p-6 shadow-sm">
-          <div className="mb-4 flex items-center justify-between">
-            <h2 className="text-lg font-semibold text-gray-900">Recent Discussions</h2>
-            <Link href="/forum" className="text-sm font-medium text-blue-600 hover:text-blue-700">
-              View all &rarr;
-            </Link>
-          </div>
-          <RecentThreads items={recentThreads} loading={threadsLoading} error={threadsError} />
-        </section>
+          {/* Recent forum discussions */}
+          <section className="bg-brand-surface border-brand-secondary/20 rounded-xl border p-6 shadow-sm">
+            <div className="bg-content-forum mb-4 h-1 w-10 rounded-full" />
+            <div className="mb-4 flex items-center justify-between">
+              <h2 className="text-brand-text-primary text-lg font-semibold">Recent Discussions</h2>
+              <Link
+                href="/forum"
+                className="text-brand-primary hover:text-brand-primary/80 text-sm font-medium"
+              >
+                View all &rarr;
+              </Link>
+            </div>
+            <RecentThreads items={recentThreads} loading={threadsLoading} error={threadsError} />
+          </section>
+        </div>
 
         {/* Notification preferences */}
-        <section className="rounded-xl bg-white p-6 shadow-sm">
-          <h2 className="mb-2 text-lg font-semibold text-gray-900">Notification Preferences</h2>
-          <p className="mb-4 text-sm text-gray-600">
+        <section className="bg-brand-surface border-brand-secondary/20 rounded-xl border p-6 shadow-sm">
+          <h2 className="text-brand-text-primary mb-2 text-lg font-semibold">
+            Notification Preferences
+          </h2>
+          <p className="text-brand-text-secondary mb-4 text-sm">
             Choose how you want to be notified for each organization.
           </p>
           <NotificationPreferences organizations={organizations} orgsLoading={orgsLoading} />

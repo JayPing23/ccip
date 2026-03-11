@@ -114,7 +114,7 @@ export default function AdminRetentionPage() {
   if (loading) {
     return (
       <div className="p-6 sm:p-8">
-        <p className="text-gray-500">Loading retention data...</p>
+        <p className="text-brand-text-muted">Loading retention data...</p>
       </div>
     );
   }
@@ -122,7 +122,7 @@ export default function AdminRetentionPage() {
   if (error) {
     return (
       <div className="p-6 sm:p-8">
-        <div className="rounded-lg bg-red-50 p-4 text-red-700">{error}</div>
+        <div className="bg-status-error/10 text-status-error rounded-lg p-4">{error}</div>
       </div>
     );
   }
@@ -130,42 +130,44 @@ export default function AdminRetentionPage() {
   return (
     <div className="p-6 sm:p-8">
       <div className="mb-8">
-        <h2 className="text-2xl font-bold text-gray-900">Content Lifecycle & Retention</h2>
-        <p className="mt-1 text-gray-600">
+        <h2 className="text-brand-text-primary text-2xl font-bold">
+          Content Lifecycle & Retention
+        </h2>
+        <p className="text-brand-text-secondary mt-1">
           Manage retention policies and review stale content across all pillars.
         </p>
       </div>
 
       {/* Retention Policies */}
       <section className="mb-8">
-        <h3 className="mb-4 text-lg font-semibold text-gray-900">Retention Policies</h3>
-        <div className="overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
+        <h3 className="text-brand-text-primary mb-4 text-lg font-semibold">Retention Policies</h3>
+        <div className="border-brand-secondary/20 bg-brand-surface overflow-hidden rounded-lg border shadow-sm">
+          <table className="divide-brand-secondary/20 min-w-full divide-y">
+            <thead className="bg-brand-bg">
               <tr>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                <th className="text-brand-text-muted px-4 py-3 text-left text-xs font-medium uppercase">
                   Content Type
                 </th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                <th className="text-brand-text-muted px-4 py-3 text-left text-xs font-medium uppercase">
                   Stale After (days)
                 </th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                <th className="text-brand-text-muted px-4 py-3 text-left text-xs font-medium uppercase">
                   Auto-Archive After (days)
                 </th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                <th className="text-brand-text-muted px-4 py-3 text-left text-xs font-medium uppercase">
                   Enabled
                 </th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                <th className="text-brand-text-muted px-4 py-3 text-left text-xs font-medium uppercase">
                   Actions
                 </th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-200">
+            <tbody className="divide-brand-secondary/20 divide-y">
               {data?.policies.map((policy) => (
                 <tr key={policy.id}>
                   {editingPolicy === policy.id ? (
                     <>
-                      <td className="px-4 py-3 text-sm font-medium text-gray-900">
+                      <td className="text-brand-text-primary px-4 py-3 text-sm font-medium">
                         {policy.content_type}
                       </td>
                       <td className="px-4 py-3">
@@ -180,7 +182,7 @@ export default function AdminRetentionPage() {
                               stale_after_days: parseInt(e.target.value) || 1,
                             }))
                           }
-                          className="w-20 rounded border border-gray-300 px-2 py-1 text-sm"
+                          className="border-brand-secondary/30 w-20 rounded border px-2 py-1 text-sm"
                         />
                       </td>
                       <td className="px-4 py-3">
@@ -196,7 +198,7 @@ export default function AdminRetentionPage() {
                             }));
                           }}
                           placeholder="None"
-                          className="w-20 rounded border border-gray-300 px-2 py-1 text-sm"
+                          className="border-brand-secondary/30 w-20 rounded border px-2 py-1 text-sm"
                         />
                       </td>
                       <td className="px-4 py-3">
@@ -212,13 +214,13 @@ export default function AdminRetentionPage() {
                       <td className="flex gap-2 px-4 py-3">
                         <button
                           onClick={savePolicy}
-                          className="rounded bg-indigo-600 px-3 py-1 text-xs font-medium text-white hover:bg-indigo-700"
+                          className="bg-brand-primary hover:bg-brand-primary/80 rounded px-3 py-1 text-xs font-medium text-white"
                         >
                           Save
                         </button>
                         <button
                           onClick={() => setEditingPolicy(null)}
-                          className="rounded border border-gray-300 px-3 py-1 text-xs font-medium text-gray-700 hover:bg-gray-50"
+                          className="border-brand-secondary/30 text-brand-text-secondary hover:bg-brand-bg rounded border px-3 py-1 text-xs font-medium"
                         >
                           Cancel
                         </button>
@@ -226,19 +228,21 @@ export default function AdminRetentionPage() {
                     </>
                   ) : (
                     <>
-                      <td className="px-4 py-3 text-sm font-medium text-gray-900">
+                      <td className="text-brand-text-primary px-4 py-3 text-sm font-medium">
                         {policy.content_type}
                       </td>
-                      <td className="px-4 py-3 text-sm text-gray-700">{policy.stale_after_days}</td>
-                      <td className="px-4 py-3 text-sm text-gray-700">
+                      <td className="text-brand-text-secondary px-4 py-3 text-sm">
+                        {policy.stale_after_days}
+                      </td>
+                      <td className="text-brand-text-secondary px-4 py-3 text-sm">
                         {policy.auto_archive_after_days ?? '—'}
                       </td>
                       <td className="px-4 py-3">
                         <span
                           className={`inline-block rounded-full px-2 py-0.5 text-xs font-semibold ${
                             policy.enabled
-                              ? 'bg-green-100 text-green-700'
-                              : 'bg-gray-100 text-gray-500'
+                              ? 'bg-status-success/15 text-status-success'
+                              : 'bg-brand-secondary/10 text-brand-text-muted'
                           }`}
                         >
                           {policy.enabled ? 'Active' : 'Disabled'}
@@ -247,7 +251,7 @@ export default function AdminRetentionPage() {
                       <td className="px-4 py-3">
                         <button
                           onClick={() => startEditing(policy)}
-                          className="text-sm font-medium text-indigo-600 hover:text-indigo-800"
+                          className="text-brand-primary hover:text-brand-primary text-sm font-medium"
                         >
                           Edit
                         </button>
@@ -263,17 +267,21 @@ export default function AdminRetentionPage() {
 
       {/* Stale Content Summary */}
       <section className="mb-8">
-        <h3 className="mb-4 text-lg font-semibold text-gray-900">Stale Content Summary</h3>
+        <h3 className="text-brand-text-primary mb-4 text-lg font-semibold">
+          Stale Content Summary
+        </h3>
         <div className="grid gap-4 sm:grid-cols-2">
-          <div className="rounded-lg border border-yellow-200 bg-yellow-50 p-4">
-            <p className="text-2xl font-bold text-yellow-700">{data?.candidates.totalStale ?? 0}</p>
-            <p className="text-sm text-yellow-600">Flagged as stale</p>
+          <div className="border-status-warning/20 bg-status-warning/10 rounded-lg border p-4">
+            <p className="text-status-warning text-2xl font-bold">
+              {data?.candidates.totalStale ?? 0}
+            </p>
+            <p className="text-status-warning text-sm">Flagged as stale</p>
           </div>
-          <div className="rounded-lg border border-red-200 bg-red-50 p-4">
-            <p className="text-2xl font-bold text-red-700">
+          <div className="border-status-error/20 bg-status-error/10 rounded-lg border p-4">
+            <p className="text-status-error text-2xl font-bold">
               {data?.candidates.totalArchivable ?? 0}
             </p>
-            <p className="text-sm text-red-600">Ready for auto-archive</p>
+            <p className="text-status-error text-sm">Ready for auto-archive</p>
           </div>
         </div>
       </section>
@@ -282,7 +290,7 @@ export default function AdminRetentionPage() {
       {data && data.candidates.candidates.length > 0 && (
         <section>
           <div className="mb-4 flex items-center justify-between">
-            <h3 className="text-lg font-semibold text-gray-900">Retention Candidates</h3>
+            <h3 className="text-brand-text-primary text-lg font-semibold">Retention Candidates</h3>
             <div className="flex gap-2">
               {(['ANNOUNCEMENT', 'ARTICLE', 'THREAD'] as const).map((ct) => {
                 const count = data.candidates.candidates.filter(
@@ -294,7 +302,7 @@ export default function AdminRetentionPage() {
                     key={ct}
                     onClick={() => archiveCandidates(ct)}
                     disabled={archiving}
-                    className="rounded bg-red-600 px-3 py-1 text-xs font-medium text-white hover:bg-red-700 disabled:opacity-50"
+                    className="bg-status-error hover:bg-status-error/80 rounded px-3 py-1 text-xs font-medium text-white disabled:opacity-50"
                   >
                     Archive {count} {ct.toLowerCase()}s
                   </button>
@@ -302,42 +310,48 @@ export default function AdminRetentionPage() {
               })}
             </div>
           </div>
-          <div className="overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
+          <div className="border-brand-secondary/20 bg-brand-surface overflow-hidden rounded-lg border shadow-sm">
+            <table className="divide-brand-secondary/20 min-w-full divide-y">
+              <thead className="bg-brand-bg">
                 <tr>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                  <th className="text-brand-text-muted px-4 py-3 text-left text-xs font-medium uppercase">
                     Title
                   </th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                  <th className="text-brand-text-muted px-4 py-3 text-left text-xs font-medium uppercase">
                     Type
                   </th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                  <th className="text-brand-text-muted px-4 py-3 text-left text-xs font-medium uppercase">
                     Status
                   </th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                  <th className="text-brand-text-muted px-4 py-3 text-left text-xs font-medium uppercase">
                     Age (days)
                   </th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                  <th className="text-brand-text-muted px-4 py-3 text-left text-xs font-medium uppercase">
                     Action
                   </th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-200">
+              <tbody className="divide-brand-secondary/20 divide-y">
                 {data.candidates.candidates.map((candidate) => (
                   <tr key={candidate.id}>
-                    <td className="max-w-[200px] truncate px-4 py-3 text-sm text-gray-900">
+                    <td className="text-brand-text-primary max-w-50 truncate px-4 py-3 text-sm">
                       {candidate.title}
                     </td>
-                    <td className="px-4 py-3 text-sm text-gray-700">{candidate.content_type}</td>
-                    <td className="px-4 py-3 text-sm text-gray-700">{candidate.status}</td>
-                    <td className="px-4 py-3 text-sm text-gray-700">{candidate.age_days}</td>
+                    <td className="text-brand-text-secondary px-4 py-3 text-sm">
+                      {candidate.content_type}
+                    </td>
+                    <td className="text-brand-text-secondary px-4 py-3 text-sm">
+                      {candidate.status}
+                    </td>
+                    <td className="text-brand-text-secondary px-4 py-3 text-sm">
+                      {candidate.age_days}
+                    </td>
                     <td className="px-4 py-3">
                       <span
                         className={`inline-block rounded-full px-2 py-0.5 text-xs font-semibold ${
                           candidate.recommended_action === 'ARCHIVE'
-                            ? 'bg-red-100 text-red-700'
-                            : 'bg-yellow-100 text-yellow-700'
+                            ? 'bg-status-error/15 text-status-error'
+                            : 'bg-status-warning/15 text-status-warning'
                         }`}
                       >
                         {candidate.recommended_action}
@@ -352,8 +366,8 @@ export default function AdminRetentionPage() {
       )}
 
       {data && data.candidates.candidates.length === 0 && (
-        <div className="rounded-lg border border-green-200 bg-green-50 p-6 text-center">
-          <p className="text-green-700">
+        <div className="border-status-success/20 bg-status-success/10 rounded-lg border p-6 text-center">
+          <p className="text-status-success">
             No stale content detected. All content is within retention thresholds.
           </p>
         </div>

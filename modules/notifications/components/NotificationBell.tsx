@@ -13,7 +13,7 @@ export default function NotificationBell({ onClick }: NotificationBellProps) {
     <button
       type="button"
       onClick={onClick}
-      className="relative rounded-full p-2 text-gray-600 hover:bg-gray-100 hover:text-gray-900 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none"
+      className="text-brand-text-secondary hover:bg-brand-secondary/10 hover:text-brand-text-primary focus:ring-brand-primary relative rounded-full p-2 focus:ring-2 focus:ring-offset-2 focus:outline-none"
       aria-label={hasUnread ? `Notifications (${unreadCount} unread)` : 'Notifications'}
     >
       <svg
@@ -33,7 +33,7 @@ export default function NotificationBell({ onClick }: NotificationBellProps) {
       </svg>
 
       {!loading && hasUnread && (
-        <span className="absolute -top-0.5 -right-0.5 flex h-5 min-w-5 items-center justify-center rounded-full bg-red-500 px-1 text-xs font-bold text-white">
+        <span className="animate-bell-pulse bg-status-error absolute -top-0.5 -right-0.5 flex h-5 min-w-5 items-center justify-center rounded-full px-1 text-xs font-bold text-white">
           {unreadCount > 99 ? '99+' : unreadCount}
         </span>
       )}

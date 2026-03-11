@@ -1,0 +1,116 @@
+@import 'tailwindcss';
+
+/*
+ * CCIP Design System — Brand Theme
+ * Defines all brand color tokens, semantic colors, and typography.
+ * See Design_Plan.md for the full specification.
+ */
+
+@theme {
+  /* Brand Palette */
+  --color-brand-primary: #355872;
+  --color-brand-secondary: #7aaace;
+  --color-brand-accent: #9cd5ff;
+  --color-brand-bg: #f7f8f0;
+  --color-brand-surface: #ffffff;
+
+  /* Text Colors */
+  --color-brand-text-primary: #355872;
+  --color-brand-text-secondary: #5a7a8f;
+  --color-brand-text-muted: #8fa5b5;
+
+  /* Semantic Colors */
+  --color-status-success: #16a34a;
+  --color-status-error: #dc2626;
+  --color-status-warning: #eab308;
+  --color-status-info: #355872;
+
+  /* Dark Mode Surface Colors */
+  --color-brand-dark-bg: #1e3a4f;
+  --color-brand-dark-surface: #355872;
+
+  /* Content-Type Accent Colors */
+  --color-content-announcement: #355872;
+  --color-content-article: #7aaace;
+  --color-content-forum: #9cd5ff;
+
+  /* Font Family */
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+
+  /* Font Sizes (matching Design_Plan type scale) */
+  --text-caption: 0.75rem;
+  --text-caption--line-height: 1.25rem;
+  --text-small: 0.875rem;
+  --text-small--line-height: 1.25rem;
+  --text-body: 1rem;
+  --text-body--line-height: 1.5rem;
+  --text-h3: 1.375rem;
+  --text-h3--line-height: 1.75rem;
+  --text-h2: 1.75rem;
+  --text-h2--line-height: 2.25rem;
+  --text-h1: 2.25rem;
+  --text-h1--line-height: 2.75rem;
+
+  /* Animation: Toast slide-in (Design Plan Phase 9) */
+  --animate-toast-in: toast-in 250ms ease-out;
+
+  /* Animation: NotificationBell scale pulse (Design Plan Phase 9) */
+  --animate-bell-pulse: bell-pulse 300ms ease-in-out;
+
+  @keyframes toast-in {
+    from {
+      opacity: 0;
+      transform: translateY(1rem);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes bell-pulse {
+    0% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.2);
+    }
+    100% {
+      transform: scale(1);
+    }
+  }
+}
+
+/* Dark mode overrides using class strategy */
+.dark {
+  --color-brand-bg: #1e3a4f;
+  --color-brand-surface: #355872;
+  --color-brand-text-primary: #f7f8f0;
+  --color-brand-text-secondary: #9cd5ff;
+  --color-brand-text-muted: #7aaace;
+}
+
+/* Base styles */
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background-color: var(--color-brand-bg);
+    color: var(--color-brand-text-primary);
+    font-family: var(--font-sans);
+  }
+
+  /* Respect reduced motion preferences */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}

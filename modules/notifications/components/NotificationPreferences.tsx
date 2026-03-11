@@ -68,34 +68,34 @@ function OrgPrefRow({ org, preference, onSave, saving }: OrgPrefRowProps) {
   }, [onSave, org.id, inApp, email, digest]);
 
   return (
-    <div className="flex flex-col gap-3 rounded-lg border border-gray-200 bg-white p-4 sm:flex-row sm:items-center sm:justify-between">
+    <div className="border-brand-secondary/20 bg-brand-surface flex flex-col gap-3 rounded-lg border p-4 sm:flex-row sm:items-center sm:justify-between">
       <div className="min-w-0 flex-1">
-        <p className="truncate font-medium text-gray-900">{org.name}</p>
-        <p className="text-xs text-gray-500 capitalize">{org.type.toLowerCase()}</p>
+        <p className="text-brand-text-primary truncate font-medium">{org.name}</p>
+        <p className="text-brand-text-muted text-xs capitalize">{org.type.toLowerCase()}</p>
       </div>
 
       <div className="flex flex-wrap items-center gap-4">
-        <label className="flex items-center gap-2 text-sm text-gray-700">
+        <label className="text-brand-text-secondary flex items-center gap-2 text-sm">
           <input
             type="checkbox"
             checked={inApp}
             onChange={(e) => handleChange(setInApp as never, e.target.checked)}
-            className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+            className="border-brand-secondary/30 text-brand-primary focus:ring-brand-primary h-4 w-4 rounded"
           />
           In-app
         </label>
 
-        <label className="flex items-center gap-2 text-sm text-gray-700">
+        <label className="text-brand-text-secondary flex items-center gap-2 text-sm">
           <input
             type="checkbox"
             checked={email}
             onChange={(e) => handleChange(setEmail as never, e.target.checked)}
-            className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+            className="border-brand-secondary/30 text-brand-primary focus:ring-brand-primary h-4 w-4 rounded"
           />
           Email
         </label>
 
-        <label className="flex items-center gap-2 text-sm text-gray-700">
+        <label className="text-brand-text-secondary flex items-center gap-2 text-sm">
           <span className="sr-only">Email digest frequency for {org.name}</span>
           <select
             value={digest}
@@ -106,7 +106,7 @@ function OrgPrefRow({ org, preference, onSave, saving }: OrgPrefRowProps) {
                 e.target.value as INotificationPreference['email_digest']
               )
             }
-            className="rounded-md border border-gray-300 bg-white px-2 py-1 text-sm text-gray-700 focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50"
+            className="border-brand-secondary/30 bg-brand-surface text-brand-text-secondary focus:border-brand-primary focus:ring-brand-primary rounded-md border px-2 py-1 text-sm disabled:opacity-50"
           >
             {DIGEST_OPTIONS.map((opt) => (
               <option key={opt} value={opt}>
@@ -120,7 +120,7 @@ function OrgPrefRow({ org, preference, onSave, saving }: OrgPrefRowProps) {
           type="button"
           onClick={handleSave}
           disabled={!dirty || saving}
-          className="rounded-md bg-blue-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
+          className="bg-brand-primary hover:bg-brand-primary/80 rounded-md px-3 py-1.5 text-sm font-medium text-white disabled:cursor-not-allowed disabled:opacity-50"
         >
           {saving ? 'Saving…' : 'Save'}
         </button>
@@ -151,21 +151,31 @@ export default function NotificationPreferences({
   const prefByOrg = new Map(preferences.map((p) => [p.org_id, p]));
 
   if (orgsLoading || prefsLoading) {
-    return <div className="py-6 text-center text-sm text-gray-500">Loading preferences…</div>;
+    return (
+      <div className="text-brand-text-muted py-6 text-center text-sm">Loading preferences…</div>
+    );
   }
 
   if (prefsError) {
-    return <div className="rounded-lg bg-red-50 p-4 text-sm text-red-700">{prefsError}</div>;
+    return (
+      <div className="bg-status-error/10 text-status-error rounded-lg p-4 text-sm">
+        {prefsError}
+      </div>
+    );
   }
 
   if (organizations.length === 0) {
-    return <p className="py-6 text-center text-sm text-gray-500">No organizations available.</p>;
+    return (
+      <p className="text-brand-text-muted py-6 text-center text-sm">No organizations available.</p>
+    );
   }
 
   return (
     <div className="space-y-3">
       {saveError && (
-        <div className="rounded-lg bg-red-50 p-3 text-sm text-red-700">{saveError}</div>
+        <div className="bg-status-error/10 text-status-error rounded-lg p-3 text-sm">
+          {saveError}
+        </div>
       )}
       {organizations.map((org) => (
         <OrgPrefRow

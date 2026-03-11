@@ -43,7 +43,7 @@ export default function ThreadPage() {
   if (userLoading || loading) {
     return (
       <div className="flex min-h-screen items-center justify-center">
-        <p className="text-gray-500">Loading…</p>
+        <p className="text-brand-text-muted">Loading…</p>
       </div>
     );
   }
@@ -52,13 +52,13 @@ export default function ThreadPage() {
 
   if (error || !thread) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-brand-bg">
         <Header user={user} navLinks={FORUM_NAV} />
         <main className="mx-auto max-w-4xl px-4 py-8">
-          <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+          <div className="rounded-lg border border-status-error/20 bg-status-error/10 p-4 text-sm text-status-error">
             {error ?? 'Thread not found.'}
           </div>
-          <Link href="/forum" className="mt-4 inline-block text-sm text-blue-600 hover:underline">
+          <Link href="/forum" className="mt-4 inline-block text-sm text-brand-primary hover:underline">
             ← Back to Forum
           </Link>
         </main>
@@ -69,20 +69,20 @@ export default function ThreadPage() {
   const isLocked = thread.status === THREAD_STATUS.LOCKED;
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-brand-bg">
       <Header user={user} navLinks={FORUM_NAV} />
       <main className="mx-auto max-w-4xl px-4 py-8">
         {/* Breadcrumb */}
-        <nav className="mb-4 text-sm text-gray-500">
-          <Link href="/forum" className="hover:text-blue-600">
+        <nav className="mb-4 text-sm text-brand-text-muted">
+          <Link href="/forum" className="hover:text-brand-primary">
             Forum
           </Link>
           <span className="mx-1">/</span>
-          <Link href={`/forum/${thread.category_id}`} className="hover:text-blue-600">
+          <Link href={`/forum/${thread.category_id}`} className="hover:text-brand-primary">
             Category
           </Link>
           <span className="mx-1">/</span>
-          <span className="truncate text-gray-900">{thread.title}</span>
+          <span className="truncate text-brand-text-primary">{thread.title}</span>
         </nav>
 
         <ThreadView thread={thread} replies={replies} reactionCounts={reactionCounts}>
@@ -91,7 +91,7 @@ export default function ThreadPage() {
             <ReactionBar threadId={thread.id} counts={reactionCounts} onReacted={handleReacted} />
             <button
               onClick={() => setReportOpen(true)}
-              className="text-xs text-gray-400 transition hover:text-red-500"
+              className="text-xs text-brand-text-muted transition hover:text-status-error"
             >
               Report
             </button>

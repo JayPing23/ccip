@@ -46,11 +46,11 @@ export default function LogoutButton() {
 
   return (
     <div>
-      {error && <p className="mb-2 text-sm text-red-600">{error}</p>}
+      {error && <p className="mb-2 text-sm text-status-error">{error}</p>}
       <button
         onClick={handleLogout}
         disabled={loading}
-        className="rounded-lg bg-red-600 px-4 py-2 text-white transition hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-50"
+        className="rounded-lg bg-status-error px-4 py-2 text-white transition hover:bg-status-error/80 disabled:cursor-not-allowed disabled:opacity-50"
       >
         {loading ? 'Signing out...' : 'Sign out'}
       </button>

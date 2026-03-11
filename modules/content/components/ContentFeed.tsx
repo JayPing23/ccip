@@ -1,5 +1,6 @@
 'use client';
 
+import EmptyState from '@/shared/components/EmptyState';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useContent } from '../hooks/useContent';
@@ -34,7 +35,7 @@ export default function ContentFeed({
     return (
       <div className="space-y-4">
         {[1, 2, 3].map((i) => (
-          <div key={i} className="h-32 animate-pulse rounded-lg bg-gray-200" />
+          <div key={i} className="bg-brand-secondary/20 h-32 animate-pulse rounded-lg" />
         ))}
       </div>
     );
@@ -42,7 +43,7 @@ export default function ContentFeed({
 
   if (error) {
     return (
-      <div className="rounded-lg bg-red-50 p-4 text-red-800">
+      <div className="bg-status-error/10 text-status-error rounded-lg p-4">
         <p className="font-medium">Failed to load announcements</p>
         <p className="text-sm">{error}</p>
       </div>
@@ -50,12 +51,7 @@ export default function ContentFeed({
   }
 
   if (content.length === 0) {
-    return (
-      <div className="rounded-lg bg-blue-50 p-8 text-center">
-        <p className="text-gray-700">No announcements yet.</p>
-        <p className="text-sm text-gray-500">Check back soon for updates!</p>
-      </div>
-    );
+    return <EmptyState type="announcement" />;
   }
 
   return (
@@ -63,14 +59,14 @@ export default function ContentFeed({
       {/* Filters */}
       {showFilters && (
         <div className="mb-6 flex items-center gap-4">
-          <label htmlFor="status-select" className="text-sm font-medium text-gray-700">
+          <label htmlFor="status-select" className="text-brand-text-secondary text-sm font-medium">
             Status:
           </label>
           <select
             id="status-select"
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value as 'PUBLISHED' | 'ALL')}
-            className="rounded border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:ring-blue-500"
+            className="border-brand-secondary/30 focus:border-brand-primary focus:ring-brand-primary rounded border px-3 py-2 text-sm"
           >
             <option value="PUBLISHED">Published</option>
             <option value="ALL">All</option>

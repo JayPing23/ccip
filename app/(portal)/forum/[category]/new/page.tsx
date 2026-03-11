@@ -35,7 +35,7 @@ export default function NewThreadPage() {
   if (userLoading || catsLoading) {
     return (
       <div className="flex min-h-screen items-center justify-center">
-        <p className="text-gray-500">Loading…</p>
+        <p className="text-brand-text-muted">Loading…</p>
       </div>
     );
   }
@@ -43,25 +43,25 @@ export default function NewThreadPage() {
   if (!user) return null;
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-brand-bg">
       <Header user={user} navLinks={FORUM_NAV} />
       <main className="mx-auto max-w-4xl px-4 py-8">
-        <nav className="mb-4 text-sm text-gray-500">
-          <Link href="/forum" className="hover:text-blue-600">
+        <nav className="mb-4 text-sm text-brand-text-muted">
+          <Link href="/forum" className="hover:text-brand-primary">
             Forum
           </Link>
           <span className="mx-1">/</span>
-          <Link href={`/forum/${categorySlug}`} className="hover:text-blue-600">
+          <Link href={`/forum/${categorySlug}`} className="hover:text-brand-primary">
             {category?.name ?? categorySlug}
           </Link>
           <span className="mx-1">/</span>
-          <span className="text-gray-900">New Thread</span>
+          <span className="text-brand-text-primary">New Thread</span>
         </nav>
 
         {category ? (
           <ThreadComposer categoryId={category.id} categorySlug={categorySlug} />
         ) : (
-          <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+          <div className="rounded-lg border border-status-error/20 bg-status-error/10 p-4 text-sm text-status-error">
             Category not found.
           </div>
         )}

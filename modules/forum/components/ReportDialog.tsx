@@ -1,8 +1,8 @@
 'use client';
 
-import { REPORT_REASON, REPORT_REASON_LABELS } from '@/modules/moderation/constants';
-import type { ReportReason } from '@/modules/moderation/constants';
 import { useReportContent } from '@/modules/forum/hooks/useForumThread';
+import type { ReportReason } from '@/modules/moderation/constants';
+import { REPORT_REASON, REPORT_REASON_LABELS } from '@/modules/moderation/constants';
 import { useToast } from '@/shared/components/Toast';
 import { useCallback, useState } from 'react';
 
@@ -39,19 +39,22 @@ export default function ReportDialog({ threadId, replyId, onClose }: ReportDialo
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
       <form
         onSubmit={handleSubmit}
-        className="w-full max-w-md rounded-lg bg-white p-6 shadow-xl"
+        className="bg-brand-surface w-full max-w-md rounded-lg p-6 shadow-xl"
         onClick={(e) => e.stopPropagation()}
       >
-        <h3 className="mb-4 text-lg font-semibold text-gray-900">Report Content</h3>
+        <h3 className="text-brand-text-primary mb-4 text-lg font-semibold">Report Content</h3>
 
-        <label htmlFor="report-reason" className="mb-1 block text-sm font-medium text-gray-700">
+        <label
+          htmlFor="report-reason"
+          className="text-brand-text-secondary mb-1 block text-sm font-medium"
+        >
           Reason
         </label>
         <select
           id="report-reason"
           value={reason}
           onChange={(e) => setReason(e.target.value as ReportReason)}
-          className="mb-3 w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none"
+          className="border-brand-secondary/30 focus:border-brand-primary focus:ring-brand-primary mb-3 w-full rounded-md border px-3 py-2 text-sm focus:ring-1 focus:outline-none"
         >
           <option value="">Select a reason…</option>
           {Object.values(REPORT_REASON).map((r) => (
@@ -61,7 +64,10 @@ export default function ReportDialog({ threadId, replyId, onClose }: ReportDialo
           ))}
         </select>
 
-        <label htmlFor="report-desc" className="mb-1 block text-sm font-medium text-gray-700">
+        <label
+          htmlFor="report-desc"
+          className="text-brand-text-secondary mb-1 block text-sm font-medium"
+        >
           Additional details (optional)
         </label>
         <textarea
@@ -69,24 +75,24 @@ export default function ReportDialog({ threadId, replyId, onClose }: ReportDialo
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           rows={3}
-          className="mb-3 w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none"
+          className="border-brand-secondary/30 focus:border-brand-primary focus:ring-brand-primary mb-3 w-full rounded-md border px-3 py-2 text-sm focus:ring-1 focus:outline-none"
           placeholder="Provide more context…"
         />
 
-        {error && <p className="mb-3 text-sm text-red-600">{error}</p>}
+        {error && <p className="text-status-error mb-3 text-sm">{error}</p>}
 
         <div className="flex justify-end gap-2">
           <button
             type="button"
             onClick={onClose}
-            className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-50"
+            className="border-brand-secondary/30 text-brand-text-secondary hover:bg-brand-bg rounded-lg border px-4 py-2 text-sm font-medium transition"
           >
             Cancel
           </button>
           <button
             type="submit"
             disabled={loading || !reason}
-            className="rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-red-700 disabled:opacity-50"
+            className="bg-status-error hover:bg-status-error/80 rounded-lg px-4 py-2 text-sm font-medium text-white transition disabled:opacity-50"
           >
             {loading ? 'Submitting…' : 'Submit Report'}
           </button>

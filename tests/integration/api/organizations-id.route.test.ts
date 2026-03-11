@@ -91,7 +91,14 @@ describe('GET /api/organizations/[id]', () => {
       org: sampleOrg,
       parent: null,
       children: [
-        { id: 'org-2', name: 'School of Engineering', slug: 'soe', type: 'SCHOOL' as const, parent_id: 'org-1', created_at: '2026-03-01T00:00:00.000Z' },
+        {
+          id: 'org-2',
+          name: 'School of Engineering',
+          slug: 'soe',
+          type: 'SCHOOL' as const,
+          parent_id: 'org-1',
+          created_at: '2026-03-01T00:00:00.000Z',
+        },
       ],
     };
     mockedGetOrganizationHierarchy.mockResolvedValue(hierarchy);

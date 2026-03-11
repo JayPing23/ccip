@@ -27,8 +27,8 @@ export default function CreateArticlePage() {
 
   if (loading || !user) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-gray-50">
-        <p className="text-gray-600">Loading editor workspace...</p>
+      <div className="flex min-h-screen items-center justify-center bg-brand-bg">
+        <p className="text-brand-text-secondary">Loading editor workspace...</p>
       </div>
     );
   }

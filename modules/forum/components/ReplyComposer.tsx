@@ -43,7 +43,7 @@ export default function ReplyComposer({
 
   if (disabled) {
     return (
-      <div className="rounded-lg border border-gray-200 bg-gray-50 p-4 text-center text-sm text-gray-500">
+      <div className="rounded-lg border border-brand-secondary/20 bg-brand-bg p-4 text-center text-sm text-brand-text-muted">
         This thread is locked. Replies are not accepted.
       </div>
     );
@@ -55,17 +55,17 @@ export default function ReplyComposer({
         value={body}
         onChange={(e) => setBody(e.target.value)}
         rows={3}
-        className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none"
+        className="w-full rounded-md border border-brand-secondary/30 px-3 py-2 text-sm focus:border-brand-primary focus:ring-1 focus:ring-brand-primary focus:outline-none"
         placeholder="Write a reply…"
         disabled={loading}
       />
 
-      {error && <p className="text-sm text-red-600">{error}</p>}
+      {error && <p className="text-sm text-status-error">{error}</p>}
 
       <button
         type="submit"
         disabled={loading || !body.trim()}
-        className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-blue-700 disabled:opacity-50"
+        className="rounded-lg bg-brand-primary px-4 py-2 text-sm font-medium text-white transition hover:bg-brand-primary/80 disabled:opacity-50"
       >
         {loading ? 'Posting…' : 'Reply'}
       </button>

@@ -73,9 +73,9 @@ export default function AuthCallbackHandler() {
         });
 
         if (!setupResponse.ok) {
-          const payload = (await setupResponse.json().catch(() => null)) as
-            | { error?: { message?: string } | string }
-            | null;
+          const payload = (await setupResponse.json().catch(() => null)) as {
+            error?: { message?: string } | string;
+          } | null;
 
           throw new Error(
             typeof payload?.error === 'string'
@@ -114,24 +114,24 @@ export default function AuthCallbackHandler() {
   }, [router, supabase]);
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100">
-      <div className="w-full max-w-md rounded-lg bg-white p-8 shadow-lg">
+    <div className="from-brand-accent/10 to-brand-secondary/15 flex min-h-screen items-center justify-center bg-linear-to-br">
+      <div className="bg-brand-surface w-full max-w-md rounded-lg p-8 shadow-lg">
         <div className="mb-8 text-center">
-          <h1 className="text-2xl font-bold text-gray-900">CCIP</h1>
-          <p className="text-sm text-gray-600">Centralized Campus Information Portal</p>
+          <h1 className="text-brand-text-primary text-2xl font-bold">CCIP</h1>
+          <p className="text-brand-text-secondary text-sm">Centralized Campus Information Portal</p>
         </div>
 
         {error ? (
-          <div className="rounded-lg bg-red-50 p-4 text-center">
-            <p className="text-sm font-medium text-red-800">{error}</p>
-            <p className="mt-2 text-xs text-red-600">Redirecting to login...</p>
+          <div className="bg-status-error/10 rounded-lg p-4 text-center">
+            <p className="text-status-error text-sm font-medium">{error}</p>
+            <p className="text-status-error mt-2 text-xs">Redirecting to login...</p>
           </div>
         ) : (
           <div className="space-y-4 text-center">
             <div className="flex justify-center">
-              <div className="h-10 w-10 animate-spin rounded-full border-4 border-blue-300 border-t-blue-600"></div>
+              <div className="border-brand-secondary border-t-brand-primary h-10 w-10 animate-spin rounded-full border-4"></div>
             </div>
-            <p className="text-gray-700">{status}</p>
+            <p className="text-brand-text-secondary">{status}</p>
           </div>
         )}
       </div>

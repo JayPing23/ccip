@@ -24,11 +24,11 @@ export default function AuthCallbackRedirect({
   }, [router, searchParams, targetPath]);
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100">
-      <div className="w-full max-w-md rounded-lg bg-white p-8 text-center shadow-lg">
-        <div className="mx-auto mb-4 h-10 w-10 animate-spin rounded-full border-4 border-blue-300 border-t-blue-600"></div>
-        <h1 className="text-xl font-bold text-gray-900">Redirecting...</h1>
-        <p className="mt-2 text-sm text-gray-600">
+    <div className="from-brand-accent/10 to-brand-secondary/15 flex min-h-screen items-center justify-center bg-linear-to-br">
+      <div className="bg-brand-surface w-full max-w-md rounded-lg p-8 text-center shadow-lg">
+        <div className="border-brand-secondary border-t-brand-primary mx-auto mb-4 h-10 w-10 animate-spin rounded-full border-4"></div>
+        <h1 className="text-brand-text-primary text-xl font-bold">Redirecting...</h1>
+        <p className="text-brand-text-secondary mt-2 text-sm">
           Sending you to the current authentication callback route.
         </p>
       </div>
